@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Allows cleartext HTTP to localhost and the Android emulator host (10.0.2.2)
+    for local development. Remove or tighten for production.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <!-- Add your LAN IP here when testing on a real device -->
+        <!-- <domain includeSubdomains="true">192.168.1.x</domain> -->
+    </domain-config>
+</network-security-config>

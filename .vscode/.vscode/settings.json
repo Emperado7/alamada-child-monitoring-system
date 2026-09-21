@@ -1,0 +1,4 @@
+{
+    "editor.renderControlCharacters": true,
+    "chat.agent.networkFilter": true
+}

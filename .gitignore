@@ -1,0 +1,27 @@
+# Laravel backend
+backend/vendor/
+backend/.env
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*
+backend/public/storage
+
+# Android
+android/.gradle/
+android/app/.gradle/
+android/app/build/
+android/local.properties
+android/*.jks
+android/app/release/
+
+# VS Code
+.vscode/settings.json
+
+# System files
+*.DS_Store
+Thumbs.db
+
+# Keep .env.example but not .env
+!backend/.env.example

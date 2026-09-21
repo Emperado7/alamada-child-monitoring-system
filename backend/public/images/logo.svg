@@ -1,0 +1,270 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 560" width="520" height="560">
+
+  <!-- ══ LIGHT GREEN BACKGROUND CIRCLE GLOW ══ -->
+  <radialGradient id="bgGlow" cx="50%" cy="45%" r="50%">
+    <stop offset="0%"   stop-color="#f1fdf1" stop-opacity="1"/>
+    <stop offset="100%" stop-color="#e8f5e9" stop-opacity="0"/>
+  </radialGradient>
+  <ellipse cx="260" cy="250" rx="240" ry="210" fill="url(#bgGlow)"/>
+
+  <!-- ══ GREEN OVAL GROUND PLATFORM ══ -->
+  <ellipse cx="260" cy="355" rx="195" ry="32" fill="#43a047" opacity="0.22"/>
+  <ellipse cx="260" cy="355" rx="148" ry="21" fill="#2e7d32" opacity="0.18"/>
+  <ellipse cx="260" cy="355" rx="100" ry="13" fill="#1b5e20" opacity="0.12"/>
+
+  <!-- ══ SPARKLE DOTS ══ -->
+  <circle cx="92"  cy="148" r="5"   fill="#66bb6a"/>
+  <circle cx="76"  cy="125" r="3"   fill="#a5d6a7"/>
+  <circle cx="108" cy="115" r="2.5" fill="#c8e6c9"/>
+  <circle cx="430" cy="142" r="5"   fill="#66bb6a"/>
+  <circle cx="446" cy="120" r="3"   fill="#a5d6a7"/>
+  <circle cx="416" cy="108" r="2.5" fill="#c8e6c9"/>
+
+  <!-- 4-point sparkle stars -->
+  <text x="82"  y="103" font-size="18" fill="#66bb6a" text-anchor="middle" font-family="sans-serif">✦</text>
+  <text x="440" y="98"  font-size="16" fill="#66bb6a" text-anchor="middle" font-family="sans-serif">✦</text>
+  <text x="460" y="158" font-size="12" fill="#a5d6a7" text-anchor="middle" font-family="sans-serif">✦</text>
+  <text x="66"  y="168" font-size="12" fill="#a5d6a7" text-anchor="middle" font-family="sans-serif">✦</text>
+
+  <!-- ══ PHONE BODY ══ -->
+  <!-- Drop shadow -->
+  <rect x="190" y="57" width="136" height="222" rx="28" ry="28"
+        fill="#1a1a1a" opacity="0.15" transform="translate(5,6)"/>
+  <!-- Phone case - dark charcoal/black -->
+  <rect x="188" y="52" width="136" height="222" rx="28" ry="28"
+        fill="#1c1c1c"/>
+  <!-- Screen bezel white/cream -->
+  <rect x="198" y="65" width="116" height="196" rx="18" ry="18"
+        fill="#f8fff8"/>
+  <!-- Top notch -->
+  <rect x="244" y="57" width="32" height="9" rx="4.5"
+        fill="#111"/>
+
+  <!-- ══ SMILEY FACE on screen ══ -->
+  <!-- Face - light yellow -->
+  <circle cx="256" cy="138" r="44" fill="#fff9c4" stroke="#f9a825" stroke-width="1.5"/>
+  <!-- Rosy cheeks -->
+  <circle cx="232" cy="150" r="12"  fill="#ffab91" opacity="0.45"/>
+  <circle cx="280" cy="150" r="12"  fill="#ffab91" opacity="0.45"/>
+  <!-- Happy arc eyes (closed happy style) -->
+  <path d="M238 130 Q244 123 250 130"
+        fill="none" stroke="#2e7d32" stroke-width="4"
+        stroke-linecap="round"/>
+  <path d="M262 130 Q268 123 274 130"
+        fill="none" stroke="#2e7d32" stroke-width="4"
+        stroke-linecap="round"/>
+  <!-- Big happy smile -->
+  <path d="M234 148 Q256 172 278 148"
+        fill="none" stroke="#2e7d32" stroke-width="4"
+        stroke-linecap="round"/>
+
+  <!-- ══ GIRL + TEDDY BEAR inside phone (lower screen) ══ -->
+  <!-- Girl body/shirt - lime green -->
+  <path d="M237 228 Q256 240 275 228 L278 262 Q256 270 234 262 Z"
+        fill="#aed581"/>
+  <!-- Girl head -->
+  <circle cx="256" cy="216" r="18" fill="#ffcc80"/>
+  <!-- Girl hair - dark brown -->
+  <ellipse cx="256" cy="202" rx="18" ry="11" fill="#5d4037"/>
+  <circle cx="240" cy="210" r="8"  fill="#5d4037"/>
+  <circle cx="272" cy="210" r="8"  fill="#5d4037"/>
+  <!-- Girl face -->
+  <circle cx="250" cy="215" r="2.8" fill="#4e342e"/>
+  <circle cx="262" cy="215" r="2.8" fill="#4e342e"/>
+  <path d="M249 221 Q256 226 263 221"
+        fill="none" stroke="#4e342e" stroke-width="2"
+        stroke-linecap="round"/>
+  <!-- Arms holding teddy -->
+  <line x1="237" y1="232" x2="226" y2="248"
+        stroke="#ffcc80" stroke-width="7" stroke-linecap="round"/>
+  <line x1="275" y1="232" x2="286" y2="248"
+        stroke="#ffcc80" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Teddy bear (held in front) -->
+  <!-- Teddy head -->
+  <circle cx="256" cy="252" r="16"  fill="#a1887f"/>
+  <!-- Ears -->
+  <circle cx="243" cy="240" r="8"   fill="#a1887f"/>
+  <circle cx="269" cy="240" r="8"   fill="#a1887f"/>
+  <circle cx="243" cy="240" r="4.5" fill="#bcaaa4"/>
+  <circle cx="269" cy="240" r="4.5" fill="#bcaaa4"/>
+  <!-- Teddy muzzle -->
+  <circle cx="256" cy="254" r="8"   fill="#bcaaa4"/>
+  <!-- Teddy eyes -->
+  <circle cx="251" cy="249" r="2"   fill="#4e342e"/>
+  <circle cx="261" cy="249" r="2"   fill="#4e342e"/>
+  <!-- Teddy nose/mouth -->
+  <circle cx="256" cy="254" r="1.5" fill="#4e342e"/>
+  <path d="M252 257 Q256 260 260 257"
+        fill="none" stroke="#4e342e" stroke-width="1.4"
+        stroke-linecap="round"/>
+
+  <!-- ══ PHONE ARMS ══ -->
+  <!-- Left arm - thick rounded -->
+  <path d="M192 155 Q166 134 148 112"
+        fill="none" stroke="#1c1c1c" stroke-width="17"
+        stroke-linecap="round"/>
+  <!-- Left hand (round fist) -->
+  <circle cx="143" cy="106" r="18" fill="#1c1c1c"/>
+  <!-- Finger hints -->
+  <circle cx="130" cy="97"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="138" cy="90"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="148" cy="87"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="158" cy="90"  r="7.5" fill="#1c1c1c"/>
+
+  <!-- Right arm -->
+  <path d="M320 155 Q346 134 364 112"
+        fill="none" stroke="#1c1c1c" stroke-width="17"
+        stroke-linecap="round"/>
+  <!-- Right hand -->
+  <circle cx="369" cy="106" r="18" fill="#1c1c1c"/>
+  <circle cx="356" cy="97"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="364" cy="90"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="374" cy="87"  r="7.5" fill="#1c1c1c"/>
+  <circle cx="384" cy="90"  r="7.5" fill="#1c1c1c"/>
+
+  <!-- ══ GREEN HEART on top ══ -->
+  <path d="M256 46
+           C256 46 246 33 236 33
+           C226 33 218 41 218 50
+           C218 65 256 82 256 82
+           C256 82 294 65 294 50
+           C294 41 286 33 276 33
+           C266 33 256 46 256 46Z"
+        fill="#43a047"/>
+
+  <!-- ══ WIFI SIGNAL ARCS ══ -->
+  <path d="M224 28 Q256 10 288 28"
+        fill="none" stroke="#43a047" stroke-width="4"
+        stroke-linecap="round" opacity="0.9"/>
+  <path d="M208 18 Q256 -4 304 18"
+        fill="none" stroke="#a5d6a7" stroke-width="3"
+        stroke-linecap="round" opacity="0.55"/>
+
+  <!-- ══ BOY IN WHEELCHAIR (LEFT) ══ -->
+  <!-- Large rear wheel -->
+  <circle cx="102" cy="308" r="34"
+          fill="none" stroke="#43a047" stroke-width="5"/>
+  <circle cx="102" cy="308" r="6"   fill="#43a047"/>
+  <!-- Spokes -->
+  <line x1="102" y1="274" x2="102" y2="342" stroke="#43a047" stroke-width="2"/>
+  <line x1="68"  y1="308" x2="136" y2="308" stroke="#43a047" stroke-width="2"/>
+  <line x1="78"  y1="284" x2="126" y2="332" stroke="#43a047" stroke-width="2"/>
+  <line x1="126" y1="284" x2="78"  y2="332" stroke="#43a047" stroke-width="2"/>
+  <!-- Small front wheel -->
+  <circle cx="144" cy="322" r="16"
+          fill="none" stroke="#43a047" stroke-width="3.5"/>
+  <circle cx="144" cy="322" r="4"   fill="#43a047"/>
+  <!-- Wheelchair seat - yellow/gold -->
+  <rect x="110" y="268" width="48" height="18" rx="7"
+        fill="#f9a825"/>
+  <!-- Backrest vertical pole -->
+  <line x1="110" y1="268" x2="110" y2="238"
+        stroke="#f9a825" stroke-width="7" stroke-linecap="round"/>
+  <!-- Footrest -->
+  <line x1="158" y1="286" x2="158" y2="308"
+        stroke="#43a047" stroke-width="5.5" stroke-linecap="round"/>
+  <line x1="148" y1="308" x2="170" y2="308"
+        stroke="#43a047" stroke-width="5" stroke-linecap="round"/>
+  <!-- Boy legs on footrest -->
+  <path d="M116 286 L144 306 L158 308"
+        fill="none" stroke="#f9a825" stroke-width="9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Boy torso - yellow shirt -->
+  <path d="M106 237 L134 237 L138 268 Q120 276 102 268 Z"
+        fill="#f9a825"/>
+  <!-- Boy shirt collar -->
+  <path d="M110 237 L120 248 L130 237" fill="#e6a800"/>
+  <!-- Boy head -->
+  <circle cx="120" cy="224" r="20"  fill="#ffcc80"/>
+  <!-- Boy hair - dark brown -->
+  <ellipse cx="120" cy="210" rx="20" ry="12" fill="#5d4037"/>
+  <path d="M100 222 Q120 208 140 222" fill="#5d4037"/>
+  <!-- Boy eyes -->
+  <circle cx="114" cy="223" r="3"   fill="#4e342e"/>
+  <circle cx="126" cy="223" r="3"   fill="#4e342e"/>
+  <!-- Boy smile -->
+  <path d="M112 231 Q120 238 128 231"
+        fill="none" stroke="#4e342e" stroke-width="2"
+        stroke-linecap="round"/>
+  <!-- Boy raised left arm -->
+  <path d="M106 244 Q88 226 76 210"
+        fill="none" stroke="#ffcc80" stroke-width="10"
+        stroke-linecap="round"/>
+  <circle cx="72" cy="204" r="12"  fill="#ffcc80"/>
+
+  <!-- ══ STANDING BOY (RIGHT) ══ -->
+  <!-- Head -->
+  <circle cx="402" cy="228" r="24"  fill="#ffcc80"/>
+  <!-- Hair dark brown -->
+  <ellipse cx="402" cy="212" rx="24" ry="14" fill="#5d4037"/>
+  <path d="M380 224 Q402 208 424 224" fill="#5d4037"/>
+  <!-- Eyes -->
+  <circle cx="395" cy="227" r="3"   fill="#4e342e"/>
+  <circle cx="409" cy="227" r="3"   fill="#4e342e"/>
+  <!-- Smile -->
+  <path d="M394 235 Q402 243 410 235"
+        fill="none" stroke="#4e342e" stroke-width="2"
+        stroke-linecap="round"/>
+  <!-- Body - green shirt -->
+  <path d="M382 252 Q402 264 422 252 L428 308 Q402 318 376 308 Z"
+        fill="#66bb6a"/>
+  <!-- Shirt detail -->
+  <path d="M390 252 L402 264 L414 252" fill="#81c784"/>
+  <!-- Raised right arm -->
+  <path d="M422 258 Q440 238 452 220"
+        fill="none" stroke="#ffcc80" stroke-width="12"
+        stroke-linecap="round"/>
+  <circle cx="456" cy="213" r="14"  fill="#ffcc80"/>
+  <!-- Raised right fingers -->
+  <circle cx="446" cy="202" r="6"   fill="#ffcc80"/>
+  <circle cx="454" cy="198" r="6"   fill="#ffcc80"/>
+  <circle cx="463" cy="200" r="6"   fill="#ffcc80"/>
+  <!-- Left arm slightly down -->
+  <path d="M382 258 Q368 278 362 294"
+        fill="none" stroke="#ffcc80" stroke-width="11"
+        stroke-linecap="round"/>
+  <circle cx="360" cy="300" r="12"  fill="#ffcc80"/>
+  <!-- Legs -->
+  <line x1="390" y1="308" x2="383" y2="346"
+        stroke="#ffcc80" stroke-width="13" stroke-linecap="round"/>
+  <line x1="414" y1="308" x2="421" y2="346"
+        stroke="#ffcc80" stroke-width="13" stroke-linecap="round"/>
+  <!-- Shoes -->
+  <ellipse cx="379" cy="351" rx="14" ry="7.5" fill="#4e342e"/>
+  <ellipse cx="423" cy="351" rx="14" ry="7.5" fill="#4e342e"/>
+
+  <!-- ══ TYPOGRAPHY ══ -->
+
+  <!-- ALAMADA — very bold, dark green, large -->
+  <text x="260" y="430"
+        font-family="'Arial Black', 'Arial Bold', Arial, sans-serif"
+        font-size="72"
+        font-weight="900"
+        fill="#1b5e20"
+        text-anchor="middle"
+        letter-spacing="4">ALAMADA</text>
+
+  <!-- LEARNING CENTER — bold, medium green -->
+  <text x="260" y="484"
+        font-family="'Arial Black', 'Arial Bold', Arial, sans-serif"
+        font-size="42"
+        font-weight="800"
+        fill="#2e7d32"
+        text-anchor="middle"
+        letter-spacing="2.5">LEARNING CENTER</text>
+
+  <!-- Divider lines -->
+  <line x1="52"  y1="500" x2="145" y2="500" stroke="#a5d6a7" stroke-width="2"/>
+  <line x1="375" y1="500" x2="468" y2="500" stroke="#a5d6a7" stroke-width="2"/>
+
+  <!-- MONITORING SYSTEM — smaller, spaced -->
+  <text x="260" y="506"
+        font-family="Arial, sans-serif"
+        font-size="17"
+        font-weight="700"
+        fill="#388e3c"
+        text-anchor="middle"
+        letter-spacing="5">MONITORING SYSTEM</text>
+
+</svg>

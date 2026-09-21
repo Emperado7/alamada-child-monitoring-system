@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary greens — matching the school theme -->
+    <color name="primary">         #2E7D32</color>
+    <color name="primary_dark">    #1B5E20</color>
+    <color name="primary_light">   #66BB6A</color>
+    <color name="accent">          #FF6F00</color>
+
+    <!-- Backgrounds -->
+    <color name="white">           #FFFFFF</color>
+    <color name="background">      #F5F5F5</color>
+    <color name="card_bg">         #FFFFFF</color>
+
+    <!-- Text -->
+    <color name="text_primary">    #212121</color>
+    <color name="text_secondary">  #757575</color>
+    <color name="text_hint">       #9E9E9E</color>
+
+    <!-- Status colors -->
+    <color name="status_present">  #2E7D32</color>
+    <color name="status_absent">   #C62828</color>
+    <color name="status_late">     #E65100</color>
+    <color name="status_excused">  #1565C0</color>
+
+    <!-- Misc -->
+    <color name="divider">         #E0E0E0</color>
+    <color name="green_light_bg">  #E8F5E9</color>
+</resources>

@@ -1,0 +1,98 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "▶ Run System (Full Setup)",
+            "type": "shell",
+            "command": "cmd",
+            "args": ["/c", "\"${workspaceFolder}\\RUN.bat\""],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true,
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "▶ Start Server Only",
+            "type": "shell",
+            "command": "C:\\xampp\\php\\php\\php.exe",
+            "args": ["artisan", "serve", "--host=127.0.0.1", "--port=8000"],
+            "options": {
+                "cwd": "${workspaceFolder}\\backend"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🗄 Start MySQL",
+            "type": "shell",
+            "command": "Start-Process",
+            "args": [
+                "-FilePath", "\"C:\\xampp\\php\\mysql\\bin\\mysqld.exe\"",
+                "-ArgumentList", "\"--standalone\"",
+                "-NoNewWindow"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🗄 Run Migrations",
+            "type": "shell",
+            "command": "C:\\xampp\\php\\php\\php.exe",
+            "args": ["artisan", "migrate", "--force"],
+            "options": {
+                "cwd": "${workspaceFolder}\\backend"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🌱 Seed Database",
+            "type": "shell",
+            "command": "C:\\xampp\\php\\php\\php.exe",
+            "args": ["artisan", "db:seed", "--force"],
+            "options": {
+                "cwd": "${workspaceFolder}\\backend"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "🧹 Clear All Cache",
+            "type": "shell",
+            "command": "C:\\xampp\\php\\php\\php.exe",
+            "args": ["artisan", "optimize:clear"],
+            "options": {
+                "cwd": "${workspaceFolder}\\backend"
+            },
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

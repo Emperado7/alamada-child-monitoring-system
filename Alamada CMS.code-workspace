@@ -1,0 +1,25 @@
+{
+    "folders": [
+        {
+            "name": "Alamada LGU Child Monitoring System",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "php.validate.executablePath": "C:\\xampp\\php\\php\\php.exe"
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "▶ Run System",
+                "type": "shell",
+                "command": "cmd /c RUN.bat",
+                "options": { "cwd": "${workspaceFolder}" },
+                "group": { "kind": "build", "isDefault": true },
+                "presentation": { "reveal": "always", "panel": "new" },
+                "problemMatcher": []
+            }
+        ]
+    }
+}
