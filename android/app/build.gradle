@@ -13,13 +13,13 @@ android {
         versionCode 1
         versionName "1.0"
 
-        // Change this IP when testing on a real device (use your PC's LAN IP)
-        buildConfigField "String", "BASE_URL", '"http://10.0.2.2:8000/api/"'
+        // LAN IP of the PC running the Laravel server
+        buildConfigField "String", "BASE_URL", '"http://192.168.0.57:8000/api/"'
     }
 
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", '"http://10.0.2.2:8000/api/"'
+            buildConfigField "String", "BASE_URL", '"http://192.168.100.26:8000/api/"'
         }
         release {
             minifyEnabled false

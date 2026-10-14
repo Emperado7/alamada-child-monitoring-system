@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Alamada CMS">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     <title>Login — Alamada Learning Center</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -11,10 +15,12 @@
 
         body {
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
             display: flex; align-items: center; justify-content: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: 20px;
+            padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
         }
 
         /* ── Wrapper ── */
@@ -70,8 +76,16 @@
             transform: translateY(-50%);
             background: none; border: none;
             color: #9e9e9e; cursor: pointer; font-size: .9rem; padding: 0;
+            min-width: 44px; min-height: 44px;
+            display: flex; align-items: center; justify-content: center;
         }
         .toggle-pwd:hover { color: #43a047; }
+
+        /* iOS: prevent auto-zoom on input focus (font-size must be >= 16px) */
+        @media (max-width: 768px) {
+            .field-wrap input { font-size: 16px; }
+            .btn-login { font-size: 16px; min-height: 50px; }
+        }
 
         /* ── Error ── */
         .err-box {

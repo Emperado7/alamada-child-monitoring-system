@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- iPhone / iOS PWA meta --}}
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Alamada CMS">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     <title>@yield('title','Dashboard') — Alamada Learning Center</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -377,11 +383,88 @@
         }
 
         /* Mobile */
-        @media (max-width: 768px) {
+        @media (max-width: 991px) {
+            /* Sidebar slides off-screen on all phones & tablets */
             #sidebar { transform: translateX(-100%); }
             #sidebar.open { transform: translateX(0); }
+            /* Topnav spans full width */
             #topnav { left: 0; }
-            #main { margin-left: 0; }
+            /* Main content fills full width */
+            #main { margin-left: 0; padding: 16px 14px 100px; }
+        }
+
+        /* ── iPhone / Small phone fixes ── */
+        @media (max-width: 576px) {
+            /* Stat cards: 2 per row, smaller font */
+            .stat-card { padding: 12px 14px; gap: 10px; }
+            .stat-icon { width: 42px; height: 42px; font-size: 1.1rem; }
+            .stat-value { font-size: 1.5rem; }
+            .stat-label { font-size: .68rem; }
+
+            /* Page title row stacks vertically */
+            .page-title-row {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px;
+            }
+            .page-title-row h4 { font-size: 1.1rem; }
+            .page-title-row .date-badge { font-size: .78rem; padding: 4px 10px; }
+
+            /* Tables scroll horizontally */
+            .table-responsive-mobile {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table { min-width: 600px; }
+
+            /* Prevent overflow on event cards */
+            .event-card { flex-wrap: wrap; }
+            .btn-view-cal { margin-left: 0; margin-top: 8px; width: 100%; text-align: center; }
+
+            /* Admin pill in topnav — hide name, show initial only */
+            .admin-pill-name { display: none; }
+
+            /* Charts — remove fixed height attribute effect */
+            canvas { max-width: 100% !important; }
+
+            /* Dash card padding */
+            .dash-card-body { padding: 10px 12px; }
+            .dash-card-header { padding: 10px 12px 8px; }
+
+            /* iOS: prevent auto-zoom on form inputs — must be >= 16px */
+            input, select, textarea, .form-control, .form-select {
+                font-size: 16px !important;
+            }
+
+            /* Larger tap targets for buttons and links */
+            .btn, .nav-link-s, .dropdown-item {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+
+            /* Topnav admin name hidden on small screens */
+            .admin-pill { padding: 5px 8px 5px 6px; }
+        }
+
+        /* ── Safe area insets for iPhone notch / home bar ── */
+        #topnav {
+            padding-left: calc(20px + env(safe-area-inset-left));
+            padding-right: calc(20px + env(safe-area-inset-right));
+        }
+        #main {
+            padding-bottom: calc(40px + env(safe-area-inset-bottom));
+        }
+        #sidebar {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* ── iOS touch improvements ── */
+        a, button, .nav-link-s, .stat-card, .list-group-item {
+            -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+        }
+        #sidebar {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
     @stack('styles')
@@ -533,7 +616,7 @@
 ════════════════════════════════════════════════ --}}
 <header id="topnav">
     <div class="topnav-left">
-        <button class="topnav-toggle" onclick="toggleSidebar()">
+        <button class="topnav-toggle" onclick="toggleSidebar()" style="min-width:44px;min-height:44px">
             <i class="fas fa-bars"></i>
         </button>
         <span class="topnav-title">@yield('page-title','Dashboard')</span>
@@ -633,12 +716,35 @@ function toggleSidebar() {
     const ov = document.getElementById('sidebarOverlay');
     const isOpen = sb.classList.toggle('open');
     ov.style.display = isOpen ? 'block' : 'none';
+    // Prevent body scroll when sidebar is open on iOS
+    document.body.style.overflow = isOpen ? 'hidden' : '';
 }
-// Auto DataTables
+
+// Close sidebar when any nav link is tapped (mobile)
+document.querySelectorAll('.nav-link-s').forEach(function(link) {
+    link.addEventListener('click', function() {
+        if (window.innerWidth < 992) {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebarOverlay');
+            sb.classList.remove('open');
+            ov.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+});
+
+// Auto DataTables — with responsive wrapper
 $(function() {
+    // Wrap all tables in responsive div if not already wrapped
+    $('table.datatable').each(function() {
+        if (!$(this).parent().hasClass('table-responsive')) {
+            $(this).wrap('<div class="table-responsive"></div>');
+        }
+    });
     $('.datatable').DataTable({
         pageLength: 15,
-        language: { search: '' }
+        language: { search: '' },
+        scrollX: false,
     });
 });
 </script>
