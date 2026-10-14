@@ -13,18 +13,18 @@ android {
         versionCode 1
         versionName "1.0"
 
-        // LAN IP of the PC running the Laravel server
-        buildConfigField "String", "BASE_URL", '"http://192.168.0.57:8000/api/"'
+        // Live Railway URL — works from any device, anywhere
+        buildConfigField "String", "BASE_URL", '"https://alamada-child-monitoring-system-production.up.railway.app/api/"'
     }
 
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", '"http://192.168.100.26:8000/api/"'
+            buildConfigField "String", "BASE_URL", '"https://alamada-child-monitoring-system-production.up.railway.app/api/"'
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", '"https://alamada-cms-production.up.railway.app/api/"'
+            buildConfigField "String", "BASE_URL", '"https://alamada-child-monitoring-system-production.up.railway.app/api/"'
         }
     }
 
