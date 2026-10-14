@@ -13,47 +13,53 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── Admin account ─────────────────────────────────────────────
-        $admin = User::create([
-            'name'     => 'System Administrator',
-            'email'    => 'admin@alamada-lgu.gov.ph',
-            'password' => Hash::make('Admin@1234'),
-            'role'     => 'admin',
-            'status'   => 'active',
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@alamada-lgu.gov.ph'],
+            [
+                'name' => 'System Administrator',
+                'password' => Hash::make('Admin@1234'),
+                'role' => 'admin',
+                'status' => 'active',
+            ]
+        );
 
         // ── Staff accounts ────────────────────────────────────────────
-        User::create([
-            'name'     => 'Maam Joy',
-            'email'    => 'maamjoy@alamada-lgu.gov.ph',
-            'password' => Hash::make('Staff@1234'),
-            'role'     => 'staff',
-            'phone'    => '09171234567',
-            'status'   => 'active',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'maamjoy@alamada-lgu.gov.ph'],
+            [
+                'name' => 'Maam Joy',
+                'password' => Hash::make('Staff@1234'),
+                'role' => 'staff',
+                'phone' => '09171234567',
+                'status' => 'active',
+            ]
+        );
 
-        User::create([
-            'name'     => 'Jose Reyes',
-            'email'    => 'jose.reyes@alamada-lgu.gov.ph',
-            'password' => Hash::make('Staff@1234'),
-            'role'     => 'staff',
-            'phone'    => '09189876543',
-            'status'   => 'active',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'jose.reyes@alamada-lgu.gov.ph'],
+            [
+                'name' => 'Jose Reyes',
+                'password' => Hash::make('Staff@1234'),
+                'role' => 'staff',
+                'phone' => '09189876543',
+                'status' => 'active',
+            ]
+        );
 
-        // ── Welcome notification ──────────────────────────────────────
-        Notification::create([
-            'title'           => 'Welcome to Alamada LGU Learning Center Monitoring System',
-            'message'         => 'The new digital monitoring system is now active. Staff can now add children, manage enrollment, and record attendance.',
-            'recipient_group' => 'all',
-            'sent_by'         => $admin->id,
-            'sent_at'         => Carbon::now(),
-        ]);
+        // ── Welcome notification (only if none exist) ──────────────────
+        if (Notification::count() === 0) {
+            Notification::create([
+                'title' => 'Welcome to Alamada LGU Learning Center Monitoring System',
+                'message' => 'The new digital monitoring system is now active. Staff can now add children, manage enrollment, and record attendance.',
+                'recipient_group' => 'all',
+                'sent_by' => $admin->id,
+                'sent_at' => Carbon::now(),
+            ]);
+        }
 
-        $this->command->info('✓ Seeding complete. No sample students added.');
+        $this->command->info('✓ Seeding complete.');
         $this->command->line('  Admin:  admin@alamada-lgu.gov.ph  / Admin@1234');
         $this->command->line('  Staff:  maamjoy@alamada-lgu.gov.ph / Staff@1234');
         $this->command->line('  Staff:  jose.reyes@alamada-lgu.gov.ph / Staff@1234');
-        $this->command->line('');
-        $this->command->line('  Students must be added manually by Admin or Staff.');
     }
 }
