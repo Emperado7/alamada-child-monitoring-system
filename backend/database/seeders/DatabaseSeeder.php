@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // ── Admin account ─────────────────────────────────────────────
+        // Use firstOrCreate so re-running never causes duplicate errors
         $admin = User::firstOrCreate(
             ['email' => 'admin@alamada-lgu.gov.ph'],
             [
@@ -23,7 +23,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // ── Staff accounts ────────────────────────────────────────────
         User::firstOrCreate(
             ['email' => 'maamjoy@alamada-lgu.gov.ph'],
             [
@@ -46,20 +45,14 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // ── Welcome notification (only if none exist) ──────────────────
         if (Notification::count() === 0) {
             Notification::create([
                 'title' => 'Welcome to Alamada LGU Learning Center Monitoring System',
-                'message' => 'The new digital monitoring system is now active. Staff can now add children, manage enrollment, and record attendance.',
+                'message' => 'The system is now active. Staff can add children, manage enrollment, and record attendance.',
                 'recipient_group' => 'all',
                 'sent_by' => $admin->id,
                 'sent_at' => Carbon::now(),
             ]);
         }
-
-        $this->command->info('✓ Seeding complete.');
-        $this->command->line('  Admin:  admin@alamada-lgu.gov.ph  / Admin@1234');
-        $this->command->line('  Staff:  maamjoy@alamada-lgu.gov.ph / Staff@1234');
-        $this->command->line('  Staff:  jose.reyes@alamada-lgu.gov.ph / Staff@1234');
     }
 }
