@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 // ── Root redirect ────────────────────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
 
+// ── Health check for Railway deployment ──────────────────────────────────
+Route::get('/health', fn() => response()->json(['status' => 'ok'], 200));
+
 
 // ── Auth ──────────────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
