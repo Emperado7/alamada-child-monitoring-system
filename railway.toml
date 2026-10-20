@@ -4,3 +4,6 @@ builder = "nixpacks"
 [deploy]
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+startCommand = "cd backend && php artisan storage:link --force ; php artisan migrate --force ; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}"
