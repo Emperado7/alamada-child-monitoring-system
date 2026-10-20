@@ -25,8 +25,18 @@ if %errorlevel% neq 0 (
 :: ── Step 1: Open Firewall for port 8000 ──────────────────
 echo  [1/5] Opening firewall port 8000...
 netsh advfirewall firewall delete rule name="Laravel 8000" >nul 2>&1
-netsh advfirewall firewall add rule name="Laravel 8000" dir=in action=allow protocol=TCP localport=8000 >nul 2>&1
+netsh advfirewall firewall delete rule name="Laravel 8000 OUT" >nul 2>&1
+netsh advfirewall firewall add rule name="Laravel 8000"     dir=in  action=allow protocol=TCP localport=8000 >nul 2>&1
+netsh advfirewall firewall add rule name="Laravel 8000 OUT" dir=out action=allow protocol=TCP localport=8000 >nul 2>&1
 echo  Firewall ready.
+
+:: ── Kill any existing php on port 8000 ───────────────────
+echo.
+echo  Stopping any old server on port 8000...
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8000 "') do (
+    taskkill /F /PID %%a >nul 2>&1
+)
+timeout /t 1 /nobreak >nul
 
 :: ── Step 2: Start MySQL if not running ───────────────────
 echo.

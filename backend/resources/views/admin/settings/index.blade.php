@@ -549,23 +549,26 @@
 .settings-nav {
     display: flex;
     flex-direction: column;
+    padding: 8px 0;
 }
 .settings-nav-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 18px;
+    padding: 11px 18px;
     color: #424242;
     text-decoration: none;
     font-size: .88rem;
     font-weight: 500;
     border-left: 3px solid transparent;
     transition: background .15s, color .15s;
+    border-radius: 0;
 }
 .settings-nav-item i {
     width: 18px;
     text-align: center;
     color: #9e9e9e;
+    font-size: .9rem;
 }
 .settings-nav-item:hover {
     background: #f5f5f5;
@@ -584,32 +587,32 @@
 .settings-row {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px 0;
+    gap: 18px;
+    padding: 18px 0;
     border-bottom: 1px solid #f0f0f0;
 }
 .settings-icon-wrap {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    background: #f5f5f5;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #e8f5e9;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 .settings-label {
-    flex: 0 0 260px;
-    max-width: 260px;
+    flex: 1 1 0;
+    min-width: 0;
 }
 .settings-control {
-    flex-grow: 1;
-    max-width: 320px;
+    flex: 0 0 42%;
+    max-width: 42%;
 }
 @media (max-width: 768px) {
     .settings-row { flex-wrap: wrap; }
-    .settings-label { flex: 0 0 100%; max-width: 100%; }
-    .settings-control { max-width: 100%; width: 100%; }
+    .settings-label { flex: 1 1 100%; max-width: 100%; }
+    .settings-control { flex: 0 0 100%; max-width: 100%; width: 100%; }
 }
 </style>
 @endpush

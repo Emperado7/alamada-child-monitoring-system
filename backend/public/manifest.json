@@ -1,0 +1,50 @@
+{
+    "name": "Alamada Learning Center Monitoring System",
+    "short_name": "Alamada CMS",
+    "description": "Mobile-based monitoring system for children at Alamada LGU Learning Center.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#1b5e20",
+    "theme_color": "#2e7d32",
+    "lang": "en",
+    "categories": ["education", "productivity"],
+    "icons": [
+        {
+            "src": "/images/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/logo.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "Go to the main dashboard",
+            "url": "/admin/dashboard",
+            "icons": [{ "src": "/images/logo.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Attendance",
+            "short_name": "Attendance",
+            "description": "Mark and view attendance",
+            "url": "/admin/attendance",
+            "icons": [{ "src": "/images/logo.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Children",
+            "short_name": "Children",
+            "description": "View child information",
+            "url": "/admin/children",
+            "icons": [{ "src": "/images/logo.png", "sizes": "96x96" }]
+        }
+    ]
+}

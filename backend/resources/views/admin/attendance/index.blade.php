@@ -4,7 +4,7 @@
 
 @section('content')
 
-{{-- ── Breadcrumb + Title ───────────────────────────────────── --}}
+{{-- ── Page Header ──────────────────────────────────────────── --}}
 <div class="d-flex justify-content-between align-items-start mb-3">
     <div>
         <h4 class="fw-bold mb-1">Attendance Dashboard</h4>
@@ -17,22 +17,12 @@
     </div>
 </div>
 
-{{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
+{{-- ── Stat Cards ───────────────────────────────────────────── --}}
 @php
-    $today         = \Carbon\Carbon::parse($date);
-    $totalActive   = \App\Models\Child::where('status','active')->count();
-    $presentCount  = \App\Models\Attendance::where('attendance_date',$date)
-                        ->where('status','present')->count();
-    $absentCount   = \App\Models\Attendance::where('attendance_date',$date)
-                        ->where('status','absent')->count();
-
-    // Monthly attendance rate
-    [$yr, $mo] = explode('-', $month);
-    $monthRecs = \App\Models\Attendance::whereYear('attendance_date',$yr)
-                    ->whereMonth('attendance_date',$mo)->get();
-    $monthRate = $monthRecs->count()
-        ? round($monthRecs->where('status','present')->count() / $monthRecs->count() * 100)
-        : 0;
+    $totalActive  = \App\Models\Child::where('status','active')->count();
+    $presentCount = $summary['present'];
+    $absentCount  = $summary['absent'];
+    $todayPct     = $totalActive > 0 ? round($presentCount / $totalActive * 100) : 0;
 @endphp
 
 <div class="row g-3 mb-4">
@@ -48,10 +38,10 @@
                 <div class="stat-value" style="color:#2e7d32">
                     {{ $presentCount }} / {{ $totalActive }}
                 </div>
-                <div class="text-muted" style="font-size:.78rem">
-                    {{ $totalActive > 0 ? round($presentCount/$totalActive*100) : 0 }}% Present
+                <div class="text-muted" style="font-size:.78rem;margin-bottom:3px">
+                    {{ $todayPct }}% Present
                 </div>
-                <a href="#attendanceTable" class="stat-link mt-1">
+                <a href="#attendanceTable" class="stat-link">
                     View Details <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>
@@ -94,13 +84,13 @@
     <div class="col-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-icon orange">
-                <i class="fas fa-chart-pie" style="color:#e65100;font-size:1.4rem"></i>
+                <i class="fas fa-shopping-bag" style="color:#e65100;font-size:1.4rem"></i>
             </div>
             <div class="stat-body">
                 <div class="stat-label">Attendance Rate</div>
                 <div class="stat-value" style="color:#e65100">{{ $monthRate }}%</div>
-                <div class="text-muted" style="font-size:.78rem">This Month</div>
-                <a href="#attendanceTable" class="stat-link mt-1">
+                <div class="text-muted" style="font-size:.78rem;margin-bottom:3px">This Month</div>
+                <a href="#attendanceTable" class="stat-link">
                     View Details <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>
@@ -114,13 +104,13 @@
     {{-- Toolbar --}}
     <div class="dash-card-header flex-wrap gap-2">
         <form method="GET" id="filterForm"
-              class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+              class="d-flex align-items-center gap-2 flex-wrap w-100">
 
             {{-- School Year --}}
             <label class="small text-muted mb-0 fw-semibold">School Year</label>
             <select name="school_year"
                     class="form-select form-select-sm rounded-2"
-                    style="width:130px"
+                    style="width:135px"
                     onchange="document.getElementById('filterForm').submit()">
                 @foreach(range(now()->year, now()->year - 3) as $y)
                     <option value="{{ $y }}"
@@ -132,52 +122,67 @@
 
             {{-- Date --}}
             <label class="small text-muted mb-0 fw-semibold">Date</label>
-            <div class="input-group" style="width:170px">
+            <div class="input-group" style="width:175px">
                 <input type="date" name="date" value="{{ $date }}"
                        class="form-control form-control-sm"
                        onchange="document.getElementById('filterForm').submit()">
+                <span class="input-group-text bg-white border-start-0"
+                      style="font-size:.8rem;color:#9e9e9e;cursor:pointer"
+                      onclick="this.previousElementSibling.showPicker()">
+                    <i class="fas fa-calendar-alt" style="color:#2e7d32"></i>
+                </span>
             </div>
 
-            {{-- Class/Group --}}
+            {{-- Class / Group --}}
             <label class="small text-muted mb-0 fw-semibold">Class / Group</label>
             <select name="group"
                     class="form-select form-select-sm rounded-2"
-                    style="width:110px"
+                    style="width:115px"
                     onchange="document.getElementById('filterForm').submit()">
                 <option value="">All</option>
-                <option value="Pre-School A" {{ request('group')=='Pre-School A'?'selected':'' }}>Pre-School A</option>
-                <option value="Pre-School B" {{ request('group')=='Pre-School B'?'selected':'' }}>Pre-School B</option>
+                <option value="Pre-School A" {{ request('group')=='Pre-School A'?'selected':'' }}>
+                    Pre-School A
+                </option>
+                <option value="Pre-School B" {{ request('group')=='Pre-School B'?'selected':'' }}>
+                    Pre-School B
+                </option>
             </select>
 
-            {{-- Search --}}
-            <div class="d-flex align-items-center gap-2 ms-auto">
-                <div class="input-group" style="max-width:220px">
-                    <input type="text" name="search" value="{{ request('search') }}"
+            {{-- Search + Filters (pushed right) --}}
+            <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+                <div class="input-group" style="max-width:230px">
+                    <input type="text" name="search"
+                           value="{{ request('search') }}"
                            class="form-control form-control-sm"
                            placeholder="Search child...">
                     <button class="btn btn-success btn-sm"
-                            style="background:#2e7d32;border-color:#2e7d32">
+                            style="background:#2e7d32;border-color:#2e7d32"
+                            type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
 
-                {{-- Filters dropdown --}}
+                {{-- Status Filters --}}
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-secondary rounded-2 dropdown-toggle"
+                            type="button"
                             data-bs-toggle="dropdown">
                         <i class="fas fa-filter me-1"></i>Filters
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2">
-                        @foreach([''=>'All Status','present'=>'Present','absent'=>'Absent','late'=>'Late','excused'=>'Excused'] as $val=>$label)
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2"
+                        style="min-width:160px">
+                        @foreach([
+                            ''        => ['All Status',  '#9e9e9e'],
+                            'present' => ['Present',     '#2e7d32'],
+                            'absent'  => ['Absent',      '#c62828'],
+                            'late'    => ['Late',        '#e65100'],
+                            'excused' => ['Excused',     '#1565c0'],
+                        ] as $val => [$label, $dot])
                         <li>
-                            <a class="dropdown-item rounded-2 small {{ request('status')==$val?'fw-bold':'' }}"
+                            <a class="dropdown-item rounded-2 small py-2
+                                      {{ request('status')==$val ? 'fw-bold' : '' }}"
                                href="{{ request()->fullUrlWithQuery(['status'=>$val,'page'=>1]) }}">
-                                @if($val=='present') <span class="me-2" style="color:#2e7d32">●</span>
-                                @elseif($val=='absent') <span class="me-2" style="color:#c62828">●</span>
-                                @elseif($val=='late') <span class="me-2" style="color:#e65100">●</span>
-                                @elseif($val=='excused') <span class="me-2" style="color:#1565c0">●</span>
-                                @else <span class="me-2" style="color:#9e9e9e">●</span>
-                                @endif
+                                <span class="me-2" style="color:{{ $dot }}">●</span>
                                 {{ $label }}
                             </a>
                         </li>
@@ -190,25 +195,28 @@
 
     {{-- ── Table ──────────────────────────────────────────────── --}}
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0" style="min-width:800px">
+        <table class="table table-hover align-middle mb-0" style="min-width:780px">
             <thead>
                 <tr style="background:#f8f9fa">
-                    <th class="px-3 py-2 small fw-bold" style="color:#2e7d32">ID</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Photo</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Child Name</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Class / Group</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Time In</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Status</th>
-                    <th class="py-2 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
+                    <th class="px-3 py-3 small fw-bold" style="color:#2e7d32">ID</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Photo</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Child Name</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Class / Group</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Time In</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Status</th>
+                    <th class="py-3 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($children as $child)
                 @php
-                    $att = $child->attendances->first();
+                    $att    = $child->attendances->first();
                     $status = $att ? $att->status : null;
-                    $groups = ['Pre-School A','Pre-School B'];
-                    $group  = $groups[$child->id % 2];
+                    // Assign group based on id for display (placeholder — replace with real group field)
+                    $group  = ($child->id % 2 === 0) ? 'Pre-School B' : 'Pre-School A';
+                    // Apply group filter
+                    $groupFilter = request('group');
+                    if ($groupFilter && $group !== $groupFilter) continue;
                 @endphp
                 <tr>
                     {{-- ID --}}
@@ -217,17 +225,17 @@
                     </td>
 
                     {{-- Photo --}}
-                    <td>
+                    <td class="py-2">
                         @if($child->photo)
                             <img src="{{ asset('storage/'.$child->photo) }}"
                                  class="rounded-circle object-fit-cover"
-                                 width="38" height="38"
+                                 width="40" height="40"
                                  style="border:2px solid #e8f5e9">
                         @else
-                            <div style="width:38px;height:38px;border-radius:50%;
+                            <div style="width:40px;height:40px;border-radius:50%;
                                         background:linear-gradient(135deg,#2e7d32,#66bb6a);
                                         color:#fff;display:flex;align-items:center;
-                                        justify-content:center;font-weight:700;font-size:.85rem">
+                                        justify-content:center;font-weight:700;font-size:.88rem">
                                 {{ strtoupper(substr($child->first_name,0,1)) }}
                             </div>
                         @endif
@@ -243,12 +251,12 @@
                         </div>
                     </td>
 
-                    {{-- Class/Group --}}
+                    {{-- Class / Group --}}
                     <td class="small text-muted">{{ $group }}</td>
 
                     {{-- Time In --}}
                     <td class="small">
-                        @if($att && $status === 'present')
+                        @if($att && in_array($status, ['present','late']))
                             <span class="fw-semibold">
                                 {{ \Carbon\Carbon::parse($att->updated_at)->format('g:i A') }}
                             </span>
@@ -257,58 +265,50 @@
                         @endif
                     </td>
 
-                    {{-- Status --}}
+                    {{-- Status badge --}}
                     <td>
-                        @if($status === 'present')
-                            <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                                  style="background:#e8f5e9;color:#2e7d32;font-size:.78rem">
-                                Present
-                            </span>
-                        @elseif($status === 'absent')
-                            <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                                  style="background:#ffebee;color:#c62828;font-size:.78rem">
-                                Absent
-                            </span>
-                        @elseif($status === 'late')
-                            <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                                  style="background:#fff3e0;color:#e65100;font-size:.78rem">
-                                Late
-                            </span>
-                        @elseif($status === 'excused')
-                            <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                                  style="background:#e3f2fd;color:#1565c0;font-size:.78rem">
-                                Excused
-                            </span>
-                        @else
-                            <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                                  style="background:#f5f5f5;color:#9e9e9e;font-size:.78rem">
-                                Not Recorded
-                            </span>
-                        @endif
+                        @php
+                            $badgeMap = [
+                                'present' => ['#e8f5e9','#2e7d32','Present'],
+                                'absent'  => ['#ffebee','#c62828','Absent'],
+                                'late'    => ['#fff3e0','#e65100','Late'],
+                                'excused' => ['#e3f2fd','#1565c0','Excused'],
+                            ];
+                            $b = $badgeMap[$status] ?? ['#f5f5f5','#9e9e9e','Not Recorded'];
+                        @endphp
+                        <span class="badge rounded-2 px-3 py-2 fw-semibold"
+                              style="background:{{ $b[0] }};color:{{ $b[1] }};font-size:.78rem">
+                            {{ $b[2] }}
+                        </span>
                     </td>
 
                     {{-- Actions --}}
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-1">
+                            {{-- View --}}
                             <a href="{{ route('admin.attendance.show',$child) }}?month={{ $month }}"
                                class="btn btn-sm rounded-2 p-1 px-2"
                                style="background:#e3f2fd;color:#1565c0;border:none"
                                title="View">
                                 <i class="fas fa-eye" style="font-size:.8rem"></i>
                             </a>
-                            <a href="{{ route('staff.attendance.mark') }}?date={{ $date }}"
+
+                            {{-- Edit --}}
+                            <a href="{{ route('admin.attendance.mark') }}?date={{ $date }}"
                                class="btn btn-sm rounded-2 p-1 px-2"
                                style="background:#e8f5e9;color:#2e7d32;border:none"
-                               title="Edit Attendance">
+                               title="Mark Attendance">
                                 <i class="fas fa-pencil-alt" style="font-size:.8rem"></i>
                             </a>
+
+                            {{-- Delete --}}
                             @php
                                 $attRecord = \App\Models\Attendance::where('child_id',$child->id)
                                     ->where('attendance_date',$date)->first();
                             @endphp
                             @if($attRecord)
                             <form method="POST"
-                                  action="/admin/attendance/{{ $attRecord->id }}"
+                                  action="{{ route('admin.attendance.destroy',$attRecord) }}"
                                   onsubmit="return confirm('Delete this attendance record?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm rounded-2 p-1 px-2"
@@ -317,6 +317,12 @@
                                     <i class="fas fa-trash" style="font-size:.8rem"></i>
                                 </button>
                             </form>
+                            @else
+                            <button class="btn btn-sm rounded-2 p-1 px-2"
+                                    style="background:#f5f5f5;color:#bdbdbd;border:none"
+                                    disabled title="No record to delete">
+                                <i class="fas fa-trash" style="font-size:.8rem"></i>
+                            </button>
                             @endif
                         </div>
                     </td>
@@ -347,6 +353,7 @@
         </div>
         <nav>
             <ul class="pagination pagination-sm mb-0 gap-1">
+                {{-- Previous --}}
                 @if($children->onFirstPage())
                 <li class="page-item disabled">
                     <span class="page-link rounded-2 border-0"
@@ -360,6 +367,7 @@
                 </li>
                 @endif
 
+                {{-- Pages --}}
                 @foreach($children->getUrlRange(1,$children->lastPage()) as $page => $url)
                 <li class="page-item">
                     <a class="page-link rounded-2 border-0" href="{{ $url }}"
@@ -371,6 +379,7 @@
                 </li>
                 @endforeach
 
+                {{-- Next --}}
                 @if($children->hasMorePages())
                 <li class="page-item">
                     <a class="page-link rounded-2 border-0"

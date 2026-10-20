@@ -10,6 +10,8 @@
     <meta name="apple-mobile-web-app-title" content="Alamada CMS">
     <meta name="mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2e7d32">
     <title>@yield('title','Dashboard') — Alamada Learning Center</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -54,20 +56,39 @@
 
         /* Brand / logo area */
         .sidebar-brand {
-            padding: 18px 14px 14px;
+            padding: 14px 14px 12px;
             border-bottom: 1px solid rgba(255,255,255,.12);
             display: flex;
+            flex-direction: row;
             align-items: center;
-            gap: 10px;
+            text-align: left;
             text-decoration: none;
+            gap: 10px;
         }
-        .sidebar-logo {
-            width: 42px;
-            height: 42px;
+        .sidebar-brand img.sidebar-logo-img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 10px;
             flex-shrink: 0;
         }
-        .sidebar-brand-text .st { font-size: .75rem; color: rgba(255,255,255,.7); }
-        .sidebar-brand-text .sb { font-size: .95rem; font-weight: 700; color: #fff; line-height: 1.2; }
+        .sidebar-brand-text .st {
+            font-size: .72rem;
+            color: rgba(255,255,255,.65);
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+        .sidebar-brand-text .sb {
+            font-size: .95rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .sidebar-brand-text .sc {
+            font-size: .7rem;
+            color: rgba(255,255,255,.6);
+            letter-spacing: .3px;
+        }
 
         /* Nav links */
         .sidebar-nav { padding: 10px 0; flex-grow: 1; }
@@ -122,6 +143,15 @@
             border-top: 1px solid rgba(255,255,255,.12);
         }
 
+        /* School building illustration */
+        .sidebar-illustration {
+            margin-top: auto;
+            padding: 0 0 4px;
+            flex-shrink: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+
         /* ═══════════════════════════════════════════
            TOP NAVBAR
         ═══════════════════════════════════════════ */
@@ -131,20 +161,24 @@
             left: var(--sidebar-w);
             right: 0;
             height: var(--topbar-h);
-            background: var(--green-main);
+            background: #ffffff;
+            border-bottom: 1px solid #e8f0e8;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 24px;
             z-index: 100;
-            box-shadow: 0 2px 6px rgba(0,0,0,.18);
+            box-shadow: 0 1px 4px rgba(0,0,0,.08);
         }
         .topnav-left { display: flex; align-items: center; gap: 14px; }
         .topnav-toggle {
-            background: none; border: none; color: #fff;
+            background: none; border: none; color: #555;
             font-size: 1.2rem; cursor: pointer; padding: 4px 8px;
         }
-        .topnav-title { color: #fff; font-weight: 600; font-size: 1rem; }
+        .topnav-title {
+            color: #212121; font-weight: 700; font-size: 1.05rem; display:block;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 
         .topnav-right { display: flex; align-items: center; gap: 14px; }
 
@@ -152,7 +186,7 @@
         .notif-btn {
             position: relative;
             background: none; border: none;
-            color: #fff; font-size: 1.15rem; cursor: pointer; padding: 6px;
+            color: #555; font-size: 1.2rem; cursor: pointer; padding: 6px;
         }
         .notif-badge {
             position: absolute;
@@ -163,29 +197,29 @@
             width: 17px; height: 17px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            border: 2px solid var(--green-main);
+            border: 2px solid #fff;
         }
 
         /* Admin dropdown */
         .admin-pill {
             display: flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,.15);
+            background: transparent;
             border: none;
-            color: #fff;
+            color: #212121;
             border-radius: 24px;
-            padding: 5px 12px 5px 6px;
+            padding: 5px 10px 5px 6px;
             cursor: pointer;
             font-size: .88rem;
             font-weight: 600;
             transition: background .15s;
         }
-        .admin-pill:hover { background: rgba(255,255,255,.25); }
+        .admin-pill:hover { background: #f5f5f5; }
         .admin-avatar {
-            width: 32px; height: 32px;
-            background: rgba(255,255,255,.25);
+            width: 34px; height: 34px;
+            background: var(--green-main);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: .88rem; color: #fff;
+            font-weight: 700; font-size: .9rem; color: #fff;
         }
 
         /* ═══════════════════════════════════════════
@@ -449,8 +483,8 @@
 
         /* ── Safe area insets for iPhone notch / home bar ── */
         #topnav {
-            padding-left: calc(20px + env(safe-area-inset-left));
-            padding-right: calc(20px + env(safe-area-inset-right));
+            padding-left: calc(24px + env(safe-area-inset-left));
+            padding-right: calc(24px + env(safe-area-inset-right));
         }
         #main {
             padding-bottom: calc(40px + env(safe-area-inset-bottom));
@@ -480,11 +514,11 @@
     <a href="#" class="sidebar-brand">
         <img src="{{ asset('images/logo.png') }}"
              alt="Alamada Learning Center"
-             style="width:44px;height:44px;object-fit:contain;flex-shrink:0;border-radius:8px"
+             class="sidebar-logo-img"
              onerror="this.src='{{ asset('images/logo.svg') }}'">
         <div class="sidebar-brand-text">
-            <div class="st">Monitoring System</div>
-            <div class="sb">Alamada Learning<br>Center</div>
+            <div class="sb">Alamada Learning Center</div>
+            <div class="sc">Monitoring System</div>
         </div>
     </a>
 
@@ -598,6 +632,59 @@
         @endauth
     </ul>
 
+    {{-- School building illustration --}}
+    <div class="sidebar-illustration" aria-hidden="true">
+        <svg viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg"
+             style="width:100%;display:block">
+            <!-- Sky / background -->
+            <rect width="220" height="140" fill="none"/>
+
+            <!-- Ground hill -->
+            <ellipse cx="110" cy="148" rx="130" ry="38" fill="#1b5e20" opacity=".55"/>
+
+            <!-- Trees left -->
+            <rect x="18" y="82" width="7" height="20" rx="3" fill="#388e3c" opacity=".7"/>
+            <ellipse cx="21" cy="78" rx="12" ry="14" fill="#43a047" opacity=".8"/>
+
+            <!-- Trees right -->
+            <rect x="192" y="85" width="7" height="18" rx="3" fill="#388e3c" opacity=".7"/>
+            <ellipse cx="195" cy="81" rx="11" ry="13" fill="#43a047" opacity=".8"/>
+
+            <!-- Building body -->
+            <rect x="62" y="58" width="96" height="72" rx="3" fill="#fff" opacity=".92"/>
+            <rect x="62" y="58" width="96" height="72" rx="3"
+                  stroke="rgba(255,255,255,.3)" stroke-width="1" fill="none"/>
+
+            <!-- Roof -->
+            <polygon points="55,60 110,28 165,60" fill="#e8f5e9" opacity=".95"/>
+            <polygon points="55,60 110,28 165,60"
+                     stroke="rgba(255,255,255,.4)" stroke-width="1" fill="none"/>
+
+            <!-- Flag pole -->
+            <line x1="110" y1="28" x2="110" y2="10"
+                  stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
+            <!-- Flag -->
+            <path d="M110 10 L128 15 L110 20 Z" fill="#a5d6a7" opacity=".95"/>
+
+            <!-- Door -->
+            <rect x="98" y="98" width="24" height="32" rx="3" fill="#a5d6a7" opacity=".85"/>
+            <circle cx="119" cy="114" r="2" fill="#2e7d32" opacity=".7"/>
+
+            <!-- Windows -->
+            <rect x="70" y="70" width="22" height="18" rx="2" fill="#b3e5fc" opacity=".8"/>
+            <line x1="81" y1="70" x2="81" y2="88" stroke="rgba(255,255,255,.6)" stroke-width="1"/>
+            <line x1="70" y1="79" x2="92" y2="79" stroke="rgba(255,255,255,.6)" stroke-width="1"/>
+
+            <rect x="128" y="70" width="22" height="18" rx="2" fill="#b3e5fc" opacity=".8"/>
+            <line x1="139" y1="70" x2="139" y2="88" stroke="rgba(255,255,255,.6)" stroke-width="1"/>
+            <line x1="128" y1="79" x2="150" y2="79" stroke="rgba(255,255,255,.6)" stroke-width="1"/>
+
+            <!-- Small bushes -->
+            <ellipse cx="74"  cy="130" rx="10" ry="7" fill="#388e3c" opacity=".7"/>
+            <ellipse cx="147" cy="130" rx="10" ry="7" fill="#388e3c" opacity=".7"/>
+        </svg>
+    </div>
+
     {{-- Logout at bottom --}}
     @auth
     <div class="sidebar-bottom">
@@ -619,7 +706,7 @@
         <button class="topnav-toggle" onclick="toggleSidebar()" style="min-width:44px;min-height:44px">
             <i class="fas fa-bars"></i>
         </button>
-        <span class="topnav-title">@yield('page-title','Dashboard')</span>
+        <span class="topnav-title">Alamada Learning Center Monitoring System</span>
     </div>
     <div class="topnav-right">
         @auth
@@ -749,5 +836,73 @@ $(function() {
 });
 </script>
 @stack('scripts')
+
+{{-- ── PWA: Offline / Online banner ─────────────────────── --}}
+<div id="offlineBanner" style="
+    display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+    background:#e65100;color:#fff;text-align:center;
+    padding:10px 16px;font-size:.88rem;font-weight:600;
+    box-shadow:0 -2px 8px rgba(0,0,0,.2);
+    display:none;align-items:center;justify-content:center;gap:8px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M1 1l22 22" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="20" r="1" fill="#fff"/>
+    </svg>
+    You are offline — showing cached pages. Some features may not work.
+</div>
+
+<div id="onlineBanner" style="
+    display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+    background:#2e7d32;color:#fff;text-align:center;
+    padding:10px 16px;font-size:.88rem;font-weight:600;
+    box-shadow:0 -2px 8px rgba(0,0,0,.2);
+    align-items:center;justify-content:center;gap:8px">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <polyline points="20 6 9 17 4 12" stroke="#fff" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back online!
+</div>
+
+<script>
+// ── Service Worker registration ───────────────────────────────
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function (reg) {
+                console.log('[SW] Registered, scope:', reg.scope);
+            })
+            .catch(function (err) {
+                console.warn('[SW] Registration failed:', err);
+            });
+    });
+}
+
+// ── Save last-online timestamp ────────────────────────────────
+localStorage.setItem('alamada_last_online', new Date().toISOString());
+
+// ── Offline / Online banners ──────────────────────────────────
+var offlineBanner = document.getElementById('offlineBanner');
+var onlineBanner  = document.getElementById('onlineBanner');
+
+function showOffline() {
+    offlineBanner.style.display = 'flex';
+    onlineBanner.style.display  = 'none';
+}
+function showOnline() {
+    onlineBanner.style.display  = 'flex';
+    offlineBanner.style.display = 'none';
+    setTimeout(function () {
+        onlineBanner.style.display = 'none';
+    }, 3000); // hide "Back online!" after 3 s
+}
+
+if (!navigator.onLine) showOffline();
+
+window.addEventListener('offline', showOffline);
+window.addEventListener('online',  showOnline);
+</script>
 </body>
 </html>

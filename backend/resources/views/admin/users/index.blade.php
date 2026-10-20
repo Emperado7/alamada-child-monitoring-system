@@ -4,8 +4,8 @@
 
 @section('content')
 
-{{-- ── Breadcrumb + Title ───────────────────────────────────── --}}
-<div class="d-flex justify-content-between align-items-start mb-3">
+{{-- ── Page Header ──────────────────────────────────────────── --}}
+<div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
     <div>
         <h4 class="fw-bold mb-1">Manage Users</h4>
         <nav style="font-size:.83rem">
@@ -16,95 +16,101 @@
         </nav>
     </div>
     <a href="{{ route('admin.users.create') }}"
-       class="btn btn-success rounded-3 px-3 py-2 fw-semibold"
-       style="background:#2e7d32;border:none;font-size:.88rem">
-        <i class="fas fa-plus me-2"></i>Add New User
+       class="btn rounded-3 px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+       style="background:#2e7d32;color:#fff;border:none;font-size:.88rem">
+        <i class="fas fa-plus"></i> Add New User
     </a>
 </div>
 
-{{-- ── 2 Stat Cards (Staff + Parents) ──────────────────────── --}}
+{{-- ── 2 Stat Cards in one row (Staff + Parents) ────────────── --}}
 @php
-    $staffCount   = \App\Models\User::where('role','staff')->count();
-    $parentCount  = \App\Models\User::where('role','parent')->count();
+    $staffCount  = \App\Models\User::where('role','staff')->count();
+    $parentCount = \App\Models\User::where('role','parent')->count();
 @endphp
 
-<div class="row g-3 mb-4">
+<div class="dash-card mb-4">
+    <div class="row g-0">
 
-    {{-- Staff Card --}}
-    <div class="col-md-6">
-        <div class="dash-card p-4">
-            <div class="d-flex align-items-center gap-4">
-                <div style="width:60px;height:60px;border-radius:14px;
-                            background:#f5f5f5;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0">
-                    <i class="fas fa-user-tie" style="font-size:1.8rem;color:#424242"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <div class="fw-bold text-muted mb-1"
-                         style="font-size:.8rem;letter-spacing:.08em;text-transform:uppercase">
-                        STAFF
+        {{-- Staff --}}
+        <div class="col-12 col-md-6" style="border-right:1px solid #f0f0f0">
+            <div class="p-4">
+                <div class="d-flex align-items-center gap-4">
+                    <div style="width:64px;height:64px;border-radius:16px;
+                                background:#f5f5f5;display:flex;align-items:center;
+                                justify-content:center;flex-shrink:0">
+                        <i class="fas fa-user" style="font-size:2rem;color:#424242"></i>
                     </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#212121;line-height:1">
-                        {{ $staffCount }}
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-1"
+                             style="font-size:.78rem;letter-spacing:.1em;
+                                    text-transform:uppercase;color:#9e9e9e">
+                            STAFF
+                        </div>
+                        <div style="font-size:2.8rem;font-weight:800;color:#212121;line-height:1">
+                            {{ $staffCount }}
+                        </div>
+                        <div class="text-muted small mt-1">All Staff</div>
                     </div>
-                    <div class="text-muted small mt-1">All Staff</div>
                 </div>
-                <div class="text-end">
+                <div class="mt-3 pt-3" style="border-top:1px solid #f0f0f0">
                     <a href="?role=staff"
-                       class="btn btn-sm rounded-3 px-3 py-2"
-                       style="background:#e8f5e9;color:#2e7d32;border:none;font-weight:600">
+                       class="text-decoration-none d-flex align-items-center gap-1"
+                       style="color:#9e9e9e;font-size:.83rem">
                         View Details
-                        <i class="fas fa-arrow-right ms-1" style="font-size:.75rem"></i>
+                        <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
                     </a>
                 </div>
             </div>
         </div>
-    </div>
 
-    {{-- Parents Card --}}
-    <div class="col-md-6">
-        <div class="dash-card p-4">
-            <div class="d-flex align-items-center gap-4">
-                <div style="width:60px;height:60px;border-radius:14px;
-                            background:#f3e5f5;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0">
-                    <i class="fas fa-users" style="font-size:1.8rem;color:#6a1b9a"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <div class="fw-bold text-muted mb-1"
-                         style="font-size:.8rem;letter-spacing:.08em;text-transform:uppercase">
-                        PARENTS
+        {{-- Parents --}}
+        <div class="col-12 col-md-6">
+            <div class="p-4">
+                <div class="d-flex align-items-center gap-4">
+                    <div style="width:64px;height:64px;border-radius:16px;
+                                background:#f3e5f5;display:flex;align-items:center;
+                                justify-content:center;flex-shrink:0">
+                        <i class="fas fa-users" style="font-size:2rem;color:#6a1b9a"></i>
                     </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#6a1b9a;line-height:1">
-                        {{ $parentCount }}
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-1"
+                             style="font-size:.78rem;letter-spacing:.1em;
+                                    text-transform:uppercase;color:#9e9e9e">
+                            PARENTS
+                        </div>
+                        <div style="font-size:2.8rem;font-weight:800;color:#6a1b9a;line-height:1">
+                            {{ $parentCount }}
+                        </div>
+                        <div class="text-muted small mt-1">All Parents</div>
                     </div>
-                    <div class="text-muted small mt-1">All Parents</div>
                 </div>
-                <div class="text-end">
+                <div class="mt-3 pt-3" style="border-top:1px solid #f0f0f0">
                     <a href="?role=parent"
-                       class="btn btn-sm rounded-3 px-3 py-2"
-                       style="background:#f3e5f5;color:#6a1b9a;border:none;font-weight:600">
+                       class="text-decoration-none d-flex align-items-center gap-1"
+                       style="color:#9e9e9e;font-size:.83rem">
                         View Details
-                        <i class="fas fa-arrow-right ms-1" style="font-size:.75rem"></i>
+                        <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
                     </a>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
-{{-- ── Table Card ───────────────────────────────────────────── --}}
+{{-- ── Users Table Card ─────────────────────────────────────── --}}
 <div class="dash-card">
 
     {{-- Toolbar --}}
     <div class="dash-card-header flex-wrap gap-2">
-        <form method="GET" class="d-flex align-items-center gap-2 flex-wrap flex-grow-1">
+        <form method="GET" class="d-flex align-items-center gap-2 flex-wrap w-100">
 
             {{-- User Type --}}
             <label class="small text-muted mb-0 fw-semibold">User Type</label>
             <select name="role"
                     class="form-select form-select-sm rounded-2"
-                    style="width:140px">
+                    style="width:140px"
+                    onchange="this.form.submit()">
                 <option value="">All Users</option>
                 <option value="admin"  {{ request('role')=='admin'  ?'selected':'' }}>Admin</option>
                 <option value="staff"  {{ request('role')=='staff'  ?'selected':'' }}>Staff</option>
@@ -115,13 +121,14 @@
             <label class="small text-muted mb-0 fw-semibold">Status</label>
             <select name="status"
                     class="form-select form-select-sm rounded-2"
-                    style="width:140px">
+                    style="width:140px"
+                    onchange="this.form.submit()">
                 <option value="">All Status</option>
                 <option value="active"   {{ request('status')=='active'  ?'selected':'' }}>Active</option>
                 <option value="inactive" {{ request('status')=='inactive'?'selected':'' }}>Inactive</option>
             </select>
 
-            {{-- Search --}}
+            {{-- Search + Filters --}}
             <div class="d-flex align-items-center gap-2 ms-auto">
                 <div class="input-group" style="max-width:240px">
                     <input type="text" name="search"
@@ -129,25 +136,30 @@
                            class="form-control form-control-sm"
                            placeholder="Search user...">
                     <button class="btn btn-success btn-sm"
-                            style="background:#2e7d32;border-color:#2e7d32">
+                            style="background:#2e7d32;border-color:#2e7d32"
+                            type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-sm btn-outline-secondary rounded-2 dropdown-toggle"
+                            type="button"
                             data-bs-toggle="dropdown">
                         <i class="fas fa-filter me-1"></i>Filters
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2">
-                        @foreach([''=>'All Users','admin'=>'Admin','staff'=>'Staff','parent'=>'Parent'] as $v=>$l)
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2"
+                        style="min-width:150px">
+                        @foreach([
+                            ''       => ['All Users', '#9e9e9e'],
+                            'admin'  => ['Admin',     '#c62828'],
+                            'staff'  => ['Staff',     '#1565c0'],
+                            'parent' => ['Parent',    '#6a1b9a'],
+                        ] as $v => [$l, $dot])
                         <li>
-                            <a class="dropdown-item rounded-2 small {{ request('role')==$v?'fw-bold':'' }}"
+                            <a class="dropdown-item rounded-2 small py-2
+                                      {{ request('role')==$v ? 'fw-bold' : '' }}"
                                href="{{ request()->fullUrlWithQuery(['role'=>$v,'page'=>1]) }}">
-                                @if($v=='admin')     <span class="me-2" style="color:#c62828">●</span>
-                                @elseif($v=='staff') <span class="me-2" style="color:#1565c0">●</span>
-                                @elseif($v=='parent')<span class="me-2" style="color:#6a1b9a">●</span>
-                                @else                <span class="me-2" style="color:#9e9e9e">●</span>
-                                @endif
+                                <span class="me-2" style="color:{{ $dot }}">●</span>
                                 {{ $l }}
                             </a>
                         </li>
@@ -160,36 +172,47 @@
 
     {{-- ── Table ──────────────────────────────────────────────── --}}
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0" style="min-width:820px">
             <thead>
                 <tr style="background:#f8f9fa">
-                    <th class="px-3 py-2 small fw-bold" style="color:#2e7d32">ID</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">User</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">User Type</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Email</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Phone</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Status</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Last Login</th>
-                    <th class="py-2 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
+                    <th class="px-3 py-3 small fw-bold" style="color:#2e7d32">ID</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">User</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">User Type</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Email</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Phone</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Status</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Last Login</th>
+                    <th class="py-3 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($users as $u)
                 @php
-                    // ID prefix by role
+                    // ID prefix
                     $prefix = match($u->role) {
                         'admin'  => 'ADM',
                         'staff'  => 'USR',
                         'parent' => 'PRT',
                         default  => 'USR',
                     };
-                    // Role badge
+
+                    // Role badge colours
                     $roleBadge = match($u->role) {
                         'admin'  => ['bg'=>'#ffebee','color'=>'#c62828','label'=>'Admin'],
                         'staff'  => ['bg'=>'#e3f2fd','color'=>'#1565c0','label'=>'Staff'],
                         'parent' => ['bg'=>'#f3e5f5','color'=>'#6a1b9a','label'=>'Parent'],
                         default  => ['bg'=>'#f5f5f5','color'=>'#757575','label'=>ucfirst($u->role)],
                     };
+
+                    // Avatar gradient by role
+                    $avatarGrad = match($u->role) {
+                        'admin'  => 'linear-gradient(135deg,#c62828,#ef9a9a)',
+                        'staff'  => 'linear-gradient(135deg,#1565c0,#90caf9)',
+                        'parent' => 'linear-gradient(135deg,#2e7d32,#66bb6a)',
+                        default  => 'linear-gradient(135deg,#616161,#bdbdbd)',
+                    };
+
+                    $lastLogin = $u->last_login_at ?? $u->updated_at;
                 @endphp
                 <tr>
                     {{-- ID --}}
@@ -197,16 +220,23 @@
                         {{ $prefix }}-{{ str_pad($u->id, 3, '0', STR_PAD_LEFT) }}
                     </td>
 
-                    {{-- User avatar + name --}}
+                    {{-- User: avatar + name + role sub-label --}}
                     <td>
                         <div class="d-flex align-items-center gap-2">
+                            @if(!empty($u->avatar))
+                            <img src="{{ asset('storage/'.$u->avatar) }}"
+                                 class="rounded-circle object-fit-cover"
+                                 width="38" height="38"
+                                 style="border:2px solid #e8f5e9">
+                            @else
                             <div style="width:38px;height:38px;border-radius:50%;
-                                        background:linear-gradient(135deg,#2e7d32,#66bb6a);
-                                        color:#fff;display:flex;align-items:center;
+                                        background:{{ $avatarGrad }};color:#fff;
+                                        display:flex;align-items:center;
                                         justify-content:center;font-weight:700;
                                         font-size:.88rem;flex-shrink:0">
                                 {{ strtoupper(substr($u->name, 0, 1)) }}
                             </div>
+                            @endif
                             <div>
                                 <div class="fw-semibold small">{{ $u->name }}</div>
                                 <div class="text-muted" style="font-size:.72rem">
@@ -234,7 +264,7 @@
 
                     {{-- Status --}}
                     <td>
-                        @if($u->status === 'active')
+                        @if(($u->status ?? 'active') === 'active')
                         <span class="badge rounded-2 px-3 py-2 fw-semibold"
                               style="background:#e8f5e9;color:#2e7d32;font-size:.78rem">
                             Active
@@ -247,15 +277,15 @@
                         @endif
                     </td>
 
-                    {{-- Last Login (using updated_at as proxy) --}}
-                    <td class="small text-muted">
-                        {{ $u->updated_at->format('M d, Y') }}<br>
+                    {{-- Last Login --}}
+                    <td class="small text-muted" style="white-space:nowrap">
+                        {{ \Carbon\Carbon::parse($lastLogin)->format('M d, Y') }}<br>
                         <span style="font-size:.72rem">
-                            {{ $u->updated_at->format('h:i A') }}
+                            {{ \Carbon\Carbon::parse($lastLogin)->format('h:i A') }}
                         </span>
                     </td>
 
-                    {{-- Actions --}}
+                    {{-- Actions: View + Edit + Delete --}}
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-1">
                             {{-- View --}}
@@ -267,7 +297,7 @@
                                         '{{ $u->email }}',
                                         '{{ $u->phone ?? '—' }}',
                                         '{{ ucfirst($u->role) }}',
-                                        '{{ ucfirst($u->status) }}',
+                                        '{{ ucfirst($u->status ?? 'active') }}',
                                         '{{ $u->created_at->format('M d, Y') }}'
                                     )">
                                 <i class="fas fa-eye" style="font-size:.8rem"></i>
@@ -281,7 +311,7 @@
                                 <i class="fas fa-pencil-alt" style="font-size:.8rem"></i>
                             </a>
 
-                            {{-- Delete --}}
+                            {{-- Delete (not self) --}}
                             @if($u->id !== auth()->id())
                             <form method="POST"
                                   action="{{ route('admin.users.destroy', $u) }}"
@@ -305,7 +335,7 @@
                             <div class="fw-semibold">No users found.</div>
                             <div class="small text-muted mt-2">
                                 <a href="{{ route('admin.users.create') }}"
-                                   style="color:#2e7d32">Add a new user</a>
+                                   style="color:#2e7d32">Add the first user</a>
                             </div>
                         </div>
                     </td>
@@ -325,43 +355,41 @@
         <nav>
             <ul class="pagination pagination-sm mb-0 gap-1">
 
-                {{-- First --}}
+                {{-- First page « --}}
                 <li class="page-item {{ $users->onFirstPage() ? 'disabled' : '' }}">
                     <a class="page-link rounded-2 border-0"
                        href="{{ $users->url(1) }}"
-                       style="background:#f5f5f5;color:{{ $users->onFirstPage() ? '#bdbdbd' : '#2e7d32' }}">
-                        «
-                    </a>
+                       style="background:#f5f5f5;
+                              color:{{ $users->onFirstPage() ? '#bdbdbd' : '#2e7d32' }}">«</a>
                 </li>
 
-                {{-- Pages --}}
+                {{-- Windowed page numbers with ellipsis --}}
                 @php
-                    $current   = $users->currentPage();
-                    $last      = $users->lastPage();
-                    $window    = 3;
-                    $start     = max(1, $current - $window);
-                    $end       = min($last, $current + $window);
+                    $cur   = $users->currentPage();
+                    $last  = $users->lastPage();
+                    $start = max(1, $cur - 2);
+                    $end   = min($last, $cur + 2);
                 @endphp
 
                 @if($start > 1)
-                <li class="page-item">
-                    <a class="page-link rounded-2 border-0"
-                       href="{{ $users->url(1) }}"
-                       style="background:#f5f5f5;color:#212121">1</a>
-                </li>
-                @if($start > 2)
-                <li class="page-item disabled">
-                    <span class="page-link rounded-2 border-0"
-                          style="background:#f5f5f5;color:#9e9e9e">…</span>
-                </li>
-                @endif
+                    <li class="page-item">
+                        <a class="page-link rounded-2 border-0"
+                           href="{{ $users->url(1) }}"
+                           style="background:#f5f5f5;color:#212121">1</a>
+                    </li>
+                    @if($start > 2)
+                    <li class="page-item disabled">
+                        <span class="page-link rounded-2 border-0"
+                              style="background:#f5f5f5;color:#9e9e9e">…</span>
+                    </li>
+                    @endif
                 @endif
 
                 @for($p = $start; $p <= $end; $p++)
                 <li class="page-item">
                     <a class="page-link rounded-2 border-0"
                        href="{{ $users->url($p) }}"
-                       style="{{ $p == $current
+                       style="{{ $p == $cur
                            ? 'background:#2e7d32;color:#fff'
                            : 'background:#f5f5f5;color:#212121' }}">
                         {{ $p }}
@@ -370,28 +398,27 @@
                 @endfor
 
                 @if($end < $last)
-                @if($end < $last - 1)
-                <li class="page-item disabled">
-                    <span class="page-link rounded-2 border-0"
-                          style="background:#f5f5f5;color:#9e9e9e">…</span>
-                </li>
-                @endif
-                <li class="page-item">
-                    <a class="page-link rounded-2 border-0"
-                       href="{{ $users->url($last) }}"
-                       style="background:#f5f5f5;color:#212121">
-                        {{ $last }}
-                    </a>
-                </li>
+                    @if($end < $last - 1)
+                    <li class="page-item disabled">
+                        <span class="page-link rounded-2 border-0"
+                              style="background:#f5f5f5;color:#9e9e9e">…</span>
+                    </li>
+                    @endif
+                    <li class="page-item">
+                        <a class="page-link rounded-2 border-0"
+                           href="{{ $users->url($last) }}"
+                           style="background:#f5f5f5;color:#212121">
+                            {{ $last }}
+                        </a>
+                    </li>
                 @endif
 
-                {{-- Last --}}
+                {{-- Last page » --}}
                 <li class="page-item {{ !$users->hasMorePages() ? 'disabled' : '' }}">
                     <a class="page-link rounded-2 border-0"
                        href="{{ $users->url($last) }}"
-                       style="background:#f5f5f5;color:{{ !$users->hasMorePages() ? '#bdbdbd' : '#2e7d32' }}">
-                        »
-                    </a>
+                       style="background:#f5f5f5;
+                              color:{{ !$users->hasMorePages() ? '#bdbdbd' : '#2e7d32' }}">»</a>
                 </li>
             </ul>
         </nav>
@@ -421,33 +448,33 @@
                                 font-weight:700;margin:0 auto 10px"></div>
                     <div class="fw-bold fs-6" id="viewName"></div>
                 </div>
-                <table class="table table-sm">
+                <table class="table table-sm mb-0">
                     <tr>
-                        <td class="text-muted small fw-semibold">Email</td>
+                        <td class="text-muted small fw-semibold ps-0">Email</td>
                         <td class="small" id="viewEmail"></td>
                     </tr>
                     <tr>
-                        <td class="text-muted small fw-semibold">Phone</td>
+                        <td class="text-muted small fw-semibold ps-0">Phone</td>
                         <td class="small" id="viewPhone"></td>
                     </tr>
                     <tr>
-                        <td class="text-muted small fw-semibold">Role</td>
+                        <td class="text-muted small fw-semibold ps-0">Role</td>
                         <td class="small" id="viewRole"></td>
                     </tr>
                     <tr>
-                        <td class="text-muted small fw-semibold">Status</td>
+                        <td class="text-muted small fw-semibold ps-0">Status</td>
                         <td class="small" id="viewStatus"></td>
                     </tr>
                     <tr>
-                        <td class="text-muted small fw-semibold">Joined</td>
+                        <td class="text-muted small fw-semibold ps-0">Joined</td>
                         <td class="small" id="viewJoined"></td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer border-0 pt-0">
                 <button type="button"
-                        class="btn btn-success rounded-3 w-100"
-                        style="background:#2e7d32;border:none"
+                        class="btn rounded-3 w-100 fw-semibold"
+                        style="background:#2e7d32;color:#fff;border:none"
                         data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -459,13 +486,13 @@
 @push('scripts')
 <script>
 function viewUser(name, email, phone, role, status, joined) {
-    document.getElementById('viewAvatar').textContent  = name.charAt(0).toUpperCase();
-    document.getElementById('viewName').textContent    = name;
-    document.getElementById('viewEmail').textContent   = email;
-    document.getElementById('viewPhone').textContent   = phone;
-    document.getElementById('viewRole').textContent    = role;
-    document.getElementById('viewStatus').textContent  = status;
-    document.getElementById('viewJoined').textContent  = joined;
+    document.getElementById('viewAvatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('viewName').textContent   = name;
+    document.getElementById('viewEmail').textContent  = email;
+    document.getElementById('viewPhone').textContent  = phone;
+    document.getElementById('viewRole').textContent   = role;
+    document.getElementById('viewStatus').textContent = status;
+    document.getElementById('viewJoined').textContent = joined;
     new bootstrap.Modal(document.getElementById('viewUserModal')).show();
 }
 </script>

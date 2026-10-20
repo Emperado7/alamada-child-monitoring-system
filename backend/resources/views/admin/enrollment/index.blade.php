@@ -144,7 +144,7 @@
                 <input type="hidden" name="status"    value="{{ request('status') }}">
                 <select name="school_year"
                         class="form-select form-select-sm rounded-2"
-                        style="width:130px"
+                        style="width:140px"
                         onchange="document.getElementById('yearForm').submit()">
                     <option value="">All Years</option>
                     @foreach($years as $y)
@@ -160,10 +160,7 @@
                     style="width:70px"
                     onchange="changePageSize(this.value)">
                 @foreach([10,25,50] as $ps)
-                    <option value="{{ $ps }}"
-                        {{ request('per_page',10)==$ps?'selected':'' }}>
-                        {{ $ps }}
-                    </option>
+                    <option value="{{ $ps }}" {{ request('per_page',10)==$ps?'selected':'' }}>{{ $ps }}</option>
                 @endforeach
             </select>
             <span class="text-muted small">entries</span>
@@ -174,7 +171,7 @@
                 <input type="hidden" name="per_page"    value="{{ request('per_page',10) }}">
                 <input type="hidden" name="school_year" value="{{ request('school_year') }}">
                 <input type="hidden" name="status"      value="{{ request('status') }}">
-                <div class="input-group" style="max-width:240px">
+                <div class="input-group" style="max-width:260px">
                     <input type="text" name="search"
                            value="{{ request('search') }}"
                            class="form-control form-control-sm"
@@ -186,7 +183,7 @@
                 </div>
             </form>
 
-            {{-- Status filter dropdown --}}
+            {{-- Filters dropdown --}}
             <div class="dropdown">
                 <button class="btn btn-sm btn-outline-secondary rounded-2 dropdown-toggle"
                         data-bs-toggle="dropdown">
@@ -196,19 +193,18 @@
                     style="min-width:160px">
                     @foreach([''=>'All Status','approved'=>'Enrolled','pending'=>'Pending','rejected'=>'Rejected','graduated'=>'Graduated'] as $val=>$label)
                     <li>
-                        <a class="dropdown-item rounded-2 small {{ request('status')==$val?'fw-bold':'' }}"
+                        <a class="dropdown-item rounded-2 small py-2 {{ request('status')==$val?'fw-bold':'' }}"
                            href="{{ request()->fullUrlWithQuery(['status'=>$val,'page'=>1]) }}">
-                            @if($val=='approved')
-                            <span class="me-2" style="color:#2e7d32">●</span>
-                            @elseif($val=='pending')
-                            <span class="me-2" style="color:#e65100">●</span>
-                            @elseif($val=='rejected')
-                            <span class="me-2" style="color:#c62828">●</span>
-                            @elseif($val=='graduated')
-                            <span class="me-2" style="color:#6a1b9a">●</span>
-                            @else
-                            <span class="me-2" style="color:#9e9e9e">●</span>
-                            @endif
+                            @php
+                                $dotColor = match($val) {
+                                    'approved'  => '#2e7d32',
+                                    'pending'   => '#e65100',
+                                    'rejected'  => '#c62828',
+                                    'graduated' => '#6a1b9a',
+                                    default     => '#9e9e9e',
+                                };
+                            @endphp
+                            <span class="me-2" style="color:{{ $dotColor }}">●</span>
                             {{ $label }}
                         </a>
                     </li>
@@ -330,7 +326,7 @@
                             ];
                             $sm = $statusMap[$e->status] ?? ['bg'=>'#f5f5f5','color'=>'#9e9e9e','label'=>ucfirst($e->status)];
                         @endphp
-                        <span class="badge rounded-2 px-3 py-2 fw-semibold"
+                        <span class="badge rounded-pill px-3 py-2 fw-semibold"
                               style="background:{{ $sm['bg'] }};color:{{ $sm['color'] }};font-size:.78rem">
                             {{ $sm['label'] }}
                         </span>
@@ -345,29 +341,12 @@
                                title="View">
                                 <i class="fas fa-eye" style="font-size:.8rem"></i>
                             </a>
-                            @if($e->status === 'pending')
-                            <form method="POST" action="{{ route('admin.enrollment.approve',$e) }}">
-                                @csrf
-                                <button class="btn btn-sm rounded-2 p-1 px-2"
-                                        style="background:#e8f5e9;color:#2e7d32;border:none"
-                                        title="Approve">
-                                    <i class="fas fa-check" style="font-size:.8rem"></i>
-                                </button>
-                            </form>
-                            <button class="btn btn-sm rounded-2 p-1 px-2"
-                                    style="background:#fff3e0;color:#e65100;border:none"
-                                    title="Reject"
-                                    onclick="openRejectModal({{ $e->id }})">
-                                <i class="fas fa-times" style="font-size:.8rem"></i>
-                            </button>
-                            @else
                             <a href="{{ route('admin.children.edit', $e->child_id) }}"
                                class="btn btn-sm rounded-2 p-1 px-2"
                                style="background:#e8f5e9;color:#2e7d32;border:none"
                                title="Edit">
                                 <i class="fas fa-pencil-alt" style="font-size:.8rem"></i>
                             </a>
-                            @endif
                             <form method="POST"
                                   action="{{ route('admin.enrollment.destroy',$e) }}"
                                   onsubmit="return confirm('Delete this enrollment?')">
