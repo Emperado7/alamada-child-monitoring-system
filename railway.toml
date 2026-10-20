@@ -1,5 +1,6 @@
 [build]
 builder = "nixpacks"
+watchPatterns = ["backend/**"]
 
 [deploy]
 restartPolicyType = "on_failure"

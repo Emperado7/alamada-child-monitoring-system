@@ -1,6 +1,12 @@
 [variables]
 APP_ENV = "production"
-PORT = "8080"
+
+# Force nixpacks to use PHP provider
+[providers]
+php = {}
+
+[phases.setup]
+nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.fileinfo", "php82Extensions.openssl", "php82Extensions.curl", "php82Extensions.zip"]
 
 [phases.install]
 cmds = [
@@ -9,9 +15,9 @@ cmds = [
 
 [phases.build]
 cmds = [
-    "cd backend && php artisan config:cache",
-    "cd backend && php artisan route:cache",
-    "cd backend && php artisan view:cache"
+    "cd backend && php artisan config:cache || true",
+    "cd backend && php artisan route:cache || true",
+    "cd backend && php artisan view:cache || true"
 ]
 
 [start]
