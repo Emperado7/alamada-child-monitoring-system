@@ -16,13 +16,41 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Trigger Render deploy via deploy hook ──────────────────────────
-      #
-      #  Required GitHub secret:
-      #    RENDER_DEPLOY_HOOK_URL  → copy from Render dashboard:
-      #                              Settings → Deploy Hook → copy URL
-      #
-      - name: Trigger Render deploy
+      # ── 2. Set environment variables on Render via API ────────────────────
+      - name: Set Render environment variables
         run: |
-          curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
+          curl -sf -X PATCH \
+            "https://api.render.com/v1/services/srv-dbf26pm7bikc73btqco0/env-vars" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '[
+              {"key":"APP_NAME",  "value":"Alamada LGU Child Monitoring System"},
+              {"key":"APP_ENV",   "value":"production"},
+              {"key":"APP_DEBUG", "value":"false"},
+              {"key":"APP_KEY",   "value":"base64:Pfs3OjH5zbFU+1pdJNkqhSu9eHHlWaaBZGYD9n6trOA="},
+              {"key":"APP_URL",   "value":"https://alamada-cms-backend.onrender.com"},
+              {"key":"DB_CONNECTION","value":"pgsql"},
+              {"key":"DB_HOST",   "value":"db.uladgqimfubazxtcetjb.supabase.co"},
+              {"key":"DB_PORT",   "value":"5432"},
+              {"key":"DB_DATABASE","value":"postgres"},
+              {"key":"DB_USERNAME","value":"postgres"},
+              {"key":"DB_PASSWORD","value":"${{ secrets.DB_PASSWORD }}"},
+              {"key":"DB_SSLMODE","value":"require"},
+              {"key":"LOG_CHANNEL","value":"stack"},
+              {"key":"LOG_LEVEL", "value":"error"},
+              {"key":"BROADCAST_DRIVER","value":"log"},
+              {"key":"CACHE_DRIVER","value":"file"},
+              {"key":"FILESYSTEM_DISK","value":"public"},
+              {"key":"QUEUE_CONNECTION","value":"sync"},
+              {"key":"SESSION_DRIVER","value":"file"},
+              {"key":"SESSION_LIFETIME","value":"120"},
+              {"key":"SANCTUM_STATEFUL_DOMAINS","value":"alamada-cms-backend.onrender.com"},
+              {"key":"SESSION_DOMAIN","value":".onrender.com"}
+            ]'
+
+      # ── 3. Trigger Render deploy ──────────────────────────────────────────
+      - name: Trigger deploy
+        run: |
+          curl -fsSL -X POST \
+            "https://api.render.com/deploy/srv-dbf26pm7bikc73btqco0?key=WkSksUDpRDg" \
             -w "\nHTTP status: %{http_code}\n"
