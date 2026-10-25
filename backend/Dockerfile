@@ -1,16 +1,14 @@
 FROM php:8.2-cli-alpine
 
-# Alpine package names differ from Debian — use correct Alpine equivalents
 RUN apk add --no-cache \
-    git \
-    curl \
-    zip \
-    unzip \
-    postgresql-dev \
-    libzip-dev \
-    libpng-dev \
-    oniguruma-dev \
-    libxml2-dev \
+        git curl zip unzip \
+        postgresql-dev \
+        libzip-dev \
+        libpng-dev \
+        oniguruma-dev \
+        libxml2-dev \
+        openssl-dev \
+        icu-dev \
     && docker-php-ext-install \
         pdo \
         pdo_pgsql \
@@ -18,7 +16,14 @@ RUN apk add --no-cache \
         mbstring \
         zip \
         bcmath \
-        xml
+        xml \
+        dom \
+        ctype \
+        tokenizer \
+        fileinfo \
+        filter \
+        intl \
+    && docker-php-ext-enable opcache
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -26,7 +31,6 @@ WORKDIR /var/www
 
 COPY . .
 
-# Remove any local .env — Render injects env vars at runtime
 RUN rm -f .env
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
