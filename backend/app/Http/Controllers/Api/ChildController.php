@@ -17,7 +17,7 @@ class ChildController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $user  = $request->user();
+        $user = $request->user();
         $query = Child::with(['staff:id,name', 'parent:id,name', 'currentEnrollment']);
 
         if ($user->isParent()) {
@@ -38,9 +38,9 @@ class ChildController extends Controller
         }
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('first_name', 'like', "%{$request->search}%")
-                  ->orWhere('last_name', 'like', "%{$request->search}%")
-                  ->orWhere('guardian_name', 'like', "%{$request->search}%");
+                $q->where('first_name', 'ilike', "%{$request->search}%")
+                    ->orWhere('last_name', 'ilike', "%{$request->search}%")
+                    ->orWhere('guardian_name', 'ilike', "%{$request->search}%");
             });
         }
 
@@ -61,19 +61,19 @@ class ChildController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'first_name'       => 'required|string|max:100',
-            'last_name'        => 'required|string|max:100',
-            'middle_name'      => 'nullable|string|max:100',
-            'date_of_birth'    => 'required|date|before:today',
-            'gender'           => 'required|in:male,female',
-            'address'          => 'required|string|max:255',
-            'guardian_name'    => 'required|string|max:200',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'date_of_birth' => 'required|date|before:today',
+            'gender' => 'required|in:male,female',
+            'address' => 'required|string|max:255',
+            'guardian_name' => 'required|string|max:200',
             'guardian_contact' => 'required|string|max:20',
-            'diagnosis'        => 'required|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
-            'diagnosis_notes'  => 'nullable|string',
-            'staff_id'         => 'nullable|exists:users,id',
-            'parent_id'        => 'nullable|exists:users,id',
-            'photo'            => 'nullable|image|max:2048',
+            'diagnosis' => 'required|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
+            'diagnosis_notes' => 'nullable|string',
+            'staff_id' => 'nullable|exists:users,id',
+            'parent_id' => 'nullable|exists:users,id',
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -85,7 +85,7 @@ class ChildController extends Controller
 
         return response()->json([
             'message' => 'Child record created successfully.',
-            'child'   => $child->load(['staff:id,name', 'parent:id,name']),
+            'child' => $child->load(['staff:id,name', 'parent:id,name']),
         ], 201);
     }
 
@@ -110,20 +110,20 @@ class ChildController extends Controller
         $this->authorizeAccess($request, $child);
 
         $data = $request->validate([
-            'first_name'       => 'sometimes|string|max:100',
-            'last_name'        => 'sometimes|string|max:100',
-            'middle_name'      => 'nullable|string|max:100',
-            'date_of_birth'    => 'sometimes|date|before:today',
-            'gender'           => 'sometimes|in:male,female',
-            'address'          => 'sometimes|string|max:255',
-            'guardian_name'    => 'sometimes|string|max:200',
+            'first_name' => 'sometimes|string|max:100',
+            'last_name' => 'sometimes|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'date_of_birth' => 'sometimes|date|before:today',
+            'gender' => 'sometimes|in:male,female',
+            'address' => 'sometimes|string|max:255',
+            'guardian_name' => 'sometimes|string|max:200',
             'guardian_contact' => 'sometimes|string|max:20',
-            'diagnosis'        => 'sometimes|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
-            'diagnosis_notes'  => 'nullable|string',
-            'status'           => 'sometimes|in:active,inactive,graduated',
-            'staff_id'         => 'nullable|exists:users,id',
-            'parent_id'        => 'nullable|exists:users,id',
-            'photo'            => 'nullable|image|max:2048',
+            'diagnosis' => 'sometimes|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
+            'diagnosis_notes' => 'nullable|string',
+            'status' => 'sometimes|in:active,inactive,graduated',
+            'staff_id' => 'nullable|exists:users,id',
+            'parent_id' => 'nullable|exists:users,id',
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -139,7 +139,7 @@ class ChildController extends Controller
 
         return response()->json([
             'message' => 'Child record updated successfully.',
-            'child'   => $child->fresh()->load(['staff:id,name', 'parent:id,name']),
+            'child' => $child->fresh()->load(['staff:id,name', 'parent:id,name']),
         ]);
     }
 
@@ -165,7 +165,7 @@ class ChildController extends Controller
 
         $activities = $child->activities()
             ->with('recorder:id,name')
-            ->when($request->filled('date'), fn ($q) => $q->whereDate('activity_date', $request->date))
+            ->when($request->filled('date'), fn($q) => $q->whereDate('activity_date', $request->date))
             ->orderBy('activity_date', 'desc')
             ->paginate(20);
 

@@ -15,16 +15,20 @@ class ChildController extends Controller
 
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->where(fn($q) => $q
-                ->where('first_name', 'like', "%$s%")
-                ->orWhere('last_name',  'like', "%$s%")
-                ->orWhere('guardian_name', 'like', "%$s%")
-                ->orWhereRaw("CONCAT('CHD-', LPAD(id,3,'0')) LIKE ?", ["%$s%"])
+            $query->where(
+                fn($q) => $q
+                    ->where('first_name', 'ilike', "%$s%")
+                    ->orWhere('last_name', 'ilike', "%$s%")
+                    ->orWhere('guardian_name', 'ilike', "%$s%")
+                    ->orWhereRaw("'CHD-' || LPAD(id::text, 3, '0') ILIKE ?", ["%$s%"])
             );
         }
-        if ($request->filled('gender')) $query->where('gender', $request->gender);
-        if ($request->filled('status')) $query->where('status', $request->status);
-        if ($request->filled('diagnosis')) $query->where('diagnosis', $request->diagnosis);
+        if ($request->filled('gender'))
+            $query->where('gender', $request->gender);
+        if ($request->filled('status'))
+            $query->where('status', $request->status);
+        if ($request->filled('diagnosis'))
+            $query->where('diagnosis', $request->diagnosis);
 
         $children = $query->orderBy('last_name')->paginate(10)->withQueryString();
 
@@ -42,7 +46,7 @@ class ChildController extends Controller
             'parent:id,name,email,phone',
             'enrollments.approver:id,name',
             'attendances' => fn($q) => $q->orderBy('attendance_date', 'desc')->take(30),
-            'activities'  => fn($q) => $q->orderBy('activity_date', 'desc')->take(20),
+            'activities' => fn($q) => $q->orderBy('activity_date', 'desc')->take(20),
         ]);
 
         return view('staff.children.show', compact('child'));

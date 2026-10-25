@@ -18,18 +18,20 @@ class EnrollmentController extends Controller
 
         $query = Enrollment::with(['child', 'approver:id,name']);
 
-        if ($request->filled('status'))      $query->where('status', $request->status);
-        if ($request->filled('school_year')) $query->where('school_year', $request->school_year);
+        if ($request->filled('status'))
+            $query->where('status', $request->status);
+        if ($request->filled('school_year'))
+            $query->where('school_year', $request->school_year);
         if ($request->filled('search')) {
             $s = $request->search;
             $query->whereHas('child', fn($q) =>
-                $q->where('first_name', 'like', "%$s%")
-                  ->orWhere('last_name',  'like', "%$s%")
-                  ->orWhere('guardian_name','like',"%$s%"));
+                $q->where('first_name', 'ilike', "%$s%")
+                    ->orWhere('last_name', 'ilike', "%$s%")
+                    ->orWhere('guardian_name', 'ilike', "%$s%"));
         }
 
         $enrollments = $query->orderBy('created_at', 'desc')
-                             ->paginate($perPage)->withQueryString();
+            ->paginate($perPage)->withQueryString();
         $years = Enrollment::selectRaw('DISTINCT school_year')
             ->orderBy('school_year', 'desc')->pluck('school_year');
 
@@ -49,53 +51,53 @@ class EnrollmentController extends Controller
     {
         $data = $request->validate([
             // ── Child fields ──────────────────────────────────────
-            'first_name'       => 'required|string|max:100',
-            'last_name'        => 'required|string|max:100',
-            'middle_name'      => 'nullable|string|max:100',
-            'date_of_birth'    => 'required|date|before:today',
-            'gender'           => 'required|in:male,female',
-            'address'          => 'required|string|max:255',
-            'guardian_name'    => 'required|string|max:200',
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'date_of_birth' => 'required|date|before:today',
+            'gender' => 'required|in:male,female',
+            'address' => 'required|string|max:255',
+            'guardian_name' => 'required|string|max:200',
             'guardian_contact' => 'required|string|max:20',
-            'diagnosis'        => 'required|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
-            'diagnosis_notes'  => 'nullable|string|max:500',
-            'staff_id'         => 'nullable|exists:users,id',
+            'diagnosis' => 'required|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
+            'diagnosis_notes' => 'nullable|string|max:500',
+            'staff_id' => 'nullable|exists:users,id',
 
             // ── Enrollment fields ─────────────────────────────────
-            'enrollment_date'  => 'required|date',
-            'school_year'      => 'required|digits:4|integer|min:2000|max:2099',
-            'remarks'          => 'nullable|string|max:500',
-            'auto_approve'     => 'nullable|boolean',
+            'enrollment_date' => 'required|date',
+            'school_year' => 'required|digits:4|integer|min:2000|max:2099',
+            'remarks' => 'nullable|string|max:500',
+            'auto_approve' => 'nullable|boolean',
         ]);
 
         // Create the child
         $child = Child::create([
-            'first_name'       => $data['first_name'],
-            'last_name'        => $data['last_name'],
-            'middle_name'      => $data['middle_name'] ?? null,
-            'date_of_birth'    => $data['date_of_birth'],
-            'gender'           => $data['gender'],
-            'address'          => $data['address'],
-            'guardian_name'    => $data['guardian_name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'middle_name' => $data['middle_name'] ?? null,
+            'date_of_birth' => $data['date_of_birth'],
+            'gender' => $data['gender'],
+            'address' => $data['address'],
+            'guardian_name' => $data['guardian_name'],
             'guardian_contact' => $data['guardian_contact'],
-            'diagnosis'        => $data['diagnosis'],
-            'diagnosis_notes'  => $data['diagnosis_notes'] ?? null,
-            'status'           => 'active',
-            'staff_id'         => $data['staff_id'] ?? null,
+            'diagnosis' => $data['diagnosis'],
+            'diagnosis_notes' => $data['diagnosis_notes'] ?? null,
+            'status' => 'active',
+            'staff_id' => $data['staff_id'] ?? null,
         ]);
 
         // Determine enrollment status
         $autoApprove = $request->boolean('auto_approve');
-        $status      = $autoApprove ? 'approved' : 'pending';
+        $status = $autoApprove ? 'approved' : 'pending';
 
         $enrollment = Enrollment::create([
-            'child_id'        => $child->id,
+            'child_id' => $child->id,
             'enrollment_date' => $data['enrollment_date'],
-            'school_year'     => $data['school_year'],
-            'remarks'         => $data['remarks'] ?? null,
-            'status'          => $status,
-            'approved_by'     => $autoApprove ? auth()->id() : null,
-            'approved_at'     => $autoApprove ? Carbon::now() : null,
+            'school_year' => $data['school_year'],
+            'remarks' => $data['remarks'] ?? null,
+            'status' => $status,
+            'approved_by' => $autoApprove ? auth()->id() : null,
+            'approved_at' => $autoApprove ? Carbon::now() : null,
         ]);
 
         $msg = $autoApprove
@@ -117,7 +119,7 @@ class EnrollmentController extends Controller
             return back()->with('error', 'Only pending enrollments can be approved.');
         }
         $enrollment->update([
-            'status'      => 'approved',
+            'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
         ]);
@@ -132,10 +134,10 @@ class EnrollmentController extends Controller
             return back()->with('error', 'Only pending enrollments can be rejected.');
         }
         $enrollment->update([
-            'status'      => 'rejected',
+            'status' => 'rejected',
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
-            'remarks'     => $request->remarks,
+            'remarks' => $request->remarks,
         ]);
         return back()->with('success', 'Enrollment rejected.');
     }

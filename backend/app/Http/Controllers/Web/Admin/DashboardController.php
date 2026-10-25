@@ -34,7 +34,7 @@ class DashboardController extends Controller
         $presMap = Attendance::whereYear('attendance_date', $year)
             ->whereMonth('attendance_date', $month)
             ->where('status', 'present')
-            ->selectRaw('DAY(attendance_date) as d, count(*) as c')
+            ->selectRaw("EXTRACT(day FROM attendance_date) as d, count(*) as c")
             ->groupBy('d')
             ->pluck('c', 'd');
 

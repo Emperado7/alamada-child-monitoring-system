@@ -28,7 +28,7 @@
     $totalMale   = \App\Models\Child::where('gender','male')->count();
     $totalFemale = \App\Models\Child::where('gender','female')->count();
     $avgAge      = round(\App\Models\Child::selectRaw(
-        'AVG(TIMESTAMPDIFF(YEAR,date_of_birth,CURDATE())) as a'
+        "AVG(DATE_PART('year', AGE(date_of_birth))) as a"
     )->value('a'), 1);
 @endphp
 

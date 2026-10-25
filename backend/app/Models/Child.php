@@ -19,6 +19,8 @@ class Child extends Model
         'address',
         'guardian_name',
         'guardian_contact',
+        'guardian_gender',          // added by migration 000002
+        'guardian_relationship',    // added by migration 000002
         'diagnosis',
         'diagnosis_notes',
         'photo',

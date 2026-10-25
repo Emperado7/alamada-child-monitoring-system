@@ -13,14 +13,17 @@ class UserController extends Controller
     {
         $query = User::query();
 
-        if ($request->filled('role'))   $query->where('role',   $request->role);
-        if ($request->filled('status')) $query->where('status', $request->status);
+        if ($request->filled('role'))
+            $query->where('role', $request->role);
+        if ($request->filled('status'))
+            $query->where('status', $request->status);
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->where(fn($q) =>
-                $q->where('name',  'like', "%$s%")
-                  ->orWhere('email','like', "%$s%")
-                  ->orWhere('phone','like', "%$s%")
+            $query->where(
+                fn($q) =>
+                    $q->where('name', 'ilike', "%$s%")
+                        ->orWhere('email', 'ilike', "%$s%")
+                        ->orWhere('phone', 'ilike', "%$s%")
             );
         }
 
@@ -37,15 +40,15 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'phone'    => 'nullable|string|max:20',
-            'role'     => 'required|in:admin,staff,parent',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,staff,parent',
             'password' => 'required|string|min:8|confirmed',
         ]);
         $data['password'] = Hash::make($data['password']);
         User::create($data);
-        return redirect()->route('admin.users.index')->with('success','User created successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     public function edit(User $user)
@@ -56,11 +59,11 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => "required|email|unique:users,email,{$user->id}",
-            'phone'    => 'nullable|string|max:20',
-            'role'     => 'required|in:admin,staff,parent',
-            'status'   => 'required|in:active,inactive',
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$user->id}",
+            'phone' => 'nullable|string|max:20',
+            'role' => 'required|in:admin,staff,parent',
+            'status' => 'required|in:active,inactive',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
@@ -71,15 +74,15 @@ class UserController extends Controller
         }
 
         $user->update($data);
-        return redirect()->route('admin.users.index')->with('success','User updated successfully.');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            return back()->with('error','You cannot delete your own account.');
+            return back()->with('error', 'You cannot delete your own account.');
         }
         $user->delete();
-        return redirect()->route('admin.users.index')->with('success','User deleted.');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted.');
     }
 }

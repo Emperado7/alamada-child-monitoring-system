@@ -19,7 +19,7 @@ class ReportController extends Controller
     public function index(Request $request): JsonResponse
     {
         $reports = Report::with('generatedBy:id,name')
-            ->when($request->filled('report_type'), fn ($q) => $q->where('report_type', $request->report_type))
+            ->when($request->filled('report_type'), fn($q) => $q->where('report_type', $request->report_type))
             ->orderBy('generated_at', 'desc')
             ->paginate(15);
 
@@ -33,13 +33,13 @@ class ReportController extends Controller
     public function enrollmentReport(Request $request): JsonResponse
     {
         $request->validate([
-            'gender'      => 'nullable|in:male,female',
+            'gender' => 'nullable|in:male,female',
             'school_year' => 'nullable|digits:4|integer',
-            'age_min'     => 'nullable|integer|min:5|max:16',
-            'age_max'     => 'nullable|integer|min:5|max:16',
+            'age_min' => 'nullable|integer|min:5|max:16',
+            'age_max' => 'nullable|integer|min:5|max:16',
         ]);
 
-        $currentYear  = Carbon::now()->year;
+        $currentYear = Carbon::now()->year;
         $previousYear = $currentYear - 1;
 
         // Base query: approved enrollments joined with children
@@ -55,8 +55,9 @@ class ReportController extends Controller
             $base->where('enrollments.school_year', $request->school_year);
         }
         if ($request->filled('age_min') || $request->filled('age_max')) {
+            // PostgreSQL-compatible age calculation
             $base->whereBetween(
-                \DB::raw('TIMESTAMPDIFF(YEAR, children.date_of_birth, CURDATE())'),
+                \DB::raw("DATE_PART('year', AGE(children.date_of_birth))"),
                 [$request->age_min ?? 0, $request->age_max ?? 100]
             );
         }
@@ -64,53 +65,56 @@ class ReportController extends Controller
         $all = $base->get();
 
         // Current vs previous year counts (using all approved, no age/gender filter on these)
-        $currentCount  = Enrollment::where('status', 'approved')
+        $currentCount = Enrollment::where('status', 'approved')
             ->where('school_year', $currentYear)->count();
         $previousCount = Enrollment::where('status', 'approved')
             ->where('school_year', $previousYear)->count();
 
-        $byGender    = $all->groupBy('gender')->map->count();
+        $byGender = $all->groupBy('gender')->map->count();
         $byDiagnosis = $all->groupBy('diagnosis')->map->count();
-        $byYear      = $all->groupBy('school_year')->map->count();
+        $byYear = $all->groupBy('school_year')->map->count();
 
         // Age distribution
         $ageGroups = $all->groupBy(function ($child) {
             $age = Carbon::parse($child->date_of_birth)->age;
-            if ($age <= 7)  return '5-7';
-            if ($age <= 10) return '8-10';
-            if ($age <= 13) return '11-13';
+            if ($age <= 7)
+                return '5-7';
+            if ($age <= 10)
+                return '8-10';
+            if ($age <= 13)
+                return '11-13';
             return '14-16';
         })->map->count();
 
-        // Save report record
+        // Save report record — format must be one of: pdf, excel, csv
         $report = Report::create([
-            'report_type'  => 'enrollment',
-            'title'        => 'Enrollment Report — ' . Carbon::now()->format('F Y'),
-            'filters'      => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
-            'format'       => 'json',
-            'status'       => 'generated',
+            'report_type' => 'enrollment',
+            'title' => 'Enrollment Report — ' . Carbon::now()->format('F Y'),
+            'filters' => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
+            'format' => 'pdf',   // logical default; actual data is returned as JSON in the response
+            'status' => 'generated',
             'generated_by' => $request->user()->id,
             'generated_at' => Carbon::now(),
         ]);
 
         return response()->json([
-            'report_id'        => $report->id,
-            'generated_at'     => $report->generated_at,
-            'filters_applied'  => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
-            'total_enrolled'   => $all->count(),
-            'current_year'     => ['year' => $currentYear, 'count' => $currentCount],
-            'previous_year'    => ['year' => $previousYear, 'count' => $previousCount],
-            'by_gender'        => $byGender,
-            'by_diagnosis'     => $byDiagnosis,
-            'by_school_year'   => $byYear,
-            'by_age_group'     => $ageGroups,
-            'children'         => $all->map(fn ($c) => [
-                'id'            => $c->id,
-                'name'          => trim("{$c->first_name} {$c->middle_name} {$c->last_name}"),
-                'age'           => Carbon::parse($c->date_of_birth)->age,
-                'gender'        => $c->gender,
-                'diagnosis'     => $c->diagnosis,
-                'school_year'   => $c->school_year,
+            'report_id' => $report->id,
+            'generated_at' => $report->generated_at,
+            'filters_applied' => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
+            'total_enrolled' => $all->count(),
+            'current_year' => ['year' => $currentYear, 'count' => $currentCount],
+            'previous_year' => ['year' => $previousYear, 'count' => $previousCount],
+            'by_gender' => $byGender,
+            'by_diagnosis' => $byDiagnosis,
+            'by_school_year' => $byYear,
+            'by_age_group' => $ageGroups,
+            'children' => $all->map(fn($c) => [
+                'id' => $c->id,
+                'name' => trim("{$c->first_name} {$c->middle_name} {$c->last_name}"),
+                'age' => Carbon::parse($c->date_of_birth)->age,
+                'gender' => $c->gender,
+                'diagnosis' => $c->diagnosis,
+                'school_year' => $c->school_year,
                 'enrolled_date' => $c->enrollment_date,
             ]),
         ]);
@@ -123,7 +127,7 @@ class ReportController extends Controller
     public function attendanceReport(Request $request): JsonResponse
     {
         $request->validate([
-            'month'    => 'required|date_format:Y-m',
+            'month' => 'required|date_format:Y-m',
             'child_id' => 'nullable|exists:children,id',
         ]);
 
@@ -146,24 +150,24 @@ class ReportController extends Controller
             $total = $group->count();
             $present = $group->where('status', 'present')->count();
             return [
-                'child_id'        => $child->id,
-                'child_name'      => trim("{$child->first_name} {$child->last_name}"),
-                'gender'          => $child->gender,
-                'diagnosis'       => $child->diagnosis,
-                'present'         => $present,
-                'absent'          => $group->where('status', 'absent')->count(),
-                'late'            => $group->where('status', 'late')->count(),
-                'excused'         => $group->where('status', 'excused')->count(),
-                'total_days'      => $total,
+                'child_id' => $child->id,
+                'child_name' => trim("{$child->first_name} {$child->last_name}"),
+                'gender' => $child->gender,
+                'diagnosis' => $child->diagnosis,
+                'present' => $present,
+                'absent' => $group->where('status', 'absent')->count(),
+                'late' => $group->where('status', 'late')->count(),
+                'excused' => $group->where('status', 'excused')->count(),
+                'total_days' => $total,
                 'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 1) . '%' : '0%',
             ];
         })->values();
 
         return response()->json([
-            'month'           => $request->month,
-            'total_children'  => $summary->count(),
-            'avg_attendance'  => $summary->avg(fn ($s) => (float) rtrim($s['attendance_rate'], '%')) . '%',
-            'summary'         => $summary,
+            'month' => $request->month,
+            'total_children' => $summary->count(),
+            'avg_attendance' => $summary->avg(fn($s) => (float) rtrim($s['attendance_rate'], '%')) . '%',
+            'summary' => $summary,
         ]);
     }
 

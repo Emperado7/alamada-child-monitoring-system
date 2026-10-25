@@ -2,10 +2,10 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -14,13 +14,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'staff', 'parent'])->default('parent');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            // PostgreSQL-compatible: string + CHECK constraint instead of ENUM
+            $table->string('role')->default('parent');
+            $table->string('status')->default('active');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
+
+        // Enforce allowed values via CHECK constraints
+        DB::statement("ALTER TABLE users ADD CONSTRAINT chk_users_role   CHECK (role   IN ('admin','staff','parent'))");
+        DB::statement("ALTER TABLE users ADD CONSTRAINT chk_users_status CHECK (status IN ('active','inactive'))");
     }
 
     public function down(): void

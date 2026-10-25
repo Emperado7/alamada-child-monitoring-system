@@ -17,7 +17,7 @@ class AttendanceController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $user  = $request->user();
+        $user = $request->user();
         $query = Attendance::with(['child', 'recorder:id,name'])
             ->join('children', 'attendances.child_id', '=', 'children.id')
             ->select('attendances.*');
@@ -37,15 +37,15 @@ class AttendanceController extends Controller
         if ($request->filled('month')) {
             // Expects YYYY-MM
             $query->whereYear('attendances.attendance_date', substr($request->month, 0, 4))
-                  ->whereMonth('attendances.attendance_date', substr($request->month, 5, 2));
+                ->whereMonth('attendances.attendance_date', substr($request->month, 5, 2));
         }
         if ($request->filled('status')) {
             $query->where('attendances.status', $request->status);
         }
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('children.first_name', 'like', "%{$request->search}%")
-                  ->orWhere('children.last_name', 'like', "%{$request->search}%");
+                $q->where('children.first_name', 'ilike', "%{$request->search}%")
+                    ->orWhere('children.last_name', 'ilike', "%{$request->search}%");
             });
         }
 
@@ -61,10 +61,10 @@ class AttendanceController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'child_id'        => 'required|exists:children,id',
+            'child_id' => 'required|exists:children,id',
             'attendance_date' => 'required|date',
-            'status'          => 'required|in:present,absent,late,excused',
-            'remarks'         => 'nullable|string',
+            'status' => 'required|in:present,absent,excused',
+            'remarks' => 'nullable|string',
         ]);
 
         $data['recorded_by'] = $request->user()->id;
@@ -75,7 +75,7 @@ class AttendanceController extends Controller
         );
 
         return response()->json([
-            'message'    => 'Attendance recorded successfully.',
+            'message' => 'Attendance recorded successfully.',
             'attendance' => $attendance->load('child'),
         ], 201);
     }
@@ -88,23 +88,23 @@ class AttendanceController extends Controller
     public function bulkStore(Request $request): JsonResponse
     {
         $request->validate([
-            'date'              => 'required|date',
-            'records'           => 'required|array|min:1',
+            'date' => 'required|date',
+            'records' => 'required|array|min:1',
             'records.*.child_id' => 'required|exists:children,id',
-            'records.*.status'   => 'required|in:present,absent,late,excused',
-            'records.*.remarks'  => 'nullable|string',
+            'records.*.status' => 'required|in:present,absent,excused',
+            'records.*.remarks' => 'nullable|string',
         ]);
 
-        $date      = $request->date;
-        $staffId   = $request->user()->id;
-        $saved     = [];
+        $date = $request->date;
+        $staffId = $request->user()->id;
+        $saved = [];
 
         foreach ($request->records as $record) {
             $saved[] = Attendance::updateOrCreate(
                 ['child_id' => $record['child_id'], 'attendance_date' => $date],
                 [
-                    'status'      => $record['status'],
-                    'remarks'     => $record['remarks'] ?? null,
+                    'status' => $record['status'],
+                    'remarks' => $record['remarks'] ?? null,
                     'recorded_by' => $staffId,
                 ]
             );
@@ -130,14 +130,14 @@ class AttendanceController extends Controller
     public function update(Request $request, Attendance $attendance): JsonResponse
     {
         $data = $request->validate([
-            'status'  => 'sometimes|in:present,absent,late,excused',
+            'status' => 'sometimes|in:present,absent,excused',
             'remarks' => 'nullable|string',
         ]);
 
         $attendance->update($data);
 
         return response()->json([
-            'message'    => 'Attendance updated successfully.',
+            'message' => 'Attendance updated successfully.',
             'attendance' => $attendance->fresh()->load(['child', 'recorder:id,name']),
         ]);
     }
@@ -161,7 +161,7 @@ class AttendanceController extends Controller
 
         [$year, $month] = explode('-', $request->month);
 
-        $user  = $request->user();
+        $user = $request->user();
         $query = Attendance::with('child:id,first_name,last_name')
             ->whereYear('attendance_date', $year)
             ->whereMonth('attendance_date', $month)
@@ -179,12 +179,12 @@ class AttendanceController extends Controller
         $summary = $records->groupBy('child_id')->map(function ($group) {
             $child = $group->first()->child;
             return [
-                'child_id'   => $child->id,
+                'child_id' => $child->id,
                 'child_name' => $child->full_name,
-                'present'    => $group->where('status', 'present')->count(),
-                'absent'     => $group->where('status', 'absent')->count(),
-                'late'       => $group->where('status', 'late')->count(),
-                'excused'    => $group->where('status', 'excused')->count(),
+                'present' => $group->where('status', 'present')->count(),
+                'absent' => $group->where('status', 'absent')->count(),
+                'late' => $group->where('status', 'late')->count(),
+                'excused' => $group->where('status', 'excused')->count(),
                 'total_days' => $group->count(),
             ];
         })->values();

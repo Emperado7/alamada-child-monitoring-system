@@ -17,7 +17,7 @@ class EnrollmentController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $user  = $request->user();
+        $user = $request->user();
         $query = Enrollment::with(['child', 'approver:id,name'])
             ->join('children', 'enrollments.child_id', '=', 'children.id')
             ->select('enrollments.*');
@@ -40,8 +40,8 @@ class EnrollmentController extends Controller
         }
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('children.first_name', 'like', "%{$request->search}%")
-                  ->orWhere('children.last_name', 'like', "%{$request->search}%");
+                $q->where('children.first_name', 'ilike', "%{$request->search}%")
+                    ->orWhere('children.last_name', 'ilike', "%{$request->search}%");
             });
         }
 
@@ -57,10 +57,10 @@ class EnrollmentController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'child_id'        => 'required|exists:children,id',
+            'child_id' => 'required|exists:children,id',
             'enrollment_date' => 'required|date',
-            'school_year'     => 'required|digits:4|integer|min:2000|max:2099',
-            'remarks'         => 'nullable|string',
+            'school_year' => 'required|digits:4|integer|min:2000|max:2099',
+            'remarks' => 'nullable|string',
         ]);
 
         // Check if child already has an active enrollment for this year
@@ -78,7 +78,7 @@ class EnrollmentController extends Controller
         $enrollment = Enrollment::create($data);
 
         return response()->json([
-            'message'    => 'Enrollment submitted successfully. Awaiting admin approval.',
+            'message' => 'Enrollment submitted successfully. Awaiting admin approval.',
             'enrollment' => $enrollment->load('child'),
         ], 201);
     }
@@ -100,8 +100,8 @@ class EnrollmentController extends Controller
     {
         $data = $request->validate([
             'enrollment_date' => 'sometimes|date',
-            'school_year'     => 'sometimes|digits:4|integer|min:2000|max:2099',
-            'remarks'         => 'nullable|string',
+            'school_year' => 'sometimes|digits:4|integer|min:2000|max:2099',
+            'remarks' => 'nullable|string',
         ]);
 
         if ($enrollment->status !== 'pending') {
@@ -111,7 +111,7 @@ class EnrollmentController extends Controller
         $enrollment->update($data);
 
         return response()->json([
-            'message'    => 'Enrollment updated successfully.',
+            'message' => 'Enrollment updated successfully.',
             'enrollment' => $enrollment->fresh()->load('child'),
         ]);
     }
@@ -126,7 +126,7 @@ class EnrollmentController extends Controller
         }
 
         $enrollment->update([
-            'status'      => 'approved',
+            'status' => 'approved',
             'approved_by' => $request->user()->id,
             'approved_at' => Carbon::now(),
         ]);
@@ -135,7 +135,7 @@ class EnrollmentController extends Controller
         $enrollment->child->update(['status' => 'active']);
 
         return response()->json([
-            'message'    => 'Enrollment approved successfully.',
+            'message' => 'Enrollment approved successfully.',
             'enrollment' => $enrollment->fresh()->load(['child', 'approver:id,name']),
         ]);
     }
@@ -152,14 +152,14 @@ class EnrollmentController extends Controller
         }
 
         $enrollment->update([
-            'status'      => 'rejected',
+            'status' => 'rejected',
             'approved_by' => $request->user()->id,
             'approved_at' => Carbon::now(),
-            'remarks'     => $request->remarks ?? $enrollment->remarks,
+            'remarks' => $request->remarks ?? $enrollment->remarks,
         ]);
 
         return response()->json([
-            'message'    => 'Enrollment rejected.',
+            'message' => 'Enrollment rejected.',
             'enrollment' => $enrollment->fresh()->load(['child', 'approver:id,name']),
         ]);
     }
