@@ -1,0 +1,54 @@
+services:
+  # ── Laravel Backend ────────────────────────────────────────────────────────
+  - type: web
+    name: alamada-cms-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile   # relative to repo root (Render root = backend/)
+    plan: free
+
+    # Health check — Render uses this to confirm the service is up
+    healthCheckPath: /api/health
+
+    # Environment variables
+    # Secrets (DB_HOST, DB_PASSWORD, APP_KEY, etc.) must be added in the
+    # Render dashboard → Environment → Add from .env or individually.
+    # The values below are safe non-secret defaults.
+    envVars:
+      - key: APP_NAME
+        value: "Alamada LGU Child Monitoring System"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_SSLMODE
+        value: require
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_LEVEL
+        value: error
+      - key: BROADCAST_DRIVER
+        value: log
+      - key: CACHE_DRIVER
+        value: file
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: SESSION_LIFETIME
+        value: "120"
+      - key: SESSION_DOMAIN
+        value: ".onrender.com"
+      # Secrets — set these in Render dashboard, NOT here
+      # APP_KEY        → base64:...
+      # APP_URL        → https://your-app.onrender.com
+      # DB_HOST        → from Supabase project settings
+      # DB_DATABASE    → from Supabase project settings
+      # DB_USERNAME    → from Supabase project settings
+      # DB_PASSWORD    → from Supabase project settings
+      # SANCTUM_STATEFUL_DOMAINS → your-app.onrender.com

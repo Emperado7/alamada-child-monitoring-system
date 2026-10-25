@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: Deploy to Render
 
 on:
   push:
@@ -8,59 +8,21 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Railway
+    name: Deploy to Render
     runs-on: ubuntu-latest
-
-    env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
     steps:
       # ── 1. Checkout ───────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Install Railway CLI ────────────────────────────────────────────
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      # ── 3. Sync environment variables to the Railway service ─────────────
+      # ── 2. Trigger Render deploy via deploy hook ──────────────────────────
       #
-      #  These are the static variables your Laravel app needs.
-      #  DATABASE_URL, PGHOST, PGPORT, etc. are injected automatically by
-      #  Railway when the PostgreSQL plugin is attached — DO NOT set them here.
+      #  Required GitHub secret:
+      #    RENDER_DEPLOY_HOOK_URL  → copy from Render dashboard:
+      #                              Settings → Deploy Hook → copy URL
       #
-      #  Secrets that must be added to GitHub → Settings → Secrets & variables
-      #  → Actions (repository secrets) BEFORE the first deploy:
-      #
-      #    RAILWAY_TOKEN          → Railway account token
-      #    RAILWAY_SERVICE_NAME   → name of your Railway service (e.g. "backend")
-      #    APP_KEY                → output of: php artisan key:generate --show
-      #    SANCTUM_DOMAIN         → your Railway public domain (e.g. "my-app.up.railway.app")
-      #
-      - name: Set environment variables on Railway
+      - name: Trigger Render deploy
         run: |
-          railway variables set \
-            APP_NAME="Alamada LGU Child Monitoring System" \
-            APP_ENV=production \
-            APP_DEBUG=false \
-            APP_URL="https://${{ secrets.SANCTUM_DOMAIN }}" \
-            APP_KEY="${{ secrets.APP_KEY }}" \
-            DB_CONNECTION=pgsql \
-            DB_SSLMODE=require \
-            LOG_CHANNEL=stack \
-            LOG_LEVEL=error \
-            BROADCAST_DRIVER=log \
-            CACHE_DRIVER=file \
-            FILESYSTEM_DISK=public \
-            QUEUE_CONNECTION=sync \
-            SESSION_DRIVER=file \
-            SESSION_LIFETIME=120 \
-            SANCTUM_STATEFUL_DOMAINS="${{ secrets.SANCTUM_DOMAIN }}" \
-            SESSION_DOMAIN=".railway.app" \
-            --service "${{ secrets.RAILWAY_SERVICE_NAME }}"
-        working-directory: ./backend
-
-      # ── 4. Deploy the backend to Railway ─────────────────────────────────
-      - name: Deploy
-        run: railway up --detach --service "${{ secrets.RAILWAY_SERVICE_NAME }}"
-        working-directory: ./backend
+          curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
+            -w "\nHTTP status: %{http_code}\n"

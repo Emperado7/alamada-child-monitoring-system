@@ -20,16 +20,16 @@ COPY . .
 # Install PHP dependencies (production, optimised autoloader)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set storage / cache permissions
-RUN chmod -R 775 storage bootstrap/cache
+# Set storage / bootstrap permissions
+RUN mkdir -p storage/logs storage/framework/cache storage/framework/sessions \
+             storage/framework/views bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
 
-# Expose Railway's expected port
+# Render injects $PORT at runtime — expose the default as a hint
 EXPOSE 10000
 
-# Run migrations + seed then start the built-in server
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan migrate --force && \
-    php artisan db:seed --force && \
-    php artisan storage:link --force && \
-    php artisan serve --host=0.0.0.0 --port=10000
+# start.sh is the entrypoint — see below
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
