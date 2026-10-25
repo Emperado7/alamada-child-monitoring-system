@@ -1,6 +1,6 @@
 FROM php:8.2-cli-alpine
 
-# Minimal deps — avoid heavy compilation on Render free tier
+# Use libpq-dev (correct package for Alpine, not postgresql-dev which is the full server)
 RUN apk add --no-cache \
         git \
         curl \
@@ -10,7 +10,6 @@ RUN apk add --no-cache \
         libzip-dev \
         oniguruma-dev \
         libxml2-dev \
-    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install \
         pdo \
         pdo_pgsql \
