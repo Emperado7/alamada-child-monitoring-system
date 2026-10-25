@@ -12,3 +12,6 @@ bootstrap/cache/*
 *.log
 local host.txt
 setup.bat
+Procfile
+nixpacks.toml
+start.sh
