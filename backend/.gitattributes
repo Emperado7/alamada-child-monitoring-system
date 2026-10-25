@@ -1,0 +1,14 @@
+# Force LF line endings for shell scripts (critical for Docker on Linux)
+*.sh text eol=lf
+
+# Force LF for all text files in the repo
+* text=auto eol=lf
+
+# Binary files — no line ending conversion
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.zip binary

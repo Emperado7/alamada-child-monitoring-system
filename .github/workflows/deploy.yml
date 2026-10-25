@@ -52,5 +52,5 @@ jobs:
       - name: Trigger deploy
         run: |
           curl -fsSL -X POST \
-            "https://api.render.com/deploy/srv-dbf26pm7bikc73btqco0?key=WkSksUDpRDg" \
+            "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
             -w "\nHTTP status: %{http_code}\n"
