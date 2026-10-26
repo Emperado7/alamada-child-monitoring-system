@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,42 +17,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Set environment variables on Render via API ────────────────────
-      - name: Set Render environment variables
+      # ── 2. Trigger Render deploy via Render API ────────────────────────────
+      - name: Trigger Render deploy
         run: |
-          curl -sf -X PATCH \
-            "https://api.render.com/v1/services/srv-dbevq4on74is73b2cnqg/env-vars" \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+          RESPONSE=$(curl -s -X POST \
+            "https://api.render.com/v1/services/srv-dbevq4on74is73b2cnqg/deploys" \
+            -H "Authorization: Bearer rnd_fmSAk65nhK8lllLcJPjmvrTkDtc9" \
             -H "Content-Type: application/json" \
-            -d '[
-              {"key":"APP_NAME",  "value":"Alamada LGU Child Monitoring System"},
-              {"key":"APP_ENV",   "value":"production"},
-              {"key":"APP_DEBUG", "value":"false"},
-              {"key":"APP_KEY",   "value":"base64:Pfs3OjH5zbFU+1pdJNkqhSu9eHHlWaaBZGYD9n6trOA="},
-              {"key":"APP_URL",   "value":"https://alamada-child-monitoring-system.onrender.com"},
-              {"key":"DB_CONNECTION","value":"pgsql"},
-              {"key":"DB_HOST",   "value":"aws-0-ap-southeast-1.pooler.supabase.com"},
-              {"key":"DB_PORT",   "value":"5432"},
-              {"key":"DB_DATABASE","value":"postgres"},
-              {"key":"DB_USERNAME","value":"postgres.uladgqimfubazxtcetjb"},
-              {"key":"DB_PASSWORD","value":"${{ secrets.DB_PASSWORD }}"},
-              {"key":"DB_SSLMODE","value":"require"},
-              {"key":"LOG_CHANNEL","value":"errorlog"},
-              {"key":"LOG_LEVEL", "value":"error"},
-              {"key":"BROADCAST_DRIVER","value":"log"},
-              {"key":"CACHE_DRIVER","value":"file"},
-              {"key":"FILESYSTEM_DISK","value":"public"},
-              {"key":"QUEUE_CONNECTION","value":"sync"},
-              {"key":"SESSION_DRIVER","value":"cookie"},
-              {"key":"SESSION_LIFETIME","value":"120"},
-              {"key":"SESSION_SECURE_COOKIE","value":"true"},
-              {"key":"SESSION_DOMAIN","value":"alamada-child-monitoring-system.onrender.com"},
-              {"key":"SANCTUM_STATEFUL_DOMAINS","value":"alamada-child-monitoring-system.onrender.com"}
-            ]'
-
-      # ── 3. Trigger Render deploy ──────────────────────────────────────────
-      - name: Trigger deploy
-        run: |
-          curl -fsSL -X POST \
-            "${{ secrets.RENDER_DEPLOY_HOOK_URL }}" \
-            -w "\nHTTP status: %{http_code}\n"
+            -H "Accept: application/json" \
+            -d '{"clearCache":"do_not_clear"}')
+          echo "Response: $RESPONSE"
+          DEPLOY_ID=$(echo "$RESPONSE" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+          echo "Deploy ID: $DEPLOY_ID"
+          if [ -z "$DEPLOY_ID" ]; then
+            echo "❌ Failed to trigger deploy"
+            exit 1
+          fi
+          echo "✅ Deploy triggered: $DEPLOY_ID"
+          echo "🔗 Monitor at: https://dashboard.render.com/web/srv-dbevq4on74is73b2cnqg"
