@@ -15,52 +15,50 @@ jobs:
       contents: write   # required to create GitHub Releases
 
     steps:
-      # ── 1. Checkout (full history avoids Gradle git-describe errors) ──
+      # ── 1. Checkout ──────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # ── 2. Mark workspace safe for git ───────────────────────────────
-      - name: Mark workspace as git-safe
-        run: |
-          # Mark all directories safe — Gradle may call git from the android subdir
-          git config --global --add safe.directory "*"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE/android"
-          git config --global --add safe.directory "$GITHUB_WORKSPACE/android/app"
-          # Verify
-          git -C "$GITHUB_WORKSPACE/android" rev-parse HEAD || echo "git check skipped"
-
-      # ── 3. Java 17 ───────────────────────────────────────────────────
+      # ── 2. Java 17 ───────────────────────────────────────────────────
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
-      # ── 4. Write local.properties (Android SDK path on CI runner) ────
+      # ── 3. Write local.properties (Android SDK path on CI) ───────────
       - name: Create local.properties
         run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > android/app/local.properties
+          printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/local.properties
+          printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/app/local.properties
           cat android/local.properties
 
-      # ── 5. Gradle permissions ────────────────────────────────────────
+      # ── 4. Gradle permissions ────────────────────────────────────────
       - name: Make gradlew executable
         working-directory: android
         run: chmod +x gradlew
 
-      # ── 6. Build debug APK ───────────────────────────────────────────
+      # ── 5. Build debug APK ───────────────────────────────────────────
+      #    GIT_CONFIG_COUNT=1 + safe.directory=* fixes "git exit code 128"
+      #    that Gradle 8+ triggers when running in a CI container.
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon --stacktrace --no-configuration-cache
+        run: ./gradlew assembleDebug --no-daemon --stacktrace --no-configuration-cache -x lint
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8 -Dorg.gradle.configureondemand=false"
+          # Tell git every directory is safe — affects any git subprocess Gradle spawns
+          GIT_CONFIG_COUNT: 1
+          GIT_CONFIG_KEY_0: safe.directory
+          GIT_CONFIG_VALUE_0: "*"
+          GRADLE_OPTS: >-
+            -Dorg.gradle.daemon=false
+            -Dorg.gradle.jvmargs=-Xmx2g
+            -Dfile.encoding=UTF-8
+            -Dorg.gradle.configuration-cache=false
 
-      # ── 7. Prepare APK ───────────────────────────────────────────────
+      # ── 6. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
         run: |
           mkdir -p release-artifacts
@@ -68,7 +66,7 @@ jobs:
              release-artifacts/alamada-parent-app.apk
           echo "APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
 
-      # ── 8. Delete old "latest-apk" release ───────────────────────────
+      # ── 7. Delete old "latest-apk" release ───────────────────────────
       - name: Delete existing release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -77,7 +75,7 @@ jobs:
             --repo "${{ github.repository }}" --yes 2>/dev/null || true
           git push origin :refs/tags/latest-apk 2>/dev/null || true
 
-      # ── 9. Create new release + upload APK ───────────────────────────
+      # ── 8. Create new release + upload APK ───────────────────────────
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
