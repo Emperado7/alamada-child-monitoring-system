@@ -24,8 +24,13 @@ jobs:
       # ── 2. Mark workspace safe for git ───────────────────────────────
       - name: Mark workspace as git-safe
         run: |
+          # Mark all directories safe — Gradle may call git from the android subdir
+          git config --global --add safe.directory "*"
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git config --global --add safe.directory "$GITHUB_WORKSPACE/android"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE/android/app"
+          # Verify
+          git -C "$GITHUB_WORKSPACE/android" rev-parse HEAD || echo "git check skipped"
 
       # ── 3. Java 17 ───────────────────────────────────────────────────
       - name: Set up JDK 17
@@ -50,10 +55,10 @@ jobs:
       # ── 6. Build debug APK ───────────────────────────────────────────
       - name: Build debug APK
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: ./gradlew assembleDebug --no-daemon --stacktrace --no-configuration-cache
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8"
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8 -Dorg.gradle.configureondemand=false"
 
       # ── 7. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
