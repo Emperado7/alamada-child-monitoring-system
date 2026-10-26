@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Render
+    name: Deploy backend to Render
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: Set Render environment variables
         run: |
           curl -sf -X PATCH \
-            "https://api.render.com/v1/services/srv-dbf26pm7bikc73btqco0/env-vars" \
+            "https://api.render.com/v1/services/srv-dbevq4on74is73b2cnqg/env-vars" \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '[
@@ -28,24 +28,25 @@ jobs:
               {"key":"APP_ENV",   "value":"production"},
               {"key":"APP_DEBUG", "value":"false"},
               {"key":"APP_KEY",   "value":"base64:Pfs3OjH5zbFU+1pdJNkqhSu9eHHlWaaBZGYD9n6trOA="},
-              {"key":"APP_URL",   "value":"https://alamada-cms-backend.onrender.com"},
+              {"key":"APP_URL",   "value":"https://alamada-child-monitoring-system.onrender.com"},
               {"key":"DB_CONNECTION","value":"pgsql"},
-              {"key":"DB_HOST",   "value":"db.uladgqimfubazxtcetjb.supabase.co"},
+              {"key":"DB_HOST",   "value":"aws-0-ap-southeast-1.pooler.supabase.com"},
               {"key":"DB_PORT",   "value":"5432"},
               {"key":"DB_DATABASE","value":"postgres"},
-              {"key":"DB_USERNAME","value":"postgres"},
+              {"key":"DB_USERNAME","value":"postgres.uladgqimfubazxtcetjb"},
               {"key":"DB_PASSWORD","value":"${{ secrets.DB_PASSWORD }}"},
               {"key":"DB_SSLMODE","value":"require"},
-              {"key":"LOG_CHANNEL","value":"stack"},
+              {"key":"LOG_CHANNEL","value":"errorlog"},
               {"key":"LOG_LEVEL", "value":"error"},
               {"key":"BROADCAST_DRIVER","value":"log"},
               {"key":"CACHE_DRIVER","value":"file"},
               {"key":"FILESYSTEM_DISK","value":"public"},
               {"key":"QUEUE_CONNECTION","value":"sync"},
-              {"key":"SESSION_DRIVER","value":"file"},
+              {"key":"SESSION_DRIVER","value":"cookie"},
               {"key":"SESSION_LIFETIME","value":"120"},
-              {"key":"SANCTUM_STATEFUL_DOMAINS","value":"alamada-cms-backend.onrender.com"},
-              {"key":"SESSION_DOMAIN","value":".onrender.com"}
+              {"key":"SESSION_SECURE_COOKIE","value":"true"},
+              {"key":"SESSION_DOMAIN","value":"alamada-child-monitoring-system.onrender.com"},
+              {"key":"SANCTUM_STATEFUL_DOMAINS","value":"alamada-child-monitoring-system.onrender.com"}
             ]'
 
       # ── 3. Trigger Render deploy ──────────────────────────────────────────

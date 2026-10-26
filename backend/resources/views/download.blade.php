@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             min-height: 100vh;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
@@ -17,67 +16,32 @@
             padding: max(20px, env(safe-area-inset-top)) 20px
                      max(20px, env(safe-area-inset-bottom));
         }
+        .page-wrap { max-width: 480px; width: 100%; margin: 0 auto; }
 
-        .page-wrap {
-            max-width: 480px;
-            width: 100%;
-            margin: 0 auto;
-        }
+        .logo-area { text-align: center; margin: 10px 0 16px; }
+        .logo-area img { width: 220px; max-width: 90%;
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,.12)); }
 
-        /* ── Logo ── */
-        .logo-area {
-            text-align: center;
-            margin-bottom: 16px;
-            margin-top: 10px;
-        }
-        .logo-area img {
-            width: 220px; max-width: 90%;
-            filter: drop-shadow(0 4px 14px rgba(0,0,0,.12));
-        }
-
-        /* ── Card ── */
         .card-main {
-            background: #fff;
-            border-radius: 22px;
-            padding: 28px 26px 22px;
-            box-shadow: 0 8px 40px rgba(46,125,50,.13);
-            margin-bottom: 20px;
+            background: #fff; border-radius: 22px; padding: 28px 26px 22px;
+            box-shadow: 0 8px 40px rgba(46,125,50,.13); margin-bottom: 20px;
         }
-
         .app-icon {
-            width: 72px; height: 72px;
-            border-radius: 18px;
+            width: 72px; height: 72px; border-radius: 18px;
             background: linear-gradient(135deg, #388e3c, #2e7d32);
             display: flex; align-items: center; justify-content: center;
-            font-size: 38px;
-            margin: 0 auto 14px;
+            font-size: 38px; margin: 0 auto 14px;
             box-shadow: 0 4px 16px rgba(46,125,50,.30);
         }
+        .app-title { font-size: 1.25rem; font-weight: 800; color: #212121; text-align: center; margin-bottom: 4px; }
+        .app-sub   { font-size: .85rem; color: #9e9e9e; text-align: center; margin-bottom: 20px; }
 
-        .app-title {
-            font-size: 1.25rem; font-weight: 800;
-            color: #212121; text-align: center;
-            margin-bottom: 4px;
-        }
-        .app-sub {
-            font-size: .85rem; color: #9e9e9e;
-            text-align: center; margin-bottom: 20px;
-        }
-        .meta-row {
-            display: flex; justify-content: center; gap: 18px;
-            margin-bottom: 20px;
-        }
-        .meta-item {
-            text-align: center;
-        }
-        .meta-item .val {
-            font-size: .95rem; font-weight: 700; color: #2e7d32;
-        }
-        .meta-item .lbl {
-            font-size: .72rem; color: #9e9e9e;
-        }
+        .meta-row { display: flex; justify-content: center; gap: 18px; margin-bottom: 20px; }
+        .meta-item { text-align: center; }
+        .meta-item .val { font-size: .95rem; font-weight: 700; color: #2e7d32; }
+        .meta-item .lbl { font-size: .72rem; color: #9e9e9e; }
 
-        /* ── Download button ── */
+        /* Download button states */
         .btn-download {
             display: flex; align-items: center; justify-content: center; gap: 10px;
             width: 100%; padding: 15px;
@@ -89,37 +53,38 @@
             transition: opacity .2s, transform .1s;
             margin-bottom: 10px;
         }
-        .btn-download:hover { opacity: .92; color: #fff; }
+        .btn-download:hover  { opacity: .92; color: #fff; }
         .btn-download:active { transform: scale(.99); }
         .btn-download .size-badge {
-            background: rgba(255,255,255,.22);
-            border-radius: 6px; padding: 2px 8px;
-            font-size: .75rem; font-weight: 600;
+            background: rgba(255,255,255,.22); border-radius: 6px;
+            padding: 2px 8px; font-size: .75rem; font-weight: 600;
         }
-
-        /* ── Unavailable state ── */
-        .btn-unavailable {
+        .btn-loading, .btn-unavailable {
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            width: 100%; padding: 15px;
-            background: #e0e0e0;
-            color: #9e9e9e; border: none; border-radius: 14px;
-            font-size: 1rem; font-weight: 700;
-            margin-bottom: 10px;
-            cursor: not-allowed;
+            width: 100%; padding: 15px; border: none; border-radius: 14px;
+            font-size: 1rem; font-weight: 700; margin-bottom: 10px;
         }
+        .btn-loading     { background: #e8f5e9; color: #2e7d32; }
+        .btn-unavailable { background: #e0e0e0; color: #9e9e9e; cursor: not-allowed; }
 
-        /* ── Steps ── */
-        .steps-title {
-            font-size: .95rem; font-weight: 700; color: #2e7d32;
-            margin-bottom: 12px; margin-top: 6px;
+        /* Build status pill */
+        .build-status {
+            text-align: center; font-size: .78rem; color: #9e9e9e;
+            margin-bottom: 14px;
         }
-        .step {
-            display: flex; align-items: flex-start; gap: 12px;
-            margin-bottom: 12px;
-        }
+        .build-status .dot { display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; margin-right: 5px; }
+        .dot-green  { background: #43a047; }
+        .dot-yellow { background: #fb8c00; }
+        .dot-gray   { background: #bdbdbd; }
+
+        .divider { border: none; border-top: 1px solid #f0f0f0; margin: 16px 0; }
+
+        /* Steps */
+        .steps-title { font-size: .95rem; font-weight: 700; color: #2e7d32; margin-bottom: 12px; margin-top: 6px; }
+        .step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
         .step-num {
-            min-width: 28px; height: 28px;
-            border-radius: 50%;
+            min-width: 28px; height: 28px; border-radius: 50%;
             background: #e8f5e9; color: #2e7d32;
             font-size: .8rem; font-weight: 800;
             display: flex; align-items: center; justify-content: center;
@@ -128,45 +93,18 @@
         .step-text { font-size: .87rem; color: #424242; line-height: 1.5; }
         .step-text b { color: #212121; }
 
-        /* ── QR section ── */
+        /* QR */
         .qr-card {
-            background: #fff;
-            border-radius: 22px;
-            padding: 22px;
+            background: #fff; border-radius: 22px; padding: 22px;
             box-shadow: 0 8px 40px rgba(46,125,50,.10);
-            text-align: center;
-            margin-bottom: 20px;
+            text-align: center; margin-bottom: 20px;
         }
-        .qr-card p {
-            font-size: .85rem; color: #616161; margin-top: 10px; margin-bottom: 0;
-        }
-        .qr-placeholder {
-            width: 160px; height: 160px;
-            margin: 0 auto;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            background: #f9f9f9;
-            flex-direction: column; gap: 6px;
-        }
-        .qr-placeholder span { font-size: 40px; }
-        .qr-placeholder small { font-size: .72rem; color: #9e9e9e; }
+        #qr-canvas { border-radius: 10px; margin: 0 auto; display: block; }
 
-        /* ── Footer ── */
-        .footer-note {
-            text-align: center; font-size: .78rem; color: #9e9e9e;
-            padding-bottom: 10px;
-        }
+        .footer-note { text-align: center; font-size: .78rem; color: #9e9e9e; padding-bottom: 10px; }
         .footer-note a { color: #2e7d32; font-weight: 600; text-decoration: none; }
 
-        .divider {
-            border: none; border-top: 1px solid #f0f0f0;
-            margin: 16px 0;
-        }
-
-        @media (max-width: 400px) {
-            .card-main { padding: 20px 16px 18px; }
-        }
+        @media (max-width: 400px) { .card-main { padding: 20px 16px 18px; } }
     </style>
 </head>
 <body>
@@ -175,24 +113,21 @@
 
     <!-- Logo -->
     <div class="logo-area">
-        <img src="{{ asset('images/logo.png') }}"
-             alt="Alamada Learning Center"
+        <img src="{{ asset('images/logo.png') }}" alt="Alamada Learning Center"
              onerror="this.style.display='none'">
     </div>
 
     <!-- Main card -->
     <div class="card-main">
 
-        <!-- App icon -->
         <div class="app-icon">📱</div>
-
         <div class="app-title">Alamada LGU Parent App</div>
         <div class="app-sub">Mobile Monitoring System &nbsp;·&nbsp; Android</div>
 
         <!-- Meta row -->
         <div class="meta-row">
             <div class="meta-item">
-                <div class="val">v1.0</div>
+                <div class="val" id="meta-version">—</div>
                 <div class="lbl">Version</div>
             </div>
             <div class="meta-item">
@@ -200,33 +135,28 @@
                 <div class="lbl">Requires</div>
             </div>
             <div class="meta-item">
-                <div class="val">Free</div>
-                <div class="lbl">Cost</div>
+                <div class="val" id="meta-size">—</div>
+                <div class="lbl">Size</div>
             </div>
         </div>
 
-        @if(file_exists(public_path('downloads/alamada-parent-app.apk')))
-        {{-- APK is available --}}
-        <a href="{{ asset('downloads/alamada-parent-app.apk') }}"
-           class="btn-download"
-           download="alamada-parent-app.apk">
-            <i class="fas fa-download" style="font-size:1.1rem"></i>
-            Download APK
-            <span class="size-badge">Android</span>
-        </a>
-        @else
-        {{-- APK not yet uploaded --}}
-        <div class="btn-unavailable">
-            <i class="fas fa-hourglass-half"></i>
-            APK coming soon — ask your admin
+        <!-- Build status -->
+        <div class="build-status" id="build-status">
+            <span class="dot dot-yellow"></span>Checking for latest build…
         </div>
-        @endif
+
+        <!-- Download button — injected by JS -->
+        <div id="download-btn-wrap">
+            <div class="btn-loading">
+                <span class="spinner-border spinner-border-sm" style="width:.9rem;height:.9rem;border-width:.15em"></span>
+                Loading…
+            </div>
+        </div>
 
         <hr class="divider">
 
         <!-- Install steps -->
         <div class="steps-title">📋 How to install</div>
-
         <div class="step">
             <div class="step-num">1</div>
             <div class="step-text">Tap <b>Download APK</b> above and wait for it to finish.</div>
@@ -260,14 +190,10 @@
         <div style="font-size:.9rem; font-weight:700; color:#212121; margin-bottom:12px">
             📲 Scan to open this page on your phone
         </div>
-        <div class="qr-placeholder">
-            <span>📷</span>
-            <small>QR code</small>
-        </div>
-        <p>Or share this link:<br>
-            <b style="color:#2e7d32; word-break:break-all">
-                {{ url('/download') }}
-            </b>
+        <canvas id="qr-canvas" width="160" height="160"></canvas>
+        <p style="font-size:.82rem; color:#616161; margin-top:10px">
+            Or share this link:<br>
+            <b style="color:#2e7d32; word-break:break-all">{{ url('/download') }}</b>
         </p>
     </div>
 
@@ -279,6 +205,86 @@
     </div>
 
 </div><!-- /page-wrap -->
+
+{{-- QR code library (tiny, no external API needed) --}}
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<script>
+const REPO      = 'Emperado7/alamada-child-monitoring-system';
+const RELEASE   = 'latest-apk';
+const API_URL   = `https://api.github.com/repos/${REPO}/releases/tags/${RELEASE}`;
+const PAGE_URL  = '{{ url("/download") }}';
+
+// ── Fetch latest release from GitHub API ──────────────────────────────────
+async function loadRelease() {
+    const btnWrap = document.getElementById('download-btn-wrap');
+    const status  = document.getElementById('build-status');
+
+    try {
+        const res = await fetch(API_URL, {
+            headers: { 'Accept': 'application/vnd.github.v3+json' }
+        });
+
+        if (!res.ok) throw new Error('Release not found yet');
+
+        const data = await res.json();
+
+        // Find the APK asset
+        const asset = (data.assets || []).find(a =>
+            a.name.endsWith('.apk') || a.name.includes('apk')
+        );
+
+        if (!asset) throw new Error('APK not in release');
+
+        // Update meta row
+        const pubDate = new Date(asset.updated_at || data.published_at);
+        document.getElementById('meta-version').textContent = 'v1.0';
+        document.getElementById('meta-size').textContent    =
+            (asset.size / 1048576).toFixed(1) + ' MB';
+
+        // Status
+        const dateStr = pubDate.toLocaleDateString('en-PH', {
+            month: 'short', day: 'numeric', year: 'numeric'
+        });
+        status.innerHTML =
+            '<span class="dot dot-green"></span>Build ready · ' + dateStr;
+
+        // Download button
+        btnWrap.innerHTML = `
+          <a href="${asset.browser_download_url}"
+             class="btn-download"
+             download="${asset.name}">
+            <i class="fas fa-download" style="font-size:1.1rem"></i>
+            Download APK
+            <span class="size-badge">${(asset.size/1048576).toFixed(1)} MB</span>
+          </a>`;
+
+    } catch (err) {
+        // APK not built yet
+        status.innerHTML =
+            '<span class="dot dot-gray"></span>Build not available yet';
+
+        btnWrap.innerHTML = `
+          <div class="btn-unavailable">
+            <i class="fas fa-hourglass-half"></i>
+            APK is being built — check back shortly
+          </div>`;
+    }
+}
+
+// ── Generate QR code for this page ───────────────────────────────────────
+new QRCode(document.getElementById('qr-canvas'), {
+    text:           PAGE_URL,
+    width:          160,
+    height:         160,
+    colorDark:      '#2e7d32',
+    colorLight:     '#ffffff',
+    correctLevel:   QRCode.CorrectLevel.M
+});
+
+// Load on page ready
+loadRelease();
+</script>
 
 </body>
 </html>
