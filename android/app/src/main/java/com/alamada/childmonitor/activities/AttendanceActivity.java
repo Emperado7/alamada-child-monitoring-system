@@ -1,13 +1,12 @@
 package com.alamada.childmonitor.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.alamada.childmonitor.R;
@@ -19,7 +18,6 @@ import com.alamada.childmonitor.models.AttendanceSummaryResponse;
 import com.alamada.childmonitor.models.Child;
 import com.alamada.childmonitor.models.ChildListResponse;
 import com.alamada.childmonitor.network.ApiClient;
-import com.alamada.childmonitor.utils.SessionManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,10 +29,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AttendanceActivity extends AppCompatActivity {
+public class AttendanceActivity extends BaseActivity {
 
     private ActivityAttendanceBinding binding;
-    private SessionManager session;
     private AttendanceAdapter adapter;
     private final List<AttendanceRecord> records  = new ArrayList<>();
     private final List<Child>            children = new ArrayList<>();
@@ -47,26 +44,40 @@ public class AttendanceActivity extends AppCompatActivity {
         binding = ActivityAttendanceBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Attendance");
-        }
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        session = new SessionManager(this);
         selectedMonth = new SimpleDateFormat("yyyy-MM", Locale.getDefault())
             .format(Calendar.getInstance().getTime());
-
         updateMonthLabel();
 
         adapter = new AttendanceAdapter(records);
         binding.rvAttendance.setLayoutManager(new LinearLayoutManager(this));
         binding.rvAttendance.setAdapter(adapter);
 
+        binding.btnBack.setOnClickListener(v -> finish());
         binding.btnPrevMonth.setOnClickListener(v -> shiftMonth(-1));
         binding.btnNextMonth.setOnClickListener(v -> shiftMonth(+1));
 
         binding.swipeRefresh.setColorSchemeResources(R.color.primary);
         binding.swipeRefresh.setOnRefreshListener(this::loadAttendance);
+
+        // ── Bottom nav (Attendance has no dedicated tab — back goes home) ──
+        binding.tabHome.setOnClickListener(v -> {
+            startActivity(new Intent(this, DashboardActivity.class));
+            finish();
+        });
+        binding.tabChild.setOnClickListener(v -> {
+            startActivity(new Intent(this, ChildDetailActivity.class));
+            finish();
+        });
+        binding.tabNotifications.setOnClickListener(v -> {
+            startActivity(new Intent(this, NotificationsActivity.class));
+            finish();
+        });
+        binding.tabSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+            finish();
+        });
 
         loadChildren();
     }
@@ -78,6 +89,7 @@ public class AttendanceActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ChildListResponse> call,
                                        Response<ChildListResponse> response) {
+                    if (response.code() == 401) { handleUnauthorised(); return; }
                     if (response.isSuccessful() && response.body() != null
                             && response.body().data != null) {
                         children.clear();
@@ -95,24 +107,34 @@ public class AttendanceActivity extends AppCompatActivity {
 
     private void setupSpinner() {
         List<String> names = new ArrayList<>();
-        names.add("All Children");
-        for (Child c : children) names.add(c.getDisplayName());
+        // If only one child, skip "All Children" and select immediately
+        if (children.size() == 1) {
+            selectedChildId = children.get(0).id;
+            names.add(children.get(0).getDisplayName());
+        } else {
+            names.add("Select a child…");
+            for (Child c : children) names.add(c.getDisplayName());
+        }
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
             this, android.R.layout.simple_spinner_item, names);
-        spinnerAdapter.setDropDownViewResource(
-            android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerChild.setAdapter(spinnerAdapter);
 
-        binding.spinnerChild.setOnItemSelectedListener(
-            new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+        binding.spinnerChild.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
+                if (children.size() == 1) {
+                    selectedChildId = children.get(0).id;
+                } else {
                     selectedChildId = (pos == 0) ? -1 : children.get(pos - 1).id;
-                    loadAttendance();
                 }
-                @Override public void onNothingSelected(AdapterView<?> p) { }
-            });
+                loadAttendance();
+            }
+            @Override public void onNothingSelected(AdapterView<?> p) {}
+        });
+
+        if (children.size() == 1) loadAttendance();
     }
 
     private void loadAttendance() {
@@ -133,6 +155,7 @@ public class AttendanceActivity extends AppCompatActivity {
                                        Response<AttendanceResponse> response) {
                     binding.progressBar.setVisibility(View.GONE);
                     binding.swipeRefresh.setRefreshing(false);
+                    if (response.code() == 401) { handleUnauthorised(); return; }
                     if (response.isSuccessful() && response.body() != null) {
                         records.clear();
                         if (response.body().data != null)
@@ -149,13 +172,13 @@ public class AttendanceActivity extends AppCompatActivity {
                 }
             });
 
-        // Load summary stats
         ApiClient.getInstance(session.getBearerToken())
             .getAttendanceSummary(selectedMonth)
             .enqueue(new Callback<AttendanceSummaryResponse>() {
                 @Override
                 public void onResponse(Call<AttendanceSummaryResponse> call,
                                        Response<AttendanceSummaryResponse> response) {
+                    if (response.code() == 401) { handleUnauthorised(); return; }
                     if (response.isSuccessful() && response.body() != null
                             && response.body().summary != null) {
                         for (AttendanceSummaryResponse.Summary s : response.body().summary) {
@@ -171,7 +194,7 @@ public class AttendanceActivity extends AppCompatActivity {
                     }
                     binding.cardSummary.setVisibility(View.GONE);
                 }
-                @Override public void onFailure(Call<AttendanceSummaryResponse> call, Throwable t) { }
+                @Override public void onFailure(Call<AttendanceSummaryResponse> c, Throwable t) {}
             });
     }
 
@@ -184,7 +207,7 @@ public class AttendanceActivity extends AppCompatActivity {
             selectedMonth = sdf.format(cal.getTime());
             updateMonthLabel();
             loadAttendance();
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {}
     }
 
     private void updateMonthLabel() {
@@ -195,11 +218,5 @@ public class AttendanceActivity extends AppCompatActivity {
         } catch (Exception e) {
             binding.tvMonth.setText(selectedMonth);
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) { finish(); return true; }
-        return super.onOptionsItemSelected(item);
     }
 }

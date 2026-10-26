@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Solid pill background for the enrollment-status chip.
+    The fill color (#4CAF50 default) is overridden at runtime in
+    NotificationAdapter via background.setTint().
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#4CAF50"/>
+    <corners android:radius="20dp"/>
+</shape>

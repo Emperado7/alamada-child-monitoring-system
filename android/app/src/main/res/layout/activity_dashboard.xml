@@ -7,9 +7,7 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- ══════════════════════════════════════════════════════
-         SCROLLABLE CONTENT
-    ══════════════════════════════════════════════════════ -->
+    <!-- ══ SCROLLABLE CONTENT ══════════════════════════════════════ -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -21,7 +19,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- ── GREEN HEADER with School Building ──────── -->
+            <!-- GREEN HEADER -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -31,7 +29,6 @@
                 android:paddingTop="44dp"
                 android:paddingBottom="0dp">
 
-                <!-- App title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -48,88 +45,39 @@
                     android:text="Parents Mobile App"
                     android:textColor="#A5D6A7"
                     android:textSize="13sp"
-                    android:fontStyle="italic"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- School building illustration -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <!-- Simple school building SVG-like layout -->
+                    android:layout_height="130dp"
+                    android:gravity="center">
                     <RelativeLayout
                         android:layout_width="220dp"
-                        android:layout_height="130dp">
-
-                        <!-- Sky / clouds hint -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="☁  ☁"
-                            android:textSize="18sp"
-                            android:textColor="#FFFFFF"
-                            android:alpha="0.7"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="4dp"/>
-
-                        <!-- Flag pole -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🚩"
-                            android:textSize="16sp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="14dp"/>
-
-                        <!-- Building body -->
-                        <LinearLayout
-                            android:layout_width="160dp"
-                            android:layout_height="70dp"
-                            android:layout_centerHorizontal="true"
-                            android:layout_alignParentBottom="true"
-                            android:orientation="horizontal"
-                            android:background="@drawable/school_building_bg"
-                            android:gravity="center"
-                            android:padding="6dp">
-
-                            <!-- Left tree -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🌳"
-                                android:textSize="22sp"/>
-
-                            <!-- Clock -->
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="🕐"
-                                android:textSize="18sp"
-                                android:gravity="center"/>
-
-                            <!-- Right tree -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="🌳"
-                                android:textSize="22sp"/>
+                        android:layout_height="120dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="☁  ☁" android:textSize="18sp" android:textColor="#FFFFFF"
+                            android:alpha="0.7" android:layout_centerHorizontal="true" android:layout_marginTop="4dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="🚩" android:textSize="16sp"
+                            android:layout_centerHorizontal="true" android:layout_marginTop="14dp"/>
+                        <LinearLayout android:layout_width="160dp" android:layout_height="70dp"
+                            android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
+                            android:orientation="horizontal" android:background="@drawable/school_building_bg"
+                            android:gravity="center" android:padding="6dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="🌳" android:textSize="22sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                                android:layout_weight="1" android:text="🕐" android:textSize="18sp" android:gravity="center"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="🌳" android:textSize="22sp"/>
                         </LinearLayout>
-
-                        <!-- Green ground -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="12dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="#2E7D32"
-                            android:alpha="0.4"/>
+                        <View android:layout_width="match_parent" android:layout_height="12dp"
+                            android:layout_alignParentBottom="true" android:background="#2E7D32" android:alpha="0.4"/>
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- ── WHITE CONTENT AREA ─────────────────────── -->
+            <!-- WHITE CONTENT AREA -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -140,7 +88,7 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="20dp">
 
-                <!-- ── Welcome Card ────────────────────────── -->
+                <!-- Welcome Card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -148,391 +96,255 @@
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
                     app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <!-- Text -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Welcome back,"
-                                android:textSize="13sp"
-                                android:textColor="#616161"/>
-
-                            <TextView
-                                android:id="@+id/tv_welcome"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Parent!"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                android:textColor="#2E7D32"
-                                android:layout_marginBottom="6dp"/>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Welcome back," android:textSize="13sp" android:textColor="#616161"/>
+                            <TextView android:id="@+id/tv_welcome"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Parent!" android:textSize="20sp" android:textStyle="bold"
+                                android:textColor="#2E7D32" android:layout_marginBottom="6dp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:text="Stay updated with your child's\nlearning and activities."
-                                android:textSize="12sp"
-                                android:textColor="#9E9E9E"
-                                android:lineSpacingMultiplier="1.3"/>
+                                android:textSize="12sp" android:textColor="#9E9E9E" android:lineSpacingMultiplier="1.3"/>
                         </LinearLayout>
-
-                        <!-- Avatar -->
-                        <TextView
-                            android:id="@+id/tv_avatar"
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
-                            android:gravity="center"
-                            android:text="👤"
-                            android:textSize="36sp"
-                            android:background="@drawable/circle_avatar_bg"
-                            android:layout_marginStart="12dp"/>
+                        <TextView android:id="@+id/tv_avatar"
+                            android:layout_width="72dp" android:layout_height="72dp"
+                            android:gravity="center" android:text="👤" android:textSize="36sp"
+                            android:background="@drawable/circle_avatar_bg" android:layout_marginStart="12dp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- ── Quick Access Title ──────────────────── -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quick Access"
-                    android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:textColor="#212121"
-                    android:layout_marginBottom="12dp"/>
+                <!-- Quick Access title -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Quick Access" android:textSize="17sp" android:textStyle="bold"
+                    android:textColor="#212121" android:layout_marginBottom="12dp"/>
 
-                <!-- ── Child Information ───────────────────── -->
+                <!-- Card: Child Information -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_child_info"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:foreground="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <!-- Icon -->
-                        <LinearLayout
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/quick_icon_bg_green"
-                            android:gravity="center"
+                    android:clickable="true" android:focusable="true"
+                    app:cardCornerRadius="16dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <LinearLayout android:layout_width="52dp" android:layout_height="52dp"
+                            android:background="@drawable/quick_icon_bg_green" android:gravity="center"
                             android:layout_marginEnd="14dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="👦"
-                                android:textSize="24sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="👦" android:textSize="24sp"/>
                         </LinearLayout>
-
-                        <!-- Text -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:text="Child Information"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="#212121"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="View your child's attendance,\nactivities and notifications."
-                                android:textSize="12sp"
-                                android:textColor="#9E9E9E"
-                                android:lineSpacingMultiplier="1.3"
-                                android:layout_marginTop="2dp"/>
+                                android:textSize="15sp" android:textStyle="bold" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Attendance, activities\nand child profile."
+                                android:textSize="12sp" android:textColor="#9E9E9E"
+                                android:lineSpacingMultiplier="1.3" android:layout_marginTop="2dp"/>
                         </LinearLayout>
-
-                        <!-- Arrow -->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textSize="24sp"
-                            android:textColor="#2E7D32"
-                            android:textStyle="bold"
-                            android:layout_marginStart="8dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="›" android:textSize="24sp" android:textColor="#2E7D32"
+                            android:textStyle="bold" android:layout_marginStart="8dp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- ── Settings ────────────────────────────── -->
+                <!-- Card: Enrollment -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/card_settings"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/card_enrollment"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:foreground="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <LinearLayout
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:background="@drawable/quick_icon_bg_green"
-                            android:gravity="center"
+                    android:clickable="true" android:focusable="true"
+                    app:cardCornerRadius="16dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <LinearLayout android:layout_width="52dp" android:layout_height="52dp"
+                            android:background="@drawable/quick_icon_bg_green" android:gravity="center"
                             android:layout_marginEnd="14dp">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="⚙️"
-                                android:textSize="24sp"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="📋" android:textSize="24sp"/>
                         </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Settings"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="#212121"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Manage your profile\nand security settings."
-                                android:textSize="12sp"
-                                android:textColor="#9E9E9E"
-                                android:lineSpacingMultiplier="1.3"
-                                android:layout_marginTop="2dp"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Enrollment"
+                                android:textSize="15sp" android:textStyle="bold" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="View enrollment status\nand school year details."
+                                android:textSize="12sp" android:textColor="#9E9E9E"
+                                android:lineSpacingMultiplier="1.3" android:layout_marginTop="2dp"/>
                         </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textSize="24sp"
-                            android:textColor="#2E7D32"
-                            android:textStyle="bold"
-                            android:layout_marginStart="8dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="›" android:textSize="24sp" android:textColor="#2E7D32"
+                            android:textStyle="bold" android:layout_marginStart="8dp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- ── Notifications ───────────────────────── -->
+                <!-- Card: Notifications -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_notifications"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:foreground="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
-
-                        <FrameLayout
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
+                    android:clickable="true" android:focusable="true"
+                    app:cardCornerRadius="16dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <FrameLayout android:layout_width="52dp" android:layout_height="52dp"
                             android:layout_marginEnd="14dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/quick_icon_bg_green"
-                                android:gravity="center">
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="🔔"
-                                    android:textSize="24sp"/>
+                            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                                android:background="@drawable/quick_icon_bg_green" android:gravity="center">
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                    android:text="🔔" android:textSize="24sp"/>
                             </LinearLayout>
-
-                            <!-- Unread badge -->
-                            <TextView
-                                android:id="@+id/tv_notif_badge"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                            <TextView android:id="@+id/tv_notif_badge"
+                                android:layout_width="18dp" android:layout_height="18dp"
                                 android:background="@drawable/badge_red_circle"
-                                android:textColor="#FFFFFF"
-                                android:textSize="9sp"
-                                android:textStyle="bold"
-                                android:gravity="center"
-                                android:layout_gravity="top|end"
+                                android:textColor="#FFFFFF" android:textSize="9sp" android:textStyle="bold"
+                                android:gravity="center" android:layout_gravity="top|end"
                                 android:visibility="gone"/>
                         </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
                                 android:text="Notifications"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="#212121"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="View important announcements\nand updates."
-                                android:textSize="12sp"
-                                android:textColor="#9E9E9E"
-                                android:lineSpacingMultiplier="1.3"
-                                android:layout_marginTop="2dp"/>
+                                android:textSize="15sp" android:textStyle="bold" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Announcements and\nimportant updates."
+                                android:textSize="12sp" android:textColor="#9E9E9E"
+                                android:lineSpacingMultiplier="1.3" android:layout_marginTop="2dp"/>
                         </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="›"
-                            android:textSize="24sp"
-                            android:textColor="#2E7D32"
-                            android:textStyle="bold"
-                            android:layout_marginStart="8dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="›" android:textSize="24sp" android:textColor="#2E7D32"
+                            android:textStyle="bold" android:layout_marginStart="8dp"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Loading indicator -->
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="gone"
-                    android:layout_marginTop="8dp"/>
+                <!-- Card: Settings -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_settings"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:clickable="true" android:focusable="true"
+                    app:cardCornerRadius="16dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:padding="16dp" android:gravity="center_vertical">
+                        <LinearLayout android:layout_width="52dp" android:layout_height="52dp"
+                            android:background="@drawable/quick_icon_bg_green" android:gravity="center"
+                            android:layout_marginEnd="14dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="⚙️" android:textSize="24sp"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Settings"
+                                android:textSize="15sp" android:textStyle="bold" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Profile, security\nand account settings."
+                                android:textSize="12sp" android:textColor="#9E9E9E"
+                                android:lineSpacingMultiplier="1.3" android:layout_marginTop="2dp"/>
+                        </LinearLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="›" android:textSize="24sp" android:textColor="#2E7D32"
+                            android:textStyle="bold" android:layout_marginStart="8dp"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
-            <!-- end white area -->
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ══════════════════════════════════════════════════════
-         BOTTOM NAVIGATION
-    ══════════════════════════════════════════════════════ -->
+    <!-- ══ BOTTOM NAV — Home ACTIVE ════════════════════════════════ -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:elevation="8dp">
 
-        <!-- Home tab -->
-        <LinearLayout
-            android:id="@+id/tab_home"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🏠"
-                android:textSize="20sp"
-                android:gravity="center"/>
-            <TextView
-                android:id="@+id/tab_home_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Home"
-                android:textSize="11sp"
-                android:textColor="#2E7D32"
-                android:textStyle="bold"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="56dp"
+            android:orientation="horizontal">
+
+            <!-- Home — ACTIVE -->
+            <LinearLayout android:id="@+id/tab_home"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🏠" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:id="@+id/tab_home_label"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Home" android:textSize="10sp"
+                    android:textColor="@color/primary" android:textStyle="bold"/>
+            </LinearLayout>
+
+            <!-- Child -->
+            <LinearLayout android:id="@+id/tab_child"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="👦" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Child" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+
+            <!-- Notifications -->
+            <LinearLayout android:id="@+id/tab_notifications"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <FrameLayout android:layout_width="26dp" android:layout_height="26dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="🔔" android:textSize="19sp" android:layout_gravity="center"/>
+                    <TextView android:id="@+id/tv_nav_notif_badge"
+                        android:layout_width="14dp" android:layout_height="14dp"
+                        android:background="@drawable/badge_red_circle"
+                        android:textColor="#FFFFFF" android:textSize="8sp" android:textStyle="bold"
+                        android:gravity="center" android:layout_gravity="top|end" android:visibility="gone"/>
+                </FrameLayout>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Alerts" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+
+            <!-- Settings -->
+            <LinearLayout android:id="@+id/tab_settings"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="⚙️" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Settings" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+
         </LinearLayout>
 
-        <!-- Child Info tab -->
-        <LinearLayout
-            android:id="@+id/tab_child"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="👦"
-                android:textSize="20sp"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Child Info"
-                android:textSize="11sp"
-                android:textColor="#9E9E9E"/>
+        <!-- Active indicator under Home -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <View android:layout_width="0dp" android:layout_height="3dp" android:layout_weight="1"
+                android:background="@color/primary"/>
+            <View android:layout_width="0dp" android:layout_height="3dp" android:layout_weight="1"/>
+            <View android:layout_width="0dp" android:layout_height="3dp" android:layout_weight="1"/>
+            <View android:layout_width="0dp" android:layout_height="3dp" android:layout_weight="1"/>
         </LinearLayout>
 
-        <!-- Settings tab -->
-        <LinearLayout
-            android:id="@+id/tab_settings"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⚙️"
-                android:textSize="20sp"
-                android:gravity="center"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Settings"
-                android:textSize="11sp"
-                android:textColor="#9E9E9E"/>
-        </LinearLayout>
-
+        <View android:layout_width="80dp" android:layout_height="3dp"
+            android:background="#212121" android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
     </LinearLayout>
 
 </LinearLayout>

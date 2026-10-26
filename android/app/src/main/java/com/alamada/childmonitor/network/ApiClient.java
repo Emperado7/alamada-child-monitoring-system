@@ -11,13 +11,46 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Singleton Retrofit client.
- * Call ApiClient.getInstance(token) to get an ApiService.
+ * Call ApiClient.init(token) once after login, then ApiClient.get() everywhere.
  */
 public class ApiClient {
 
-    private static Retrofit retrofit;
+    private static volatile ApiService instance;
+    private static String currentToken;
 
+    private ApiClient() {}
+
+    /** Call after login or when the token changes. */
+    public static synchronized void init(String bearerToken) {
+        if (instance == null || !bearerToken.equals(currentToken)) {
+            currentToken = bearerToken;
+            instance = buildService(bearerToken);
+        }
+    }
+
+    /** Returns the singleton ApiService. Call init() first. */
+    public static ApiService get() {
+        if (instance == null) {
+            throw new IllegalStateException("ApiClient not initialised — call ApiClient.init(token) first.");
+        }
+        return instance;
+    }
+
+    /** Convenience — matches old call-site signature so existing code needs minimal changes. */
     public static ApiService getInstance(String bearerToken) {
+        init(bearerToken);
+        return instance;
+    }
+
+    /** Invalidate after logout so a stale token can't be reused. */
+    public static synchronized void clear() {
+        instance = null;
+        currentToken = null;
+    }
+
+    // ── Private builder ───────────────────────────────────────────
+
+    private static ApiService buildService(String bearerToken) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(BuildConfig.DEBUG
                 ? HttpLoggingInterceptor.Level.BODY
@@ -39,12 +72,11 @@ public class ApiClient {
                 })
                 .build();
 
-        retrofit = new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        return retrofit.create(ApiService.class);
+                .build()
+                .create(ApiService.class);
     }
 }

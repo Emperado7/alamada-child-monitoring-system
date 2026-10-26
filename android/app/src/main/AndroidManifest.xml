@@ -55,5 +55,10 @@
             android:name=".activities.SettingsActivity"
             android:exported="false"/>
 
+        <!-- Enrollment -->
+        <activity
+            android:name=".activities.EnrollmentActivity"
+            android:exported="false"/>
+
     </application>
 </manifest>

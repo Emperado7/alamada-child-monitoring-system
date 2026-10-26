@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
@@ -17,22 +16,22 @@ import com.alamada.childmonitor.models.Child;
 import com.alamada.childmonitor.models.ChildListResponse;
 import com.alamada.childmonitor.models.ChildResponse;
 import com.alamada.childmonitor.network.ApiClient;
-import com.alamada.childmonitor.utils.SessionManager;
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ChildDetailActivity extends AppCompatActivity {
+public class ChildDetailActivity extends BaseActivity {
 
     private ActivityChildDetailBinding binding;
-    private SessionManager session;
     private int childId = -1;
     private ChildResponse childData;
+    private List<Child> childList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,34 +41,33 @@ public class ChildDetailActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        session = new SessionManager(this);
-
-        // Get child_id from intent (may be -1 if opened from dashboard — load first child)
         childId = getIntent().getIntExtra("child_id", -1);
 
-        // Back button
         binding.btnBack.setOnClickListener(v -> finish());
 
-        // Bottom nav
+        // ── Bottom nav ─────────────────────────────────────────────
         binding.tabHome.setOnClickListener(v -> {
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
         });
+        binding.tabNotifications.setOnClickListener(v -> {
+            startActivity(new Intent(this, NotificationsActivity.class));
+            finish();
+        });
         binding.tabSettings.setOnClickListener(v -> {
             startActivity(new Intent(this, SettingsActivity.class));
+            finish();
         });
 
-        if (childId == -1) {
-            // Load first child automatically
-            loadFirstChild();
-        } else {
-            loadChildDetail(childId);
-        }
+        // ── Child switcher button ──────────────────────────────────
+        binding.btnSwitchChild.setOnClickListener(v -> showChildSwitcher());
+
+        loadAllChildren();
     }
 
-    // ── If no child_id passed, fetch first child ──────────
+    // ── Step 1: load all children so switcher works ────────────────
 
-    private void loadFirstChild() {
+    private void loadAllChildren() {
         binding.progressBar.setVisibility(View.VISIBLE);
         ApiClient.getInstance(session.getBearerToken())
             .getMyChildren()
@@ -77,17 +75,23 @@ public class ChildDetailActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ChildListResponse> call,
                                        Response<ChildListResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        List<Child> list = response.body().data;
-                        if (list != null && !list.isEmpty()) {
-                            childId = list.get(0).id;
+                    if (response.code() == 401) { handleUnauthorised(); return; }
+                    if (response.isSuccessful() && response.body() != null
+                            && response.body().data != null) {
+                        childList = response.body().data;
+                        // Show switcher button only if more than one child
+                        binding.btnSwitchChild.setVisibility(
+                            childList.size() > 1 ? View.VISIBLE : View.GONE);
+
+                        if (childId == -1 && !childList.isEmpty()) {
+                            childId = childList.get(0).id;
+                        }
+                        if (childId != -1) {
                             loadChildDetail(childId);
                         } else {
                             binding.progressBar.setVisibility(View.GONE);
                             showNoChildMessage();
                         }
-                    } else if (response.code() == 401) {
-                        sessionExpired();
                     } else {
                         binding.progressBar.setVisibility(View.GONE);
                         showNoChildMessage();
@@ -97,12 +101,12 @@ public class ChildDetailActivity extends AppCompatActivity {
                 public void onFailure(Call<ChildListResponse> call, Throwable t) {
                     binding.progressBar.setVisibility(View.GONE);
                     Toast.makeText(ChildDetailActivity.this,
-                        "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        "Network error.", Toast.LENGTH_SHORT).show();
                 }
             });
     }
 
-    // ── Load a specific child ─────────────────────────────
+    // ── Step 2: load the selected child's detail ───────────────────
 
     private void loadChildDetail(int id) {
         binding.progressBar.setVisibility(View.VISIBLE);
@@ -113,6 +117,7 @@ public class ChildDetailActivity extends AppCompatActivity {
                 public void onResponse(Call<ChildResponse> call,
                                        Response<ChildResponse> response) {
                     binding.progressBar.setVisibility(View.GONE);
+                    if (response.code() == 401) { handleUnauthorised(); return; }
                     if (response.isSuccessful() && response.body() != null) {
                         childData = response.body();
                         populateHeader(childData);
@@ -131,12 +136,31 @@ public class ChildDetailActivity extends AppCompatActivity {
             });
     }
 
-    // ── Populate the green header ─────────────────────────
+    // ── Child switcher dialog ──────────────────────────────────────
+
+    private void showChildSwitcher() {
+        if (childList.isEmpty()) return;
+        String[] names = new String[childList.size()];
+        for (int i = 0; i < childList.size(); i++) {
+            names[i] = childList.get(i).getDisplayName();
+        }
+        new android.app.AlertDialog.Builder(this)
+            .setTitle("Select Child")
+            .setItems(names, (dialog, which) -> {
+                int selected = childList.get(which).id;
+                if (selected != childId) {
+                    childId = selected;
+                    loadChildDetail(childId);
+                }
+            })
+            .show();
+    }
+
+    // ── Populate green header ──────────────────────────────────────
 
     private void populateHeader(ChildResponse c) {
         String displayName = (c.fullName != null && !c.fullName.isEmpty())
-            ? c.fullName
-            : (c.firstName + " " + c.lastName);
+            ? c.fullName : (c.firstName + " " + c.lastName);
 
         binding.tvName.setText(displayName);
         binding.tvAge.setText("Age " + c.age + "  ·  " + capitalize(c.gender));
@@ -145,37 +169,29 @@ public class ChildDetailActivity extends AppCompatActivity {
         binding.tvContact.setText(c.guardianContact != null ? c.guardianContact : "—");
         binding.tvStatus.setText(capitalize(c.status));
 
-        // Avatar initial
         if (!displayName.isEmpty()) {
             binding.tvPhotoInitial.setText(
                 String.valueOf(displayName.charAt(0)).toUpperCase());
         }
-
-        // Load photo if available
         if (c.photo != null && !c.photo.isEmpty()) {
             binding.ivPhoto.setVisibility(View.VISIBLE);
             binding.tvPhotoInitial.setVisibility(View.GONE);
-            Glide.with(this)
-                .load(c.photo)
-                .circleCrop()
-                .into(binding.ivPhoto);
+            Glide.with(this).load(c.photo).circleCrop().into(binding.ivPhoto);
         } else {
             binding.ivPhoto.setVisibility(View.GONE);
             binding.tvPhotoInitial.setVisibility(View.VISIBLE);
         }
     }
 
-    // ── Setup ViewPager2 tabs ─────────────────────────────
+    // ── Setup ViewPager2 tabs ──────────────────────────────────────
 
     private void setupTabs() {
-        final String[] TABS = { "Attendance", "Activities", "Info" };
+        final String[] TABS = {"Attendance", "Activities", "Info"};
         final int finalChildId = childId;
 
         binding.viewPager.setAdapter(new FragmentStateAdapter(this) {
             @Override public int getItemCount() { return 3; }
-
-            @Override
-            public Fragment createFragment(int position) {
+            @Override public Fragment createFragment(int position) {
                 switch (position) {
                     case 0: return AttendanceTabFragment.newInstance(finalChildId);
                     case 1: return ActivitiesFragment.newInstance(finalChildId);
@@ -186,24 +202,16 @@ public class ChildDetailActivity extends AppCompatActivity {
         });
 
         new TabLayoutMediator(binding.tabLayout, binding.viewPager,
-            (tab, pos) -> tab.setText(TABS[pos])
-        ).attach();
+            (tab, pos) -> tab.setText(TABS[pos])).attach();
     }
 
-    // ── Helpers ───────────────────────────────────────────
+    // ── Helpers ────────────────────────────────────────────────────
 
     private void showNoChildMessage() {
         Toast.makeText(this,
             "No children linked to your account. Contact the learning center.",
             Toast.LENGTH_LONG).show();
         finish();
-    }
-
-    private void sessionExpired() {
-        session.clearSession();
-        Intent i = new Intent(this, LoginActivity.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(i);
     }
 
     private String capitalize(String s) {
