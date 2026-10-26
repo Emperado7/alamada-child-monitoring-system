@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 // ── Root redirect ────────────────────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
 
+// ── App download page (public — no auth needed) ───────────────────────────
+Route::get('/download', fn() => view('download'))->name('app.download');
+
 // ── Health check for Railway deployment ──────────────────────────────────
 Route::get('/health', fn() => response()->json(['status' => 'ok'], 200));
 
