@@ -73,18 +73,18 @@ jobs:
       # ── 7. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
         run: |
-          echo "=== Finding APK files ==="
-          find android -name "*.apk" 2>/dev/null || true
+          echo "=== Listing android/app/build ==="
+          ls -la android/app/build/ 2>/dev/null || echo "No build dir"
+          ls -la android/app/build/outputs/ 2>/dev/null || echo "No outputs dir"
+          ls -la android/app/build/outputs/apk/ 2>/dev/null || echo "No apk dir"
+          ls -la android/app/build/outputs/apk/debug/ 2>/dev/null || echo "No debug dir"
+          echo "=== find all APK ==="
+          find android/app -name "*.apk" 2>/dev/null || echo "No APK found with find"
+          echo "=== Using ls -R ==="
+          ls -R android/app/build/outputs/ 2>/dev/null || true
           mkdir -p release-artifacts
-          # Try multiple possible output paths
-          APK=$(find android -name "*.apk" | head -1)
-          if [ -z "$APK" ]; then
-            echo "❌ No APK found!"
-            exit 1
-          fi
-          echo "Found APK: $APK"
-          cp "$APK" release-artifacts/alamada-parent-app.apk
-          echo "✅ APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-artifacts/alamada-parent-app.apk
+          echo "Done: $(ls -lh release-artifacts/)"
 
       # ── 8. Delete old "latest-apk" release ───────────────────────────
       - name: Delete existing release (if any)
