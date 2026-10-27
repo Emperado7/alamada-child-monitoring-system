@@ -82,17 +82,18 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: alamada-parent-app
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            android/app/build/outputs/apk/**/*.apk
           if-no-files-found: error
           retention-days: 90
 
-      # ── 9. Prepare APK for GitHub Release ────────────────────────────
+      # ── 10. Prepare APK for GitHub Release ───────────────────────────
       - name: Prepare APK
         run: |
           mkdir -p release-artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk \
-             release-artifacts/alamada-parent-app.apk
-          echo "✅ APK: $(ls -lh release-artifacts/alamada-parent-app.apk)"
+          APK=$(find android/app/build/outputs/apk -name "*.apk" | head -1)
+          echo "Found APK: $APK ($(du -sh "$APK"))"
+          cp "$APK" release-artifacts/alamada-parent-app.apk
 
       # ── 10. Delete old "latest-apk" release ──────────────────────────
       - name: Delete existing release (if any)
