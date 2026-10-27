@@ -15,18 +15,16 @@ jobs:
       contents: write
 
     steps:
-      # ── 1. Checkout (skip submodules — we don't need the nested repo) ─
+      # ── 1. Checkout ──────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: false
 
-      # ── 2. Neutralise git safe.directory for all processes ───────────
+      # ── 2. Fix git safe directory ────────────────────────────────────
       - name: Trust all git directories
-        run: |
-          git config --global --add safe.directory '*'
-          echo "Git global config set"
+        run: git config --global --add safe.directory '*'
 
       # ── 3. Java 17 ───────────────────────────────────────────────────
       - name: Set up JDK 17
@@ -35,40 +33,54 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ── 4. Write local.properties (Android SDK path on CI) ───────────
-      - name: Create local.properties
-        run: |
-          printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/local.properties
+      # ── 4. Cache Gradle dependencies ─────────────────────────────────
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-      # ── 5. Gradle permissions ────────────────────────────────────────
+      # ── 5. Write local.properties ────────────────────────────────────
+      - name: Create local.properties
+        run: printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/local.properties
+
+      # ── 6. Gradle permissions ────────────────────────────────────────
       - name: Make gradlew executable
         working-directory: android
         run: chmod +x gradlew
 
-      # ── 6. Build debug APK ───────────────────────────────────────────
+      # ── 7. Build debug APK ───────────────────────────────────────────
       - name: Build debug APK
         working-directory: android
         run: |
           ./gradlew assembleDebug \
             --no-daemon \
-            --stacktrace \
             --no-configuration-cache \
+            --stacktrace \
             -x lint \
             -x test
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
-          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8"
+          GRADLE_OPTS: >-
+            -Dorg.gradle.daemon=false
+            -Dorg.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=512m
+            -Dfile.encoding=UTF-8
+            -Dkotlin.incremental=false
 
-      # ── 7. Upload build output as artifact (helps debug + gives download link) ─
+      # ── 8. Upload APK as build artifact (always downloadable) ────────
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: alamada-parent-app-debug
-          path: android/app/build/outputs/apk/
+          name: alamada-parent-app
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90
 
-      # ── 8. Prepare APK for release ───────────────────────────────────
+      # ── 9. Prepare APK for GitHub Release ────────────────────────────
       - name: Prepare APK
         run: |
           mkdir -p release-artifacts
@@ -76,7 +88,7 @@ jobs:
              release-artifacts/alamada-parent-app.apk
           echo "✅ APK: $(ls -lh release-artifacts/alamada-parent-app.apk)"
 
-      # ── 9. Delete old "latest-apk" release ───────────────────────────
+      # ── 10. Delete old "latest-apk" release ──────────────────────────
       - name: Delete existing release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +97,7 @@ jobs:
             --repo "${{ github.repository }}" --yes 2>/dev/null || true
           git push origin :refs/tags/latest-apk 2>/dev/null || true
 
-      # ── 10. Publish release + APK ──────────────────────────────────────
+      # ── 11. Publish GitHub Release + APK ─────────────────────────────
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
