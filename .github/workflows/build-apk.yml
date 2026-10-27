@@ -57,19 +57,25 @@ jobs:
       - name: Build debug APK
         working-directory: android
         run: |
-          # Retry up to 3 times for transient network failures
-          for attempt in 1 2 3; do
-            echo "=== Build attempt $attempt ==="
-            ./gradlew assembleDebug \
-              --no-daemon \
-              --no-configuration-cache \
-              --rerun-tasks \
-              --stacktrace \
-              -x lint \
-              -x test && break
-            echo "Attempt $attempt failed. Retrying in 15s..."
-            sleep 15
-          done
+          echo "Android SDK: $ANDROID_SDK_ROOT"
+          echo "Working dir: $(pwd)"
+          echo ""
+          # Run assembleDebug and capture output
+          ./gradlew assembleDebug \
+            --no-daemon \
+            --no-configuration-cache \
+            --stacktrace \
+            -x lint \
+            -x test
+          echo ""
+          echo "=== Build complete. Checking outputs ==="
+          find . -name "*.apk" -type f 2>/dev/null || echo "No .apk found in $(pwd)"
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          GRADLE_OPTS: >-
+            -Dorg.gradle.daemon=false
+            -Dorg.gradle.jvmargs=-Xmx3g -XX:MaxMetaspaceSize=512m
+            -Dfile.encoding=UTF-8
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
           GRADLE_OPTS: >-
