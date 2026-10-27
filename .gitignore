@@ -34,3 +34,6 @@ Thumbs.db
 
 # Keep .env.example but not .env
 !backend/.env.example
+
+# Nested duplicate repo (was accidentally tracked as submodule)
+alamada-child-monitoring-system/
