@@ -77,23 +77,31 @@ jobs:
             -Dfile.encoding=UTF-8
             -Dkotlin.incremental=false
 
-      # ── 9. Upload APK as build artifact (always downloadable) ────────
+      # ── 9. Locate and copy APK ───────────────────────────────────────
+      - name: Prepare APK
+        run: |
+          echo "=== Searching for APK ==="
+          find android/app/build -name "*.apk" 2>/dev/null || echo "(none found via find)"
+          ls -laR android/app/build/outputs/ 2>/dev/null || echo "(no outputs dir)"
+          # Gradle sometimes puts the APK in a nested variant directory
+          mkdir -p release-artifacts
+          APK=$(find android/app/build -name "*.apk" 2>/dev/null | head -1)
+          if [ -n "$APK" ]; then
+            cp "$APK" release-artifacts/alamada-parent-app.apk
+            echo "✅ Copied: $APK → $(ls -lh release-artifacts/alamada-parent-app.apk)"
+          else
+            echo "❌ APK not found in build output"
+            exit 1
+          fi
+
+      # ── 10. Upload APK artifact ───────────────────────────────────────
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: alamada-parent-app
-          path: |
-            android/app/build/outputs/apk/**/*.apk
+          path: release-artifacts/alamada-parent-app.apk
           if-no-files-found: error
           retention-days: 90
-
-      # ── 10. Prepare APK for GitHub Release ───────────────────────────
-      - name: Prepare APK
-        run: |
-          mkdir -p release-artifacts
-          APK=$(find android/app/build/outputs/apk -name "*.apk" | head -1)
-          echo "Found APK: $APK ($(du -sh "$APK"))"
-          cp "$APK" release-artifacts/alamada-parent-app.apk
 
       # ── 10. Delete old "latest-apk" release ──────────────────────────
       - name: Delete existing release (if any)
