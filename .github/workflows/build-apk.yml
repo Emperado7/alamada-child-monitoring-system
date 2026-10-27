@@ -15,23 +15,24 @@ jobs:
       contents: write
 
     steps:
-      # ── 1. Checkout ──────────────────────────────────────────────────
+      # ── 1. Checkout (skip submodules — we don't need the nested repo) ─
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          submodules: false
 
-      # ── 2. Fix git safe.directory globally via HOME .gitconfig ───────
-      #    This covers ALL git subprocess calls including ones from Gradle.
-      - name: Configure git safe directory
+      # ── 2. Neutralise the nested git repo that causes Gradle to fail ──
+      #    The root repo contains 'alamada-child-monitoring-system' as a
+      #    submodule commit (mode 160000). Gradle 8 calls `git rev-parse`
+      #    from the workspace root; if git sees an unresolved submodule it
+      #    exits 128. Writing safe.directory=* to the SYSTEM gitconfig
+      #    (not just user) covers every process including Gradle's JVM.
+      - name: Trust all git directories (system-wide)
         run: |
-          mkdir -p "$HOME"
-          cat >> "$HOME/.gitconfig" << 'EOF'
-          [safe]
-              directory = *
-          EOF
-          echo "Git config:"
-          git config --global --list | grep safe || true
+          git config --system --add safe.directory '*'
+          git config --global --add safe.directory '*'
+          echo "safe.directory set globally and system-wide"
 
       # ── 3. Java 17 ───────────────────────────────────────────────────
       - name: Set up JDK 17
@@ -40,11 +41,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ── 4. Write local.properties ────────────────────────────────────
+      # ── 4. Write local.properties (Android SDK path on CI) ───────────
       - name: Create local.properties
         run: |
           printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/local.properties
-          printf 'sdk.dir=%s\n' "$ANDROID_SDK_ROOT" > android/app/local.properties
 
       # ── 5. Gradle permissions ────────────────────────────────────────
       - name: Make gradlew executable
@@ -64,18 +64,16 @@ jobs:
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8"
-          # Ensure the gradle user home uses the same safe git config
-          HOME: ${{ env.HOME }}
 
-      # ── 7. Verify APK exists ─────────────────────────────────────────
+      # ── 7. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
         run: |
           mkdir -p release-artifacts
           cp android/app/build/outputs/apk/debug/app-debug.apk \
              release-artifacts/alamada-parent-app.apk
-          echo "✅ APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
+          echo "APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
 
-      # ── 8. Delete old release ─────────────────────────────────────────
+      # ── 8. Delete old "latest-apk" release ───────────────────────────
       - name: Delete existing release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
