@@ -22,17 +22,11 @@ jobs:
           fetch-depth: 0
           submodules: false
 
-      # ── 2. Neutralise the nested git repo that causes Gradle to fail ──
-      #    The root repo contains 'alamada-child-monitoring-system' as a
-      #    submodule commit (mode 160000). Gradle 8 calls `git rev-parse`
-      #    from the workspace root; if git sees an unresolved submodule it
-      #    exits 128. Writing safe.directory=* to the SYSTEM gitconfig
-      #    (not just user) covers every process including Gradle's JVM.
-      - name: Trust all git directories (system-wide)
+      # ── 2. Neutralise git safe.directory for all processes ───────────
+      - name: Trust all git directories
         run: |
-          git config --system --add safe.directory '*'
           git config --global --add safe.directory '*'
-          echo "safe.directory set globally and system-wide"
+          echo "Git global config set"
 
       # ── 3. Java 17 ───────────────────────────────────────────────────
       - name: Set up JDK 17
