@@ -52,12 +52,23 @@ jobs:
           ./gradlew assembleDebug \
             --no-daemon \
             --stacktrace \
+            --info \
             --no-configuration-cache \
             -x lint \
-            -x test
+            -x test 2>&1 | tee /tmp/gradle-build.log
+          echo "Exit code: $?"
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8"
+
+      # ── Show last 100 lines of build log on failure ───────────────────
+      - name: Show build log on failure
+        if: failure()
+        run: |
+          echo "=== LAST 150 LINES OF BUILD LOG ==="
+          tail -150 /tmp/gradle-build.log || true
+          echo "=== ERRORS ONLY ==="
+          grep -i "error\|exception\|cannot\|could not\|failed" /tmp/gradle-build.log | tail -40 || true
 
       # ── 7. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
