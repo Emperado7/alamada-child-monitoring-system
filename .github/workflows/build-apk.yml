@@ -57,17 +57,18 @@ jobs:
       - name: Build debug APK
         working-directory: android
         run: |
-          # Retry up to 2 times for transient network failures
+          # Retry up to 3 times for transient network failures
           for attempt in 1 2 3; do
             echo "=== Build attempt $attempt ==="
             ./gradlew assembleDebug \
               --no-daemon \
               --no-configuration-cache \
+              --rerun-tasks \
               --stacktrace \
               -x lint \
               -x test && break
-            echo "Attempt $attempt failed. Retrying..."
-            sleep 10
+            echo "Attempt $attempt failed. Retrying in 15s..."
+            sleep 15
           done
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
@@ -80,17 +81,20 @@ jobs:
       # ── 9. Locate and copy APK ───────────────────────────────────────
       - name: Prepare APK
         run: |
-          echo "=== Searching for APK ==="
-          find android/app/build -name "*.apk" 2>/dev/null || echo "(none found via find)"
-          ls -laR android/app/build/outputs/ 2>/dev/null || echo "(no outputs dir)"
-          # Gradle sometimes puts the APK in a nested variant directory
+          echo "=== Full build output tree ==="
+          find android/app/build -type f -name "*.apk" 2>/dev/null || echo "No APK in android/app/build"
+          find android -type f -name "*.apk" 2>/dev/null || echo "No APK anywhere in android/"
+          echo ""
+          echo "=== Build dir listing ==="
+          ls android/app/build/ 2>/dev/null || echo "No build dir"
+          echo ""
           mkdir -p release-artifacts
-          APK=$(find android/app/build -name "*.apk" 2>/dev/null | head -1)
+          APK=$(find android -type f -name "*.apk" 2>/dev/null | head -1)
           if [ -n "$APK" ]; then
             cp "$APK" release-artifacts/alamada-parent-app.apk
-            echo "✅ Copied: $APK → $(ls -lh release-artifacts/alamada-parent-app.apk)"
+            echo "✅ APK: $(ls -lh release-artifacts/alamada-parent-app.apk)"
           else
-            echo "❌ APK not found in build output"
+            echo "❌ No APK file found anywhere under android/"
             exit 1
           fi
 
