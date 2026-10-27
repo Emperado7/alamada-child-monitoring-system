@@ -73,10 +73,18 @@ jobs:
       # ── 7. Prepare APK ───────────────────────────────────────────────
       - name: Prepare APK
         run: |
+          echo "=== Finding APK files ==="
+          find android -name "*.apk" 2>/dev/null || true
           mkdir -p release-artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk \
-             release-artifacts/alamada-parent-app.apk
-          echo "APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
+          # Try multiple possible output paths
+          APK=$(find android -name "*.apk" | head -1)
+          if [ -z "$APK" ]; then
+            echo "❌ No APK found!"
+            exit 1
+          fi
+          echo "Found APK: $APK"
+          cp "$APK" release-artifacts/alamada-parent-app.apk
+          echo "✅ APK size: $(du -sh release-artifacts/alamada-parent-app.apk)"
 
       # ── 8. Delete old "latest-apk" release ───────────────────────────
       - name: Delete existing release (if any)
