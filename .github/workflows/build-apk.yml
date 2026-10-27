@@ -81,20 +81,21 @@ jobs:
       # ── 9. Locate and copy APK ───────────────────────────────────────
       - name: Prepare APK
         run: |
-          echo "=== Full build output tree ==="
-          find android/app/build -type f -name "*.apk" 2>/dev/null || echo "No APK in android/app/build"
-          find android -type f -name "*.apk" 2>/dev/null || echo "No APK anywhere in android/"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "=== Full search for APK ==="
+          find "$GITHUB_WORKSPACE" -type f -name "*.apk" 2>/dev/null || echo "No APK found anywhere"
           echo ""
-          echo "=== Build dir listing ==="
-          ls android/app/build/ 2>/dev/null || echo "No build dir"
+          echo "=== android/app/build tree ==="
+          ls -la "$GITHUB_WORKSPACE/android/app/build/" 2>/dev/null || echo "No build dir"
+          ls -laR "$GITHUB_WORKSPACE/android/app/build/outputs/" 2>/dev/null || echo "No outputs dir"
           echo ""
           mkdir -p release-artifacts
-          APK=$(find android -type f -name "*.apk" 2>/dev/null | head -1)
+          APK=$(find "$GITHUB_WORKSPACE" -type f -name "*.apk" 2>/dev/null | head -1)
           if [ -n "$APK" ]; then
             cp "$APK" release-artifacts/alamada-parent-app.apk
             echo "✅ APK: $(ls -lh release-artifacts/alamada-parent-app.apk)"
           else
-            echo "❌ No APK file found anywhere under android/"
+            echo "❌ No APK found"
             exit 1
           fi
 
