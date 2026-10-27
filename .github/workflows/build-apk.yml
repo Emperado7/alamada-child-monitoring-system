@@ -52,41 +52,31 @@ jobs:
           ./gradlew assembleDebug \
             --no-daemon \
             --stacktrace \
-            --info \
             --no-configuration-cache \
             -x lint \
-            -x test 2>&1 | tee /tmp/gradle-build.log
-          echo "Exit code: $?"
+            -x test
         env:
           ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g -Dfile.encoding=UTF-8"
 
-      # ── Show last 100 lines of build log on failure ───────────────────
-      - name: Show build log on failure
-        if: failure()
-        run: |
-          echo "=== LAST 150 LINES OF BUILD LOG ==="
-          tail -150 /tmp/gradle-build.log || true
-          echo "=== ERRORS ONLY ==="
-          grep -i "error\|exception\|cannot\|could not\|failed" /tmp/gradle-build.log | tail -40 || true
+      # ── 7. Upload build output as artifact (helps debug + gives download link) ─
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: alamada-parent-app-debug
+          path: android/app/build/outputs/apk/
+          if-no-files-found: error
+          retention-days: 30
 
-      # ── 7. Prepare APK ───────────────────────────────────────────────
+      # ── 8. Prepare APK for release ───────────────────────────────────
       - name: Prepare APK
         run: |
-          echo "=== Listing android/app/build ==="
-          ls -la android/app/build/ 2>/dev/null || echo "No build dir"
-          ls -la android/app/build/outputs/ 2>/dev/null || echo "No outputs dir"
-          ls -la android/app/build/outputs/apk/ 2>/dev/null || echo "No apk dir"
-          ls -la android/app/build/outputs/apk/debug/ 2>/dev/null || echo "No debug dir"
-          echo "=== find all APK ==="
-          find android/app -name "*.apk" 2>/dev/null || echo "No APK found with find"
-          echo "=== Using ls -R ==="
-          ls -R android/app/build/outputs/ 2>/dev/null || true
           mkdir -p release-artifacts
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-artifacts/alamada-parent-app.apk
-          echo "Done: $(ls -lh release-artifacts/)"
+          cp android/app/build/outputs/apk/debug/app-debug.apk \
+             release-artifacts/alamada-parent-app.apk
+          echo "✅ APK: $(ls -lh release-artifacts/alamada-parent-app.apk)"
 
-      # ── 8. Delete old "latest-apk" release ───────────────────────────
+      # ── 9. Delete old "latest-apk" release ───────────────────────────
       - name: Delete existing release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -95,7 +85,7 @@ jobs:
             --repo "${{ github.repository }}" --yes 2>/dev/null || true
           git push origin :refs/tags/latest-apk 2>/dev/null || true
 
-      # ── 9. Publish release + APK ──────────────────────────────────────
+      # ── 10. Publish release + APK ──────────────────────────────────────
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
