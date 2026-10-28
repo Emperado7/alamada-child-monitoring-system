@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'fcm_token',
     ];
 
     protected $hidden = [
@@ -28,7 +29,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        'password' => 'hashed',
     ];
 
     // ── Role helpers ──────────────────────────────────────────────
@@ -65,8 +66,8 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->belongsToMany(Notification::class, 'notification_reads', 'user_id', 'notification_id')
-                    ->withPivot('read_at')
-                    ->withTimestamps();
+            ->withPivot('read_at')
+            ->withTimestamps();
     }
 
     public function reports()

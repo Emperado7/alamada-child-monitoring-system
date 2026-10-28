@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\User;
+use App\Services\FcmService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -26,15 +27,14 @@ class NotificationController extends Controller
             // Notifications broadcast to all/parents OR sent specifically to this user
             $query->where(function ($q) use ($user) {
                 $q->whereIn('recipient_group', ['all', 'parents'])
-                  ->orWhere('recipient_id', $user->id);
+                    ->orWhere('recipient_id', $user->id);
             });
         } elseif ($user->isStaff()) {
             $query->where(function ($q) use ($user) {
                 $q->whereIn('recipient_group', ['all', 'staff'])
-                  ->orWhere('recipient_id', $user->id);
+                    ->orWhere('recipient_id', $user->id);
             });
         }
-        // Admin sees all
 
         $notifications = $query
             ->with('sender:id,name')
@@ -61,10 +61,10 @@ class NotificationController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'title'           => 'required|string|max:255',
-            'message'         => 'required|string',
+            'title' => 'required|string|max:255',
+            'message' => 'required|string',
             'recipient_group' => 'required|in:all,parents,staff,specific',
-            'recipient_id'    => 'required_if:recipient_group,specific|nullable|exists:users,id',
+            'recipient_id' => 'required_if:recipient_group,specific|nullable|exists:users,id',
         ]);
 
         $data['sent_by'] = $request->user()->id;
@@ -72,10 +72,58 @@ class NotificationController extends Controller
 
         $notification = Notification::create($data);
 
+        // ── Dispatch FCM push notifications ────────────────────────
+        $this->dispatchFcm($notification->recipient_group, $notification->recipient_id, $notification);
+
         return response()->json([
-            'message'      => 'Notification sent successfully.',
+            'message' => 'Notification sent successfully.',
             'notification' => $notification->load('sender:id,name'),
         ], 201);
+    }
+
+    /**
+     * Dispatch FCM push notifications to relevant users based on recipient_group.
+     */
+    private function dispatchFcm(string $group, ?int $recipientId, Notification $notification): void
+    {
+        try {
+            $fcm = app(FcmService::class);
+
+            if (!$fcm->isConfigured()) {
+                return;
+            }
+
+            $tokens = [];
+
+            if ($group === 'specific' && $recipientId) {
+                $user = User::find($recipientId);
+                if ($user && $user->fcm_token) {
+                    $tokens[] = $user->fcm_token;
+                }
+            } else {
+                $query = User::whereNotNull('fcm_token')->where('status', 'active');
+
+                if ($group === 'parents') {
+                    $query->where('role', 'parent');
+                } elseif ($group === 'staff') {
+                    $query->where('role', 'staff');
+                }
+                // 'all' → no role filter
+
+                $tokens = $query->pluck('fcm_token')->filter()->values()->all();
+            }
+
+            if (!empty($tokens)) {
+                $fcm->send(
+                    $tokens,
+                    $notification->title,
+                    $notification->message,
+                    ['notification_id' => (string) $notification->id]
+                );
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('FCM dispatch error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -115,9 +163,13 @@ class NotificationController extends Controller
         $user = $request->user();
 
         // Get all notification IDs visible to this user
-        $ids = Notification::where(function ($q) use ($user) {
-            $q->whereIn('recipient_group', ['all', $user->role . 's'])
-              ->orWhere('recipient_id', $user->id);
+        // Build the correct group slug per role:
+        // admin → 'all', staff → 'staff', parent → 'parents'
+        $roleGroup = $user->isParent() ? 'parents' : ($user->isStaff() ? 'staff' : 'all');
+
+        $ids = Notification::where(function ($q) use ($user, $roleGroup) {
+            $q->whereIn('recipient_group', ['all', $roleGroup])
+                ->orWhere('recipient_id', $user->id);
         })->pluck('id');
 
         $now = Carbon::now();
@@ -137,14 +189,14 @@ class NotificationController extends Controller
     public function update(Request $request, Notification $notification): JsonResponse
     {
         $data = $request->validate([
-            'title'   => 'sometimes|string|max:255',
+            'title' => 'sometimes|string|max:255',
             'message' => 'sometimes|string',
         ]);
 
         $notification->update($data);
 
         return response()->json([
-            'message'      => 'Notification updated.',
+            'message' => 'Notification updated.',
             'notification' => $notification->fresh()->load('sender:id,name'),
         ]);
     }
@@ -166,8 +218,9 @@ class NotificationController extends Controller
         $user = $request->user();
 
         $total = Notification::where(function ($q) use ($user) {
-            $q->whereIn('recipient_group', ['all', $user->role . 's'])
-              ->orWhere('recipient_id', $user->id);
+            $roleGroup = $user->isParent() ? 'parents' : ($user->isStaff() ? 'staff' : 'all');
+            $q->whereIn('recipient_group', ['all', $roleGroup])
+                ->orWhere('recipient_id', $user->id);
         })->count();
 
         $read = DB::table('notification_reads')

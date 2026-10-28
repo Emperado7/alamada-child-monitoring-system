@@ -14,7 +14,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alamada.childmonitor.R;
 import com.alamada.childmonitor.models.Notification;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
 
@@ -22,7 +26,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         void onNotificationClick(Notification n);
     }
 
-    private final List<Notification> notifications;
+    private final List<Notification>         notifications;
     private final OnNotificationClickListener listener;
 
     public NotificationAdapter(List<Notification> notifications,
@@ -46,11 +50,8 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         h.tvTitle.setText(n.title != null ? n.title : "—");
         h.tvMessage.setText(n.message != null ? n.message : "");
 
-        // Date
-        String dateStr = n.sentAt != null
-            ? n.sentAt.substring(0, Math.min(10, n.sentAt.length()))
-            : "";
-        h.tvDate.setText(dateStr);
+        // Format sentAt — backend returns ISO-8601 e.g. "2024-05-01T08:30:00.000000Z"
+        h.tvDate.setText(formatDate(n.sentAt));
 
         // Unread styling
         if (!n.isRead) {
@@ -70,10 +71,34 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @Override
     public int getItemCount() { return notifications.size(); }
 
+    // ── Helpers ───────────────────────────────────────────────────
+
+    private String formatDate(String raw) {
+        if (raw == null || raw.isEmpty()) return "";
+        // Try full ISO-8601 first, then plain date
+        String[] patterns = {
+            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd"
+        };
+        SimpleDateFormat out = new SimpleDateFormat("MMM d, yyyy  h:mm a", Locale.getDefault());
+        for (String pattern : patterns) {
+            try {
+                Date d = new SimpleDateFormat(pattern, Locale.getDefault()).parse(raw);
+                return out.format(d);
+            } catch (ParseException ignored) { }
+        }
+        // Fallback: return the first 10 chars (date portion)
+        return raw.length() >= 10 ? raw.substring(0, 10) : raw;
+    }
+
+    // ── ViewHolder ────────────────────────────────────────────────
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         CardView card;
         TextView tvTitle, tvMessage, tvDate;
-        View viewUnreadDot;
+        View     viewUnreadDot;
 
         ViewHolder(View v) {
             super(v);

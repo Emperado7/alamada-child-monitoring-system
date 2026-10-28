@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+    <!-- Green header -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="@drawable/header_green_gradient" android:orientation="vertical"
+        android:padding="16dp" android:paddingTop="36dp" android:paddingBottom="14dp">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginBottom="14dp">
+            <ImageButton android:id="@+id/btn_back"
+                android:layout_width="36dp" android:layout_height="36dp"
+                android:background="@drawable/circle_white_20_bg"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:scaleX="0.6" android:scaleY="0.6" android:tint="#FFFFFF"/>
+            <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:text="Reports"
+                android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"
+                android:gravity="center"/>
+            <View android:layout_width="36dp" android:layout_height="36dp"/>
+        </LinearLayout>
+
+        <!-- Tab toggle: Enrollment | Attendance -->
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_reports"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tab_enrollment"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Enrollment"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textColor="#FFFFFF"
+                app:strokeColor="#FFFFFF"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tab_attendance"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Attendance"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:textColor="#FFFFFF"
+                app:strokeColor="#FFFFFF"/>
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
+
+    <!-- ══ ENROLLMENT REPORT CONTENT ══════════════════════════════ -->
+    <ScrollView android:id="@+id/scroll_enrollment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:visibility="visible">
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:padding="16dp">
+
+            <!-- Summary stats row -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginBottom="12dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="14dp" android:gravity="center">
+                        <TextView android:id="@+id/tv_total_enrolled"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="0" android:textSize="28sp" android:textStyle="bold"
+                            android:textColor="@color/primary"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Total Enrolled" android:textSize="11sp"
+                            android:textColor="@color/text_secondary"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="6dp"
+                    app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical" android:padding="14dp" android:gravity="center">
+                        <TextView android:id="@+id/tv_avg_attendance_enr"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="—" android:textSize="28sp" android:textStyle="bold"
+                            android:textColor="@color/primary"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="This Year" android:textSize="11sp"
+                            android:textColor="@color/text_secondary"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Year-over-year comparison -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Enrollment by Year" android:textSize="14sp"
+                        android:textStyle="bold" android:textColor="#212121"
+                        android:layout_marginBottom="8dp"/>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView android:id="@+id/tv_prev_year"
+                            android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="—" android:textSize="20sp" android:textStyle="bold"
+                            android:textColor="#9E9E9E"/>
+                        <TextView android:id="@+id/tv_curr_year"
+                            android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:gravity="center"
+                            android:text="—" android:textSize="20sp" android:textStyle="bold"
+                            android:textColor="@color/primary"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- By Gender -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="By Gender" android:textSize="14sp"
+                        android:textStyle="bold" android:textColor="#212121"
+                        android:layout_marginBottom="10dp"/>
+                    <LinearLayout android:id="@+id/layout_gender"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- By Age Group -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="By Age Group" android:textSize="14sp"
+                        android:textStyle="bold" android:textColor="#212121"
+                        android:layout_marginBottom="10dp"/>
+                    <LinearLayout android:id="@+id/layout_age_groups"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- By Diagnosis -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="14dp" app:cardElevation="2dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="By Diagnosis" android:textSize="14sp"
+                        android:textStyle="bold" android:textColor="#212121"
+                        android:layout_marginBottom="10dp"/>
+                    <LinearLayout android:id="@+id/layout_diagnosis"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- ══ ATTENDANCE REPORT CONTENT ══════════════════════════════ -->
+    <LinearLayout android:id="@+id/layout_attendance_report"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Month selector -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:background="@color/white" android:padding="12dp">
+            <ImageButton android:id="@+id/btn_prev_month"
+                android:layout_width="36dp" android:layout_height="36dp"
+                android:background="@drawable/circle_white_20_bg"
+                android:src="@android:drawable/ic_media_previous"
+                android:scaleX="0.7" android:scaleY="0.7"/>
+            <TextView android:id="@+id/tv_report_month"
+                android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:gravity="center"
+                android:text="—" android:textSize="15sp" android:textStyle="bold"
+                android:textColor="#212121"/>
+            <ImageButton android:id="@+id/btn_next_month"
+                android:layout_width="36dp" android:layout_height="36dp"
+                android:background="@drawable/circle_white_20_bg"
+                android:src="@android:drawable/ic_media_next"
+                android:scaleX="0.7" android:scaleY="0.7"/>
+        </LinearLayout>
+
+        <!-- Avg attendance banner -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:padding="12dp"
+            android:background="@color/white" android:elevation="2dp">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_avg_attendance"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="—" android:textSize="24sp" android:textStyle="bold"
+                    android:textColor="@color/primary"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Avg Attendance" android:textSize="11sp"
+                    android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/tv_report_total_children"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="—" android:textSize="24sp" android:textStyle="bold"
+                    android:textColor="@color/primary"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Children" android:textSize="11sp"
+                    android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Attendance summary list -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_attendance"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+                android:padding="8dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_attendance_report"
+                    android:layout_width="match_parent" android:layout_height="match_parent"/>
+                <ProgressBar android:id="@+id/progress_bar_attendance"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_gravity="center" android:visibility="gone"/>
+                <TextView android:id="@+id/tv_empty_attendance"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="No attendance data for this month."
+                    android:textColor="@color/text_secondary" android:gravity="center"
+                    android:visibility="gone"/>
+            </FrameLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
+
+    <!-- Progress bar for enrollment report -->
+    <ProgressBar android:id="@+id/progress_bar_enrollment"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_gravity="center" android:visibility="gone"/>
+
+    <!-- ══ BOTTOM NAV ════════════════════════════════════════════ -->
+    <include layout="@layout/include_staff_bottom_nav"/>
+
+</LinearLayout>

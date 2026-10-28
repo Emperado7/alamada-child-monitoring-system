@@ -31,6 +31,11 @@ class ActivityController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('activities.activity_date', $request->date);
         }
+        if ($request->filled('month')) {
+            // Expects YYYY-MM
+            $query->whereYear('activities.activity_date', substr($request->month, 0, 4))
+                ->whereMonth('activities.activity_date', substr($request->month, 5, 2));
+        }
         if ($request->filled('activity_type')) {
             $query->where('activities.activity_type', $request->activity_type);
         }

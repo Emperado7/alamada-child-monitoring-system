@@ -17,7 +17,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
@@ -41,12 +41,12 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful.',
-            'token'   => $token,
-            'user'    => [
-                'id'    => $user->id,
-                'name'  => $user->name,
+            'token' => $token,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
                 'email' => $user->email,
-                'role'  => $user->role,
+                'role' => $user->role,
             ],
         ]);
     }
@@ -76,7 +76,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required|string',
-            'new_password'     => 'required|string|min:8|confirmed',
+            'new_password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = $request->user();
@@ -88,5 +88,20 @@ class AuthController extends Controller
         $user->update(['password' => Hash::make($request->new_password)]);
 
         return response()->json(['message' => 'Password updated successfully.']);
+    }
+
+    /**
+     * POST /api/device-token
+     * Registers or updates the user's FCM device token for push notifications.
+     */
+    public function registerDeviceToken(Request $request): JsonResponse
+    {
+        $request->validate([
+            'fcm_token' => 'required|string|max:500',
+        ]);
+
+        $request->user()->update(['fcm_token' => $request->fcm_token]);
+
+        return response()->json(['message' => 'Device token registered.']);
     }
 }

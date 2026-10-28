@@ -79,7 +79,7 @@ public class ChildDetailActivity extends BaseActivity {
                     if (response.isSuccessful() && response.body() != null
                             && response.body().data != null) {
                         childList = response.body().data;
-                        // Show switcher button only if more than one child
+                        // Show switcher only if more than one child
                         binding.btnSwitchChild.setVisibility(
                             childList.size() > 1 ? View.VISIBLE : View.GONE);
 
@@ -159,16 +159,24 @@ public class ChildDetailActivity extends BaseActivity {
     // ── Populate green header ──────────────────────────────────────
 
     private void populateHeader(ChildResponse c) {
+        // Full name
         String displayName = (c.fullName != null && !c.fullName.isEmpty())
-            ? c.fullName : (c.firstName + " " + c.lastName);
+            ? c.fullName
+            : trim(c.firstName) + " " + trim(c.lastName);
+        displayName = displayName.trim();
 
-        binding.tvName.setText(displayName);
+        binding.tvName.setText(displayName.isEmpty() ? "—" : displayName);
         binding.tvAge.setText("Age " + c.age + "  ·  " + capitalize(c.gender));
-        binding.tvDiagnosis.setText(c.diagnosis != null ? c.diagnosis : "—");
-        binding.tvGuardian.setText(c.guardianName != null ? c.guardianName : "—");
-        binding.tvContact.setText(c.guardianContact != null ? c.guardianContact : "—");
+        binding.tvDiagnosis.setText(safe(c.diagnosis));
+
+        // Guardian info
+        binding.tvGuardian.setText("👥  " + safe(c.guardianName));
+        binding.tvContact.setText("📞  " + safe(c.guardianContact));
+
+        // Enrollment status chip
         binding.tvStatus.setText(capitalize(c.status));
 
+        // Photo or initial
         if (!displayName.isEmpty()) {
             binding.tvPhotoInitial.setText(
                 String.valueOf(displayName.charAt(0)).toUpperCase());
@@ -214,8 +222,16 @@ public class ChildDetailActivity extends BaseActivity {
         finish();
     }
 
+    private String safe(String s) {
+        return (s != null && !s.trim().isEmpty()) ? s.trim() : "—";
+    }
+
+    private String trim(String s) {
+        return s != null ? s.trim() : "";
+    }
+
     private String capitalize(String s) {
-        if (s == null || s.isEmpty()) return "—";
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+        if (s == null || s.trim().isEmpty()) return "—";
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
     }
 }

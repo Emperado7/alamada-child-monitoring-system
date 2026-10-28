@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/me/password', [AuthController::class, 'changePassword']);
+    Route::post('/device-token', [AuthController::class, 'registerDeviceToken']);
 
     // ── Admin only ────────────────────────────────────────────────────────
     Route::middleware('role:admin')->prefix('admin')->group(function () {

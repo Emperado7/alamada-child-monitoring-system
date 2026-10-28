@@ -29,15 +29,32 @@ public class SettingsActivity extends BaseActivity {
 
         // Populate user info
         String name = session.getUserName();
-        binding.tvName.setText(name != null && !name.isEmpty() ? name : "Parent");
+        binding.tvName.setText(name != null && !name.isEmpty() ? name : "User");
+
+        // Show role label based on actual role
+        String role = session.getUserRole();
+        String roleLabel;
+        if ("admin".equals(role))         roleLabel = "Administrator";
+        else if ("staff".equals(role))    roleLabel = "Staff Member";
+        else                               roleLabel = "Parent/Guardian";
+
+        // Update the role subtitle in the layout
+        android.widget.TextView tvRoleLabel = findViewById(R.id.tv_role_label);
+        if (tvRoleLabel != null) tvRoleLabel.setText(roleLabel);
 
         // ── Bottom nav ────────────────────────────────────
+        boolean isStaff = !"parent".equals(session.getUserRole());
         binding.tabHome.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
+            startActivity(new Intent(this,
+                isStaff ? StaffDashboardActivity.class : DashboardActivity.class));
             finish();
         });
         binding.tabChild.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChildDetailActivity.class));
+            if (isStaff) {
+                startActivity(new Intent(this, StaffChildListActivity.class));
+            } else {
+                startActivity(new Intent(this, ChildDetailActivity.class));
+            }
             finish();
         });
         binding.tabNotifications.setOnClickListener(v -> {
@@ -63,7 +80,7 @@ public class SettingsActivity extends BaseActivity {
             .setMessage(
                 "Name:   " + session.getUserName() + "\n" +
                 "Email:  " + session.getUserEmail() + "\n" +
-                "Role:    Parent/Guardian\n\n" +
+                "Role:    " + roleLabel + "\n\n" +
                 "Contact the learning center administrator\n" +
                 "to update your profile information."
             )

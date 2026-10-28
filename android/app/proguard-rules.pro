@@ -42,3 +42,8 @@
 
 # Prevent stripping BuildConfig
 -keep class com.alamada.childmonitor.BuildConfig { *; }
+
+# Firebase Cloud Messaging — keeps are handled by the library's own consumer rules.
+# These are just extra safety rules for release builds.
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**

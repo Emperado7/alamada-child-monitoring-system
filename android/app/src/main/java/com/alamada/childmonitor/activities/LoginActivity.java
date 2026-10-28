@@ -75,11 +75,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.isSuccessful() && response.body() != null) {
                         AuthResponse auth = response.body();
 
-                        if (!"parent".equals(auth.user.role)) {
-                            showError("This app is for parents only. Please use the web portal.");
-                            return;
-                        }
-
                         session.saveSession(
                             auth.token,
                             auth.user.id,
@@ -88,7 +83,15 @@ public class LoginActivity extends AppCompatActivity {
                             auth.user.role
                         );
 
-                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                        // Register FCM token with the backend for push notifications
+                        registerFcmToken(auth.token);
+
+                        // Route based on role: staff/admin → staff dashboard, parent → parent dashboard
+                        Class<?> target = "parent".equals(auth.user.role)
+                            ? DashboardActivity.class
+                            : StaffDashboardActivity.class;
+
+                        Intent intent = new Intent(LoginActivity.this, target);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
 
@@ -104,7 +107,12 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<AuthResponse> call, Throwable t) {
                     setLoading(false);
-                    showError("Network error: " + t.getMessage());
+                    String msg = t.getMessage() != null ? t.getMessage() : "";
+                    if (msg.toLowerCase().contains("timeout") || msg.toLowerCase().contains("connect")) {
+                        showError("Could not reach the server. It may be waking up — please wait a moment and try again.");
+                    } else {
+                        showError("Network error: " + msg);
+                    }
                 }
             });
     }
@@ -121,5 +129,36 @@ public class LoginActivity extends AppCompatActivity {
 
     private void hideError() {
         binding.tvError.setVisibility(View.GONE);
+    }
+
+    /**
+     * Sends the FCM registration token to the backend so the server can
+     * send push notifications to this device.
+     */
+    private void registerFcmToken(String token) {
+        // Get FCM token from Firebase (async) or from SharedPreferences cache
+        com.google.firebase.messaging.FirebaseMessaging.getInstance()
+            .getToken()
+            .addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) return;
+                String fcmToken = task.getResult();
+                if (fcmToken == null || fcmToken.isEmpty()) return;
+
+                // Cache for later use
+                getSharedPreferences("AlamadaFCM", MODE_PRIVATE)
+                    .edit().putString("fcm_token", fcmToken).apply();
+
+                // Send to backend (fire-and-forget)
+                Map<String, String> body = new HashMap<>();
+                body.put("fcm_token", fcmToken);
+
+                ApiClient.getInstance("Bearer " + token)
+                    .registerDeviceToken(body)
+                    .enqueue(new retrofit2.Callback<MessageResponse>() {
+                        @Override public void onResponse(retrofit2.Call<MessageResponse> c,
+                            retrofit2.Response<MessageResponse> r) {}
+                        @Override public void onFailure(retrofit2.Call<MessageResponse> c, Throwable t) {}
+                    });
+            });
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.alamada.childmonitor.models.MessageResponse;
 import com.alamada.childmonitor.network.ApiClient;
@@ -25,6 +26,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new SessionManager(this);
+
+        // Create notification channel for FCM pushes (Android 8.0+)
+        com.alamada.childmonitor.network.AlamadaMessagingService.createNotificationChannel(this);
+
+        // Request POST_NOTIFICATIONS permission on Android 13+ (API 33+)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.POST_NOTIFICATIONS)
+                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
     }
 
     // ── Call this whenever an API returns 401 ─────────────────────

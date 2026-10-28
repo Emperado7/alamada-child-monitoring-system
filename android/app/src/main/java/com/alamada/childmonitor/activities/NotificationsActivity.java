@@ -60,12 +60,15 @@ public class NotificationsActivity extends BaseActivity {
         binding.swipeRefresh.setOnRefreshListener(this::loadNotifications);
 
         // ── Bottom nav (Notifications is active) ──────────────────
+        boolean isStaff = !"parent".equals(session.getUserRole());
         binding.tabHome.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
+            startActivity(new Intent(this,
+                isStaff ? StaffDashboardActivity.class : DashboardActivity.class));
             finish();
         });
         binding.tabChild.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChildDetailActivity.class));
+            startActivity(new Intent(this,
+                isStaff ? StaffChildListActivity.class : ChildDetailActivity.class));
             finish();
         });
         binding.tabSettings.setOnClickListener(v -> {

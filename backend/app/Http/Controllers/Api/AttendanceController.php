@@ -177,15 +177,18 @@ class AttendanceController extends Controller
         $records = $query->get();
 
         $summary = $records->groupBy('child_id')->map(function ($group) {
-            $child = $group->first()->child;
+            $child   = $group->first()->child;
+            $total   = $group->count();
+            $present = $group->where('status', 'present')->count();
             return [
-                'child_id' => $child->id,
-                'child_name' => $child->full_name,
-                'present' => $group->where('status', 'present')->count(),
-                'absent' => $group->where('status', 'absent')->count(),
-                'late' => $group->where('status', 'late')->count(),
-                'excused' => $group->where('status', 'excused')->count(),
-                'total_days' => $group->count(),
+                'child_id'        => $child->id,
+                'child_name'      => $child->full_name,
+                'present'         => $present,
+                'absent'          => $group->where('status', 'absent')->count(),
+                'late'            => $group->where('status', 'late')->count(),
+                'excused'         => $group->where('status', 'excused')->count(),
+                'total_days'      => $total,
+                'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 1) . '%' : '0%',
             ];
         })->values();
 

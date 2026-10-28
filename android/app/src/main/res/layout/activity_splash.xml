@@ -8,13 +8,14 @@
     android:background="@drawable/header_green_gradient"
     android:padding="40dp">
 
-    <!-- School emoji illustration -->
+    <!-- School logo circle -->
     <LinearLayout
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:background="@drawable/circle_white_bg"
         android:gravity="center"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="24dp"
+        android:elevation="4dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,20 +45,25 @@
         android:text="Parents Mobile App"
         android:textColor="#A5D6A7"
         android:textSize="14sp"
-        android:fontStyle="italic"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="48dp"/>
+        android:layout_marginBottom="56dp"/>
 
+    <!-- Spinner -->
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminateTint="#FFFFFF"/>
+        android:indeterminateTint="#FFFFFF"
+        android:layout_marginBottom="16dp"/>
 
+    <!-- Dynamic status — updated while server wakes up -->
     <TextView
+        android:id="@+id/tv_splash_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Loading…"
+        android:text="Connecting to server…"
         android:textColor="#A5D6A7"
         android:textSize="13sp"
-        android:layout_marginTop="12dp"/>
+        android:gravity="center"
+        android:layout_marginTop="4dp"/>
+
 </LinearLayout>

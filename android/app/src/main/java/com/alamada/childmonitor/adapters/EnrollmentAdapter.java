@@ -38,13 +38,20 @@ public class EnrollmentAdapter extends RecyclerView.Adapter<EnrollmentAdapter.Vi
         String childName = (e.child != null) ? e.child.getDisplayName() : "—";
         h.tvChildName.setText(childName);
 
-        // School year
-        h.tvSchoolYear.setText("School Year " + e.schoolYear + " – " + (e.schoolYear + 1));
+        // School year — backend returns e.g. 2024, display as "S.Y. 2024 – 2025"
+        if (e.schoolYear > 0) {
+            h.tvSchoolYear.setText("S.Y. " + e.schoolYear + " – " + (e.schoolYear + 1));
+        } else {
+            h.tvSchoolYear.setText("School Year —");
+        }
 
         // Enrollment date
-        h.tvEnrollmentDate.setText(e.enrollmentDate != null ? e.enrollmentDate : "—");
+        h.tvEnrollmentDate.setText(
+            (e.enrollmentDate != null && !e.enrollmentDate.isEmpty())
+                ? "Enrolled: " + e.enrollmentDate
+                : "Enrolled: —");
 
-        // Status badge — colour-coded like AttendanceAdapter
+        // Status badge — backend values: pending | approved | rejected
         String status = e.status != null ? e.status.toLowerCase() : "";
         String label  = status.isEmpty() ? "—"
             : Character.toUpperCase(status.charAt(0)) + status.substring(1);
@@ -52,7 +59,7 @@ public class EnrollmentAdapter extends RecyclerView.Adapter<EnrollmentAdapter.Vi
 
         int bgColor, textColor;
         switch (status) {
-            case "enrolled":
+            case "approved":
                 bgColor   = Color.parseColor("#E8F5E9");
                 textColor = Color.parseColor("#2E7D32");
                 break;
@@ -66,10 +73,11 @@ public class EnrollmentAdapter extends RecyclerView.Adapter<EnrollmentAdapter.Vi
                 break;
             default:
                 bgColor   = Color.parseColor("#F5F5F5");
-                textColor = Color.GRAY;
+                textColor = Color.parseColor("#616161");
         }
+        // Use setTint so the badge_green_bg shape shows the right colour
+        h.tvStatus.getBackground().setTint(bgColor);
         h.tvStatus.setTextColor(textColor);
-        h.tvStatus.setBackgroundColor(bgColor);
 
         // Remarks
         if (e.remarks != null && !e.remarks.isEmpty()) {
