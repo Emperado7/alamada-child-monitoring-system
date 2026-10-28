@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.alamada.childmonitor.R;
 import com.alamada.childmonitor.databinding.ActivitySettingsBinding;
 import com.alamada.childmonitor.models.MessageResponse;
 import com.alamada.childmonitor.network.ApiClient;
@@ -18,6 +19,8 @@ import retrofit2.Response;
 public class SettingsActivity extends BaseActivity {
 
     private ActivitySettingsBinding binding;
+    /** Cached role label used by both onCreate and showProfileDialog */
+    private String roleLabel = "Parent/Guardian";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +34,19 @@ public class SettingsActivity extends BaseActivity {
         String name = session.getUserName();
         binding.tvName.setText(name != null && !name.isEmpty() ? name : "User");
 
-        // Show role label based on actual role
+        // Set role label based on actual role
         String role = session.getUserRole();
-        String roleLabel;
-        if ("admin".equals(role))         roleLabel = "Administrator";
-        else if ("staff".equals(role))    roleLabel = "Staff Member";
-        else                               roleLabel = "Parent/Guardian";
+        if ("admin".equals(role))       roleLabel = "Administrator";
+        else if ("staff".equals(role))  roleLabel = "Staff Member";
+        else                             roleLabel = "Parent/Guardian";
 
-        // Update the role subtitle in the layout
-        android.widget.TextView tvRoleLabel = findViewById(R.id.tv_role_label);
-        if (tvRoleLabel != null) tvRoleLabel.setText(roleLabel);
+        // Update the role subtitle in the layout via view binding
+        if (binding.tvRoleLabel != null) {
+            binding.tvRoleLabel.setText(roleLabel);
+        }
 
         // ── Bottom nav ────────────────────────────────────
-        boolean isStaff = !"parent".equals(session.getUserRole());
+        boolean isStaff = !"parent".equals(role);
         binding.tabHome.setOnClickListener(v -> {
             startActivity(new Intent(this,
                 isStaff ? StaffDashboardActivity.class : DashboardActivity.class));
@@ -92,24 +95,23 @@ public class SettingsActivity extends BaseActivity {
 
     private void showSecurityDialog() {
         android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
-        android.view.View view = inflater.inflate(
-            com.alamada.childmonitor.R.layout.activity_security, null);
+        android.view.View view = inflater.inflate(R.layout.activity_security, null);
 
         android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
             .setView(view).create();
 
         com.google.android.material.textfield.TextInputEditText etCurrent =
-            view.findViewById(com.alamada.childmonitor.R.id.et_current_password);
+            view.findViewById(R.id.et_current_password);
         com.google.android.material.textfield.TextInputEditText etNew =
-            view.findViewById(com.alamada.childmonitor.R.id.et_new_password);
+            view.findViewById(R.id.et_new_password);
         com.google.android.material.textfield.TextInputEditText etConfirm =
-            view.findViewById(com.alamada.childmonitor.R.id.et_confirm_password);
+            view.findViewById(R.id.et_confirm_password);
 
-        android.view.View btnBack = view.findViewById(com.alamada.childmonitor.R.id.btn_back);
+        android.view.View btnBack = view.findViewById(R.id.btn_back);
         if (btnBack != null) btnBack.setOnClickListener(v -> dialog.dismiss());
 
         com.google.android.material.button.MaterialButton btnUpdate =
-            view.findViewById(com.alamada.childmonitor.R.id.btn_update_password);
+            view.findViewById(R.id.btn_update_password);
         if (btnUpdate != null) {
             btnUpdate.setOnClickListener(v -> {
                 String current = etCurrent != null && etCurrent.getText() != null

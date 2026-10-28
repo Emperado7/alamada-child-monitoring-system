@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 
 import com.alamada.childmonitor.R;
 import com.alamada.childmonitor.activities.SplashActivity;
@@ -91,7 +90,7 @@ public class AlamadaMessagingService extends FirebaseMessagingService {
         }
     }
 
-    static void createNotificationChannel(Context context) {
+    public static void createNotificationChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                 CHANNEL_ID,

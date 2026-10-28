@@ -67,6 +67,54 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- ══ BOTTOM NAV ════════════════════════════════════════════ -->
-    <include layout="@layout/include_staff_bottom_nav"/>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:background="#FFFFFF" android:orientation="vertical" android:elevation="8dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="56dp"
+            android:orientation="horizontal">
+            <LinearLayout android:id="@+id/tab_home"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🏠" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Home" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/tab_children"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="👦" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Children" android:textSize="10sp" android:textColor="@color/primary" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/tab_notifications"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="🔔" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Alerts" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+            <LinearLayout android:id="@+id/tab_settings"
+                android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1"
+                android:orientation="vertical" android:gravity="center"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true" android:focusable="true">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="⚙️" android:textSize="19sp" android:gravity="center"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Settings" android:textSize="10sp" android:textColor="#9E9E9E"/>
+            </LinearLayout>
+        </LinearLayout>
+        <View android:layout_width="80dp" android:layout_height="3dp" android:background="#212121"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp" android:layout_marginBottom="4dp"/>
+    </LinearLayout>
 
 </LinearLayout>

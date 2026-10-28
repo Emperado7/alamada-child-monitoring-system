@@ -9,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alamada.childmonitor.databinding.ActivityLoginBinding;
 import com.alamada.childmonitor.models.AuthResponse;
+import com.alamada.childmonitor.models.MessageResponse;
 import com.alamada.childmonitor.network.ApiClient;
 import com.alamada.childmonitor.utils.SessionManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -136,19 +138,16 @@ public class LoginActivity extends AppCompatActivity {
      * send push notifications to this device.
      */
     private void registerFcmToken(String token) {
-        // Get FCM token from Firebase (async) or from SharedPreferences cache
-        com.google.firebase.messaging.FirebaseMessaging.getInstance()
+        FirebaseMessaging.getInstance()
             .getToken()
             .addOnCompleteListener(task -> {
                 if (!task.isSuccessful()) return;
                 String fcmToken = task.getResult();
                 if (fcmToken == null || fcmToken.isEmpty()) return;
 
-                // Cache for later use
                 getSharedPreferences("AlamadaFCM", MODE_PRIVATE)
                     .edit().putString("fcm_token", fcmToken).apply();
 
-                // Send to backend (fire-and-forget)
                 Map<String, String> body = new HashMap<>();
                 body.put("fcm_token", fcmToken);
 
