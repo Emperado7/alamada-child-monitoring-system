@@ -19,7 +19,7 @@ import retrofit2.Response;
 public class SettingsActivity extends BaseActivity {
 
     private ActivitySettingsBinding binding;
-    /** Cached role label used by both onCreate and showProfileDialog */
+    /** Cached role label — used by both onCreate and showProfileDialog */
     private String roleLabel = "Parent/Guardian";
 
     @Override
@@ -30,22 +30,26 @@ public class SettingsActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        // Populate user info
+        // ── User info ──────────────────────────────────────────────
         String name = session.getUserName();
         binding.tvName.setText(name != null && !name.isEmpty() ? name : "User");
 
-        // Set role label based on actual role
         String role = session.getUserRole();
         if ("admin".equals(role))       roleLabel = "Administrator";
         else if ("staff".equals(role))  roleLabel = "Staff Member";
         else                             roleLabel = "Parent/Guardian";
 
-        // Update the role subtitle in the layout via view binding
-        if (binding.tvRoleLabel != null) {
-            binding.tvRoleLabel.setText(roleLabel);
+        binding.tvRoleLabel.setText(roleLabel);
+
+        // Avatar — show first letter of name
+        if (name != null && !name.isEmpty()) {
+            binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
+            binding.tvAvatar.setTextSize(32);
+            binding.tvAvatar.setTextColor(
+                getResources().getColor(android.R.color.white, null));
         }
 
-        // ── Bottom nav ────────────────────────────────────
+        // ── Bottom nav ─────────────────────────────────────────────
         boolean isStaff = !"parent".equals(role);
         binding.tabHome.setOnClickListener(v -> {
             startActivity(new Intent(this,
@@ -53,29 +57,22 @@ public class SettingsActivity extends BaseActivity {
             finish();
         });
         binding.tabChild.setOnClickListener(v -> {
-            if (isStaff) {
-                startActivity(new Intent(this, StaffChildListActivity.class));
-            } else {
-                startActivity(new Intent(this, ChildDetailActivity.class));
-            }
-            finish();
-        });
-        binding.tabNotifications.setOnClickListener(v -> {
-            startActivity(new Intent(this, NotificationsActivity.class));
+            startActivity(new Intent(this,
+                isStaff ? StaffChildListActivity.class : ChildDetailActivity.class));
             finish();
         });
 
-        // ── Menu cards ────────────────────────────────────
+        // ── Menu cards ─────────────────────────────────────────────
         binding.cardProfile.setOnClickListener(v -> showProfileDialog());
         binding.cardSecurity.setOnClickListener(v -> showSecurityDialog());
         binding.cardNotifications.setOnClickListener(v ->
             startActivity(new Intent(this, NotificationsActivity.class)));
 
-        // ── Logout ────────────────────────────────────────
+        // ── Log Out link ───────────────────────────────────────────
         binding.cardLogout.setOnClickListener(v -> confirmLogout());
     }
 
-    // ── Profile dialog ────────────────────────────────────
+    // ── Profile dialog ─────────────────────────────────────────────
 
     private void showProfileDialog() {
         new android.app.AlertDialog.Builder(this)
@@ -91,7 +88,7 @@ public class SettingsActivity extends BaseActivity {
             .show();
     }
 
-    // ── Change-password dialog ────────────────────────────
+    // ── Change-password dialog ──────────────────────────────────────
 
     private void showSecurityDialog() {
         android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
@@ -168,7 +165,7 @@ public class SettingsActivity extends BaseActivity {
         dialog.show();
     }
 
-    // ── Logout confirmation ───────────────────────────────
+    // ── Logout confirmation ────────────────────────────────────────
 
     private void confirmLogout() {
         new android.app.AlertDialog.Builder(this)
