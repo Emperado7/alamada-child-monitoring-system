@@ -26,6 +26,7 @@
             --green-light:  #43a047;
             --green-pale:   #e8f5e9;
             --sidebar-w:    220px;
+            --sidebar-w-collapsed: 0px;
             --topbar-h:     60px;
         }
 
@@ -416,6 +417,29 @@
             display: flex; align-items: center; gap: 6px;
         }
 
+        /* ── Desktop sidebar collapsed state ─────────────────── */
+        @media (min-width: 992px) {
+            body.sidebar-collapsed #sidebar {
+                transform: translateX(-100%);
+            }
+            body.sidebar-collapsed #topnav {
+                left: 0;
+            }
+            body.sidebar-collapsed #main {
+                margin-left: 0;
+            }
+        }
+        /* Smooth transitions for collapse/expand on all sizes */
+        #sidebar {
+            transition: transform .25s ease;
+        }
+        #topnav {
+            transition: left .25s ease;
+        }
+        #main {
+            transition: margin-left .25s ease;
+        }
+
         /* Mobile */
         @media (max-width: 991px) {
             /* Sidebar slides off-screen on all phones & tablets */
@@ -703,7 +727,12 @@
 ════════════════════════════════════════════════ --}}
 <header id="topnav">
     <div class="topnav-left">
-        <button class="topnav-toggle" onclick="toggleSidebar()" style="min-width:44px;min-height:44px">
+        <button class="topnav-toggle" onclick="toggleSidebar()"
+                style="min-width:44px;min-height:44px;border-radius:8px;
+                       transition:background .15s"
+                title="Toggle sidebar"
+                onmouseover="this.style.background='#f5f5f5'"
+                onmouseout="this.style.background='transparent'">
             <i class="fas fa-bars"></i>
         </button>
         <span class="topnav-title">Alamada Learning Center Monitoring System</span>
@@ -809,13 +838,31 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 <script>
 function toggleSidebar() {
-    const sb = document.getElementById('sidebar');
-    const ov = document.getElementById('sidebarOverlay');
-    const isOpen = sb.classList.toggle('open');
-    ov.style.display = isOpen ? 'block' : 'none';
-    // Prevent body scroll when sidebar is open on iOS
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    const sb  = document.getElementById('sidebar');
+    const ov  = document.getElementById('sidebarOverlay');
+    const body = document.body;
+
+    if (window.innerWidth >= 992) {
+        // ── DESKTOP: toggle collapsed class on body ──────────────
+        body.classList.toggle('sidebar-collapsed');
+        // Persist preference
+        localStorage.setItem('sidebarCollapsed',
+            body.classList.contains('sidebar-collapsed') ? '1' : '0');
+    } else {
+        // ── MOBILE: slide sidebar in/out ─────────────────────────
+        const isOpen = sb.classList.toggle('open');
+        ov.style.display = isOpen ? 'block' : 'none';
+        body.style.overflow = isOpen ? 'hidden' : '';
+    }
 }
+
+// Restore sidebar state on page load (desktop only)
+(function() {
+    if (window.innerWidth >= 992 &&
+        localStorage.getItem('sidebarCollapsed') === '1') {
+        document.body.classList.add('sidebar-collapsed');
+    }
+})();
 
 // Close sidebar when any nav link is tapped (mobile)
 document.querySelectorAll('.nav-link-s').forEach(function(link) {
