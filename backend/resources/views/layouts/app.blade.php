@@ -712,11 +712,21 @@
         @auth
         {{-- Notification bell --}}
         <a href="{{ auth()->user()->isAdmin() ? route('admin.notifications.index') : route('staff.notifications.index') }}"
-           class="notif-btn text-decoration-none">
-            <i class="fas fa-bell"></i>
+           style="position:relative;display:inline-flex;align-items:center;justify-content:center;
+                  width:40px;height:40px;border-radius:50%;color:#555;text-decoration:none;
+                  transition:background .15s;cursor:pointer;"
+           onmouseover="this.style.background='#f5f5f5'"
+           onmouseout="this.style.background='transparent'">
+            <i class="fas fa-bell" style="font-size:1.2rem;pointer-events:none;"></i>
             @php $nb = \App\Models\Notification::count(); @endphp
             @if($nb > 0)
-            <span class="notif-badge">{{ $nb > 9 ? '9+' : $nb }}</span>
+            <span style="position:absolute;top:2px;right:2px;
+                         background:#ef5350;color:#fff;font-size:.6rem;font-weight:700;
+                         width:16px;height:16px;border-radius:50%;
+                         display:flex;align-items:center;justify-content:center;
+                         border:2px solid #fff;pointer-events:none;">
+                {{ $nb > 9 ? '9+' : $nb }}
+            </span>
             @endif
         </a>
 
