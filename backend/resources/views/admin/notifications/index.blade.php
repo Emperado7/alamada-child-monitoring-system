@@ -138,15 +138,17 @@
                     <i class="fas fa-calendar-alt" style="color:#9e9e9e;font-size:.82rem"></i>
                 </span>
                 <input type="date" name="date_from"
-                       value="{{ request('date_from', now()->startOfMonth()->toDateString()) }}"
+                       value="{{ request('date_from') }}"
                        class="form-control form-control-sm border-start-0 border-end-0 ps-1"
-                       style="max-width:110px">
+                       style="max-width:110px"
+                       placeholder="From">
                 <span class="input-group-text bg-white border-start-0 border-end-0 px-1"
                       style="font-size:.75rem;color:#9e9e9e">-</span>
                 <input type="date" name="date_to"
-                       value="{{ request('date_to', now()->toDateString()) }}"
+                       value="{{ request('date_to') }}"
                        class="form-control form-control-sm border-start-0"
-                       style="max-width:110px">
+                       style="max-width:110px"
+                       placeholder="To">
             </div>
 
             {{-- Search + Filters --}}
