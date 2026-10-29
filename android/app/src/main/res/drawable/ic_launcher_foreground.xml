@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive icon foreground — logo bitmap centred with inset -->
+<!-- Adaptive icon foreground — uses the full Alamada logo bitmap -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:top="20dp"
-        android:bottom="20dp"
-        android:left="8dp"
-        android:right="8dp">
+        android:top="0dp"
+        android:bottom="0dp"
+        android:left="0dp"
+        android:right="0dp">
         <bitmap
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/alamada_logo"
             android:gravity="center"
             android:tileMode="disabled"/>
     </item>
