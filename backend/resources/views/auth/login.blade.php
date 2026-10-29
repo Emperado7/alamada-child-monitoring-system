@@ -17,9 +17,9 @@
             min-height: 100vh;
             min-height: -webkit-fill-available;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: flex-start; justify-content: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: max(20px, env(safe-area-inset-top)) 20px max(20px, env(safe-area-inset-bottom));
+            padding: max(32px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
             -webkit-tap-highlight-color: rgba(0,0,0,0.05);
         }
 
@@ -33,13 +33,16 @@
         .logo-area {
             width: 100%; text-align: center;
             margin-bottom: 10px;
+            padding-top: 8px;
         }
         .logo-area img {
-            width: 280px;
-            max-width: 100%;
+            width: 320px;
+            max-width: 92%;
+            height: auto;
             display: block;
             margin: 0 auto;
-            filter: drop-shadow(0 6px 18px rgba(0,0,0,0.13));
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.10));
+            object-fit: contain;
         }
 
         /* ── Login card ── */
@@ -156,8 +159,8 @@
         <img src="{{ asset('images/logo.png') }}"
              alt="Alamada Learning Center Monitoring System"
              onerror="this.src='{{ asset('images/logo.svg') }}'"
-             style="width:280px;max-width:100%;display:block;margin:0 auto;
-                    filter:drop-shadow(0 4px 16px rgba(0,0,0,0.12))">
+             style="width:320px;max-width:92%;height:auto;display:block;margin:0 auto;
+                    filter:drop-shadow(0 4px 14px rgba(0,0,0,0.10));object-fit:contain">
     </div>
 
     <!-- ══ LOGIN CARD ══ -->
