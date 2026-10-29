@@ -39,6 +39,23 @@ public class LoginActivity extends AppCompatActivity {
 
         binding.btnLogin.setOnClickListener(v -> attemptLogin());
 
+        // Password eye toggle
+        binding.btnTogglePassword.setOnClickListener(v -> {
+            android.text.method.TransformationMethod tm =
+                binding.etPassword.getTransformationMethod();
+            if (tm instanceof android.text.method.PasswordTransformationMethod) {
+                binding.etPassword.setTransformationMethod(
+                    android.text.method.HideReturnsTransformationMethod.getInstance());
+                binding.btnTogglePassword.setText("🙈");
+            } else {
+                binding.etPassword.setTransformationMethod(
+                    android.text.method.PasswordTransformationMethod.getInstance());
+                binding.btnTogglePassword.setText("👁");
+            }
+            // Keep cursor at end
+            binding.etPassword.setSelection(binding.etPassword.length());
+        });
+
         binding.tvForgotPassword.setOnClickListener(v ->
             Toast.makeText(this,
                 "Please contact the learning center administrator to reset your password.",
@@ -51,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString().trim();
 
         if (email.isEmpty()) {
-            binding.etEmail.setError("Email is required");
+            binding.etEmail.setError("Username is required");
             binding.etEmail.requestFocus();
             return;
         }
