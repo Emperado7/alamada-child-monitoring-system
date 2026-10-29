@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Adaptive icon foreground — uses the xxxhdpi launcher PNG as a scaled bitmap -->
+<!-- Adaptive icon foreground — logo bitmap centred with inset -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:top="18%"
-        android:bottom="18%"
-        android:left="5%"
-        android:right="5%">
+        android:top="20dp"
+        android:bottom="20dp"
+        android:left="8dp"
+        android:right="8dp">
         <bitmap
             android:src="@mipmap/ic_launcher"
             android:gravity="center"
