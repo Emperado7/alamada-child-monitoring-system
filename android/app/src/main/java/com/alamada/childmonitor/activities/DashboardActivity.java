@@ -24,37 +24,33 @@ public class DashboardActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        // Welcome name + avatar initial
+        // ── Welcome: name + avatar initial ─────────────────────────
         String name = session.getUserName();
         if (name != null && !name.isEmpty()) {
+            // Show full name with exclamation mark, e.g. "Juan Dela Cruz!"
             binding.tvWelcome.setText(name + "!");
+            // Replace the default emoji with the first letter of the name
             binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
-            binding.tvAvatar.setTextSize(28);
+            binding.tvAvatar.setTextSize(34);
             binding.tvAvatar.setTextColor(
                 getResources().getColor(android.R.color.white, null));
         }
 
-        // ── Quick-access card clicks ───────────────────────────────
+        // ── Card clicks ─────────────────────────────────────────────
         binding.cardChildInfo.setOnClickListener(v ->
             startActivity(new Intent(this, ChildDetailActivity.class)));
-
-        binding.cardEnrollment.setOnClickListener(v ->
-            startActivity(new Intent(this, EnrollmentActivity.class)));
-
-        binding.cardNotifications.setOnClickListener(v ->
-            startActivity(new Intent(this, NotificationsActivity.class)));
 
         binding.cardSettings.setOnClickListener(v ->
             startActivity(new Intent(this, SettingsActivity.class)));
 
-        // ── Bottom nav ─────────────────────────────────────────────
-        binding.tabHome.setOnClickListener(v -> loadUnreadCount());
+        binding.cardNotifications.setOnClickListener(v ->
+            startActivity(new Intent(this, NotificationsActivity.class)));
+
+        // ── Bottom nav ──────────────────────────────────────────────
+        binding.tabHome.setOnClickListener(v -> loadUnreadCount());   // already here — refresh
 
         binding.tabChild.setOnClickListener(v ->
             startActivity(new Intent(this, ChildDetailActivity.class)));
-
-        binding.tabNotifications.setOnClickListener(v ->
-            startActivity(new Intent(this, NotificationsActivity.class)));
 
         binding.tabSettings.setOnClickListener(v ->
             startActivity(new Intent(this, SettingsActivity.class)));
@@ -68,7 +64,7 @@ public class DashboardActivity extends BaseActivity {
         loadUnreadCount();
     }
 
-    // ── Unread notification badge ──────────────────────────────────
+    // ── Unread notification badge ───────────────────────────────────
 
     private void loadUnreadCount() {
         ApiClient.getInstance(session.getBearerToken())
@@ -78,26 +74,20 @@ public class DashboardActivity extends BaseActivity {
                 public void onResponse(Call<UnreadCountResponse> call,
                                        Response<UnreadCountResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
-                        int count = response.body().unreadCount;
-                        updateNotifBadge(count);
+                        updateBadge(response.body().unreadCount);
                     } else if (response.code() == 401) {
                         handleUnauthorised();
                     }
                 }
-                @Override public void onFailure(Call<UnreadCountResponse> call, Throwable t) {}
+                @Override
+                public void onFailure(Call<UnreadCountResponse> call, Throwable t) {}
             });
     }
 
-    private void updateNotifBadge(int count) {
-        // Card badge
+    private void updateBadge(int count) {
         if (binding.tvNotifBadge != null) {
             binding.tvNotifBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
             binding.tvNotifBadge.setText(count > 9 ? "9+" : String.valueOf(count));
-        }
-        // Bottom-nav badge
-        if (binding.tvNavNotifBadge != null) {
-            binding.tvNavNotifBadge.setVisibility(count > 0 ? View.VISIBLE : View.GONE);
-            binding.tvNavNotifBadge.setText(count > 9 ? "9+" : String.valueOf(count));
         }
     }
 }
