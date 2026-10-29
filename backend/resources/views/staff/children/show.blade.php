@@ -34,6 +34,7 @@
                 @endif
                 <tr><th class="text-muted fw-normal">Address</th><td>{{ $child->address }}</td></tr>
                 <tr><th class="text-muted fw-normal">Guardian</th><td>{{ $child->guardian_name }}</td></tr>
+                <tr><th class="text-muted fw-normal">Relationship</th><td>{{ $child->guardian_relationship ?? '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Contact</th><td>{{ $child->guardian_contact }}</td></tr>
                 @if($child->parent)
                 <tr><th class="text-muted fw-normal">Parent App</th><td>{{ $child->parent->name }}</td></tr>

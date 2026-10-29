@@ -29,6 +29,8 @@
                 <tr><th class="text-muted fw-normal">Age</th><td>{{ $enrollment->child->age }}</td></tr>
                 <tr><th class="text-muted fw-normal">Diagnosis</th><td>{{ $enrollment->child->diagnosis }}</td></tr>
                 <tr><th class="text-muted fw-normal">Guardian</th><td>{{ $enrollment->child->guardian_name }}</td></tr>
+                <tr><th class="text-muted fw-normal">Relationship</th><td>{{ $enrollment->child->guardian_relationship ?? '—' }}</td></tr>
+                <tr><th class="text-muted fw-normal">Contact</th><td>{{ $enrollment->child->guardian_contact }}</td></tr>
             </table>
             <a href="{{ route('staff.children.show',$enrollment->child) }}" class="btn btn-sm btn-outline-primary mt-2">
                 <i class="fas fa-user me-1"></i>View Child Profile

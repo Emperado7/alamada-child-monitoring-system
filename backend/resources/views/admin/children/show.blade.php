@@ -31,6 +31,7 @@
                 @endif
                 <tr><th class="text-muted fw-normal">Address</th><td>{{ $child->address }}</td></tr>
                 <tr><th class="text-muted fw-normal">Guardian</th><td>{{ $child->guardian_name }}</td></tr>
+                <tr><th class="text-muted fw-normal">Relationship</th><td>{{ $child->guardian_relationship ?? '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Contact</th><td>{{ $child->guardian_contact }}</td></tr>
                 <tr><th class="text-muted fw-normal">Staff</th><td>{{ $child->staff->name ?? '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Parent</th><td>{{ $child->parent->name ?? '—' }}</td></tr>

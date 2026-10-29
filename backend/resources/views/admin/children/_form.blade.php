@@ -82,6 +82,30 @@
     </div>
 
     <div class="col-md-6">
+        <label class="form-label">Guardian Relationship <span class="text-danger">*</span></label>
+        <select name="guardian_relationship"
+                class="form-select @error('guardian_relationship') is-invalid @enderror" required>
+            <option value="">Select relationship…</option>
+            @foreach(['Mother','Father','Grandmother','Grandfather','Aunt','Uncle','Older Sibling','Guardian','Other'] as $rel)
+                <option value="{{ $rel }}"
+                    {{ old('guardian_relationship', $child->guardian_relationship ?? '') == $rel ? 'selected' : '' }}>
+                    {{ $rel === 'Guardian' ? 'Legal Guardian' : $rel }}
+                </option>
+            @endforeach
+        </select>
+        @error('guardian_relationship')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">Guardian Gender</label>
+        <select name="guardian_gender" class="form-select">
+            <option value="">Select gender…</option>
+            <option value="male"   {{ old('guardian_gender', $child->guardian_gender ?? '') == 'male'   ? 'selected' : '' }}>Male</option>
+            <option value="female" {{ old('guardian_gender', $child->guardian_gender ?? '') == 'female' ? 'selected' : '' }}>Female</option>
+        </select>
+    </div>
+
+    <div class="col-md-6">
         <label class="form-label">Diagnosis <span class="text-danger">*</span></label>
         <select name="diagnosis" class="form-select @error('diagnosis') is-invalid @enderror" required>
             <option value="">Select Diagnosis</option>

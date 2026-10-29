@@ -298,7 +298,7 @@
                         @if($child)
                         <div class="small fw-semibold">{{ $child->guardian_name }}</div>
                         <div class="text-muted" style="font-size:.72rem">
-                            ({{ $child->gender === 'female' ? 'Mother' : 'Father' }})
+                            ({{ $child->guardian_relationship ?? ($child->gender === 'female' ? 'Mother' : 'Father') }})
                         </div>
                         @else
                         <span class="text-muted small">—</span>

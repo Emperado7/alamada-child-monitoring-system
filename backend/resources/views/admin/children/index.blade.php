@@ -279,7 +279,7 @@
                     {{-- Guardian --}}
                     <td>
                         <div class="small fw-semibold">{{ $child->guardian_name }}</div>
-                        <div class="text-muted" style="font-size:.72rem">({{ ucfirst($child->gender === 'male' ? 'Father' : 'Mother') }})</div>
+                        <div class="text-muted" style="font-size:.72rem">({{ $child->guardian_relationship ?? '—' }})</div>
                     </td>
 
                     {{-- Contact --}}

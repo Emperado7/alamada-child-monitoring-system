@@ -130,6 +130,47 @@
                             @enderror
                         </div>
 
+                        {{-- Guardian Relationship --}}
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">
+                                Guardian Relationship <span class="text-danger">*</span>
+                            </label>
+                            <select name="guardian_relationship"
+                                    class="form-select @error('guardian_relationship') is-invalid @enderror"
+                                    required>
+                                <option value="">Select relationship…</option>
+                                @foreach([
+                                    'Mother'        => 'Mother',
+                                    'Father'        => 'Father',
+                                    'Grandmother'   => 'Grandmother',
+                                    'Grandfather'   => 'Grandfather',
+                                    'Aunt'          => 'Aunt',
+                                    'Uncle'         => 'Uncle',
+                                    'Older Sibling' => 'Older Sibling',
+                                    'Guardian'      => 'Legal Guardian',
+                                    'Other'         => 'Other',
+                                ] as $val => $label)
+                                    <option value="{{ $val }}"
+                                        {{ old('guardian_relationship') === $val ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('guardian_relationship')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        {{-- Guardian Gender --}}
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Guardian Gender</label>
+                            <select name="guardian_gender" class="form-select">
+                                <option value="">Select gender…</option>
+                                <option value="male"   {{ old('guardian_gender')=='male'   ? 'selected':'' }}>Male</option>
+                                <option value="female" {{ old('guardian_gender')=='female' ? 'selected':'' }}>Female</option>
+                            </select>
+                        </div>
+
                         <div class="col-md-6">
                             <label class="form-label small fw-semibold">
                                 Diagnosis <span class="text-danger">*</span>

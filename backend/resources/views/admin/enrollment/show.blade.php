@@ -42,6 +42,7 @@
                 <tr><th class="text-muted fw-normal">Gender</th><td>{{ ucfirst($enrollment->child->gender) }}</td></tr>
                 <tr><th class="text-muted fw-normal">Diagnosis</th><td>{{ $enrollment->child->diagnosis }}</td></tr>
                 <tr><th class="text-muted fw-normal">Guardian</th><td>{{ $enrollment->child->guardian_name }}</td></tr>
+                <tr><th class="text-muted fw-normal">Relationship</th><td>{{ $enrollment->child->guardian_relationship ?? '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Contact</th><td>{{ $enrollment->child->guardian_contact }}</td></tr>
             </table>
             <a href="{{ route('admin.children.show', $enrollment->child) }}" class="btn btn-sm btn-outline-primary mt-2">
