@@ -79,6 +79,8 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'attendance' => 'required|array',
             'attendance.*' => 'required|in:present,absent,excused',
+            'fetched_by' => 'nullable|array',
+            'fetched_by.*' => 'nullable|string|max:100',
         ]);
 
         $date = $request->date;
@@ -94,6 +96,7 @@ class AttendanceController extends Controller
                 ['child_id' => $childId, 'attendance_date' => $date],
                 [
                     'status' => $status,
+                    'fetched_by' => $request->fetched_by[$childId] ?? null,
                     'remarks' => $request->remarks[$childId] ?? null,
                     'recorded_by' => $staffId,
                 ]

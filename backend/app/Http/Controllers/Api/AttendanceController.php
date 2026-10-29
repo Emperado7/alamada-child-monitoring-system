@@ -64,6 +64,7 @@ class AttendanceController extends Controller
             'child_id' => 'required|exists:children,id',
             'attendance_date' => 'required|date',
             'status' => 'required|in:present,absent,excused',
+            'fetched_by' => 'nullable|string|max:100',
             'remarks' => 'nullable|string',
         ]);
 
@@ -92,6 +93,7 @@ class AttendanceController extends Controller
             'records' => 'required|array|min:1',
             'records.*.child_id' => 'required|exists:children,id',
             'records.*.status' => 'required|in:present,absent,excused',
+            'records.*.fetched_by' => 'nullable|string|max:100',
             'records.*.remarks' => 'nullable|string',
         ]);
 
@@ -104,6 +106,7 @@ class AttendanceController extends Controller
                 ['child_id' => $record['child_id'], 'attendance_date' => $date],
                 [
                     'status' => $record['status'],
+                    'fetched_by' => $record['fetched_by'] ?? null,
                     'remarks' => $record['remarks'] ?? null,
                     'recorded_by' => $staffId,
                 ]
@@ -131,6 +134,7 @@ class AttendanceController extends Controller
     {
         $data = $request->validate([
             'status' => 'sometimes|in:present,absent,excused',
+            'fetched_by' => 'nullable|string|max:100',
             'remarks' => 'nullable|string',
         ]);
 
@@ -177,17 +181,17 @@ class AttendanceController extends Controller
         $records = $query->get();
 
         $summary = $records->groupBy('child_id')->map(function ($group) {
-            $child   = $group->first()->child;
-            $total   = $group->count();
+            $child = $group->first()->child;
+            $total = $group->count();
             $present = $group->where('status', 'present')->count();
             return [
-                'child_id'        => $child->id,
-                'child_name'      => $child->full_name,
-                'present'         => $present,
-                'absent'          => $group->where('status', 'absent')->count(),
-                'late'            => $group->where('status', 'late')->count(),
-                'excused'         => $group->where('status', 'excused')->count(),
-                'total_days'      => $total,
+                'child_id' => $child->id,
+                'child_name' => $child->full_name,
+                'present' => $present,
+                'absent' => $group->where('status', 'absent')->count(),
+                'late' => $group->where('status', 'late')->count(),
+                'excused' => $group->where('status', 'excused')->count(),
+                'total_days' => $total,
                 'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 1) . '%' : '0%',
             ];
         })->values();

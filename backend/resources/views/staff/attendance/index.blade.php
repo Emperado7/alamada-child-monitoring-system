@@ -200,6 +200,7 @@
                         <th class="py-2 small fw-bold" style="color:#2e7d32">Age</th>
                         <th class="py-2 small fw-bold" style="color:#2e7d32">Status</th>
                         <th class="py-2 small fw-bold text-center pe-3" style="color:#2e7d32">Attendance</th>
+                        <th class="py-2 small fw-bold text-center" style="color:#2e7d32">Fetched By</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -304,10 +305,36 @@
 
                             </div>
                         </td>
+
+                        {{-- Fetched By (guardian relationship) --}}
+                        <td>
+                            <select name="fetched_by[{{ $child->id }}]"
+                                    class="form-select form-select-sm rounded-2"
+                                    style="min-width:145px;font-size:.8rem">
+                                <option value="">— Select —</option>
+                                @foreach([
+                                    'Mother'        => 'Mother',
+                                    'Father'        => 'Father',
+                                    'Grandmother'   => 'Grandmother',
+                                    'Grandfather'   => 'Grandfather',
+                                    'Aunt'          => 'Aunt',
+                                    'Uncle'         => 'Uncle',
+                                    'Older Sibling' => 'Older Sibling',
+                                    'Guardian'      => 'Guardian',
+                                    'Other'         => 'Other',
+                                ] as $val => $label)
+                                    @php $curFetched = $existing?->fetched_by ?? ''; @endphp
+                                    <option value="{{ $val }}"
+                                        {{ $curFetched === $val ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-5">
+                        <td colspan="7" class="text-center py-5">
                             <div style="color:#bdbdbd">
                                 <i class="fas fa-child fa-3x mb-3 d-block"></i>
                                 <div class="fw-semibold">No active children assigned to you.</div>

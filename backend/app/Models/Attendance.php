@@ -14,6 +14,7 @@ class Attendance extends Model
         'attendance_date',
         'status',
         'remarks',
+        'fetched_by',
         'recorded_by',
     ];
 

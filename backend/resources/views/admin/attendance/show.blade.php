@@ -56,6 +56,7 @@
                     <th class="px-3 py-2 small fw-semibold text-muted">Date</th>
                     <th class="py-2 small fw-semibold text-muted">Day</th>
                     <th class="py-2 small fw-semibold text-muted">Status</th>
+                    <th class="py-2 small fw-semibold text-muted">Fetched By</th>
                     <th class="py-2 small fw-semibold text-muted">Remarks</th>
                     <th class="py-2 small fw-semibold text-muted">Recorded By</th>
                 </tr>
@@ -84,12 +85,23 @@
                             {{ ucfirst($r->status) }}
                         </span>
                     </td>
+                    <td class="small">
+                        @if($r->fetched_by)
+                            <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                                  style="background:#f3e5f5;color:#6a1b9a;font-size:.78rem">
+                                <i class="fas fa-user-friends me-1" style="font-size:.7rem"></i>
+                                {{ $r->fetched_by }}
+                            </span>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
+                    </td>
                     <td class="small text-muted">{{ $r->remarks ?? '—' }}</td>
                     <td class="small text-muted">{{ $r->recorder->name ?? '—' }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center text-muted py-4">
+                    <td colspan="6" class="text-center text-muted py-4">
                         No attendance records for this month.
                     </td>
                 </tr>
