@@ -131,6 +131,11 @@ public class SettingsActivity extends BaseActivity {
                     return;
                 }
 
+                // Show progress while request is in flight
+                android.widget.ProgressBar pb = view.findViewById(R.id.progress_bar);
+                if (pb != null) pb.setVisibility(android.view.View.VISIBLE);
+                btnUpdate.setEnabled(false);
+
                 Map<String, String> body = new HashMap<>();
                 body.put("current_password", current);
                 body.put("new_password", newPass);
@@ -142,6 +147,8 @@ public class SettingsActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call<MessageResponse> call,
                                                Response<MessageResponse> response) {
+                            if (pb != null) pb.setVisibility(android.view.View.GONE);
+                            btnUpdate.setEnabled(true);
                             if (response.isSuccessful()) {
                                 Toast.makeText(SettingsActivity.this,
                                     "Password updated successfully.", Toast.LENGTH_SHORT).show();
@@ -156,6 +163,8 @@ public class SettingsActivity extends BaseActivity {
                         }
                         @Override
                         public void onFailure(Call<MessageResponse> call, Throwable t) {
+                            if (pb != null) pb.setVisibility(android.view.View.GONE);
+                            btnUpdate.setEnabled(true);
                             Toast.makeText(SettingsActivity.this,
                                 "Network error.", Toast.LENGTH_SHORT).show();
                         }

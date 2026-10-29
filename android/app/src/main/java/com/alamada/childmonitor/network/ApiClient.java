@@ -7,6 +7,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,7 +23,8 @@ public class ApiClient {
 
     /** Call after login or when the token changes. */
     public static synchronized void init(String bearerToken) {
-        if (instance == null || !bearerToken.equals(currentToken)) {
+        // Use Objects.equals so null-safe — bearerToken can be null for unauthenticated calls
+        if (instance == null || !Objects.equals(bearerToken, currentToken)) {
             currentToken = bearerToken;
             instance = buildService(bearerToken);
         }

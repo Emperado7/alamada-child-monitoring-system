@@ -46,6 +46,9 @@ public class AttendanceActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 
+        // Read child_id passed from ChildDetailActivity so we pre-select the right child
+        selectedChildId = getIntent().getIntExtra("child_id", -1);
+
         selectedMonth = new SimpleDateFormat("yyyy-MM", Locale.getDefault())
             .format(Calendar.getInstance().getTime());
         updateMonthLabel();
@@ -61,17 +64,15 @@ public class AttendanceActivity extends BaseActivity {
         binding.swipeRefresh.setColorSchemeResources(R.color.primary);
         binding.swipeRefresh.setOnRefreshListener(this::loadAttendance);
 
-        // ── Bottom nav (Attendance has no dedicated tab — back goes home) ──
+        // ── Bottom nav — Child Info active ──────────────────────────
         binding.tabHome.setOnClickListener(v -> {
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
         });
         binding.tabChild.setOnClickListener(v -> {
-            startActivity(new Intent(this, ChildDetailActivity.class));
-            finish();
-        });
-        binding.tabNotifications.setOnClickListener(v -> {
-            startActivity(new Intent(this, NotificationsActivity.class));
+            Intent i = new Intent(this, ChildDetailActivity.class);
+            i.putExtra("child_id", selectedChildId);
+            startActivity(i);
             finish();
         });
         binding.tabSettings.setOnClickListener(v -> {
@@ -107,13 +108,22 @@ public class AttendanceActivity extends BaseActivity {
 
     private void setupSpinner() {
         List<String> names = new ArrayList<>();
-        // If only one child, skip "All Children" and select immediately
+        int preSelectIndex = 0;   // default to first item
+
         if (children.size() == 1) {
+            // Only one child — use it directly, no spinner needed
             selectedChildId = children.get(0).id;
             names.add(children.get(0).getDisplayName());
         } else {
+            // Multiple children — add a prompt entry then the list
             names.add("Select a child…");
-            for (Child c : children) names.add(c.getDisplayName());
+            for (int i = 0; i < children.size(); i++) {
+                names.add(children.get(i).getDisplayName());
+                // Pre-select the child passed from the previous screen
+                if (selectedChildId != -1 && children.get(i).id == selectedChildId) {
+                    preSelectIndex = i + 1;  // +1 because index 0 is the prompt
+                }
+            }
         }
 
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
@@ -121,6 +131,7 @@ public class AttendanceActivity extends BaseActivity {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerChild.setAdapter(spinnerAdapter);
 
+        // Set listener before setSelection so it fires correctly
         binding.spinnerChild.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
@@ -134,7 +145,8 @@ public class AttendanceActivity extends BaseActivity {
             @Override public void onNothingSelected(AdapterView<?> p) {}
         });
 
-        if (children.size() == 1) loadAttendance();
+        // Apply pre-selection — triggers onItemSelected which loads attendance
+        binding.spinnerChild.setSelection(preSelectIndex);
     }
 
     private void loadAttendance() {

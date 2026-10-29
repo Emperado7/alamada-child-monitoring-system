@@ -61,8 +61,10 @@ public class ActivitiesActivity extends BaseActivity {
             startActivity(i);
             finish();
         });
-        binding.tabSettings.setOnClickListener(v ->
-            startActivity(new Intent(this, SettingsActivity.class)));
+        binding.tabSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+            finish();
+        });
 
         loadActivities();
     }
