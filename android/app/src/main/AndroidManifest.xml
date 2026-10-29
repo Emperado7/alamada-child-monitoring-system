@@ -61,6 +61,11 @@
             android:name=".activities.EnrollmentActivity"
             android:exported="false"/>
 
+        <!-- Activities (full screen list) -->
+        <activity
+            android:name=".activities.ActivitiesActivity"
+            android:exported="false"/>
+
         <!-- Staff / Admin screens -->
         <activity
             android:name=".activities.StaffDashboardActivity"

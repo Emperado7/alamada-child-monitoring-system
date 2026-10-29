@@ -5,19 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-
 import com.alamada.childmonitor.databinding.ActivityChildDetailBinding;
-import com.alamada.childmonitor.fragments.ActivitiesFragment;
-import com.alamada.childmonitor.fragments.AttendanceTabFragment;
-import com.alamada.childmonitor.fragments.InfoFragment;
 import com.alamada.childmonitor.models.Child;
 import com.alamada.childmonitor.models.ChildListResponse;
 import com.alamada.childmonitor.models.ChildResponse;
 import com.alamada.childmonitor.network.ApiClient;
 import com.bumptech.glide.Glide;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +19,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Child Information screen — shows child profile in the header and
+ * 3 menu cards: Attendance Record, Daily Activities, Notifications.
+ * Matches the design mockup exactly.
+ */
 public class ChildDetailActivity extends BaseActivity {
 
     private ActivityChildDetailBinding binding;
     private int childId = -1;
-    private ChildResponse childData;
     private List<Child> childList = new ArrayList<>();
 
     @Override
@@ -43,29 +40,40 @@ public class ChildDetailActivity extends BaseActivity {
 
         childId = getIntent().getIntExtra("child_id", -1);
 
+        // Back button
         binding.btnBack.setOnClickListener(v -> finish());
 
-        // ── Bottom nav ─────────────────────────────────────────────
+        // Switch child button (shown only when >1 child)
+        binding.btnSwitchChild.setOnClickListener(v -> showChildSwitcher());
+
+        // ── Card navigation ─────────────────────────────────────────
+        binding.cardAttendance.setOnClickListener(v -> {
+            Intent i = new Intent(this, AttendanceActivity.class);
+            i.putExtra("child_id", childId);
+            startActivity(i);
+        });
+
+        binding.cardActivities.setOnClickListener(v -> {
+            Intent i = new Intent(this, ActivitiesActivity.class);
+            i.putExtra("child_id", childId);
+            startActivity(i);
+        });
+
+        binding.cardNotifications.setOnClickListener(v ->
+            startActivity(new Intent(this, NotificationsActivity.class)));
+
+        // ── Bottom nav ───────────────────────────────────────────────
         binding.tabHome.setOnClickListener(v -> {
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
         });
-        binding.tabNotifications.setOnClickListener(v -> {
-            startActivity(new Intent(this, NotificationsActivity.class));
-            finish();
-        });
-        binding.tabSettings.setOnClickListener(v -> {
-            startActivity(new Intent(this, SettingsActivity.class));
-            finish();
-        });
-
-        // ── Child switcher button ──────────────────────────────────
-        binding.btnSwitchChild.setOnClickListener(v -> showChildSwitcher());
+        binding.tabSettings.setOnClickListener(v ->
+            startActivity(new Intent(this, SettingsActivity.class)));
 
         loadAllChildren();
     }
 
-    // ── Step 1: load all children so switcher works ────────────────
+    // ── Step 1: load child list so switcher and default selection work ──
 
     private void loadAllChildren() {
         binding.progressBar.setVisibility(View.VISIBLE);
@@ -79,22 +87,26 @@ public class ChildDetailActivity extends BaseActivity {
                     if (response.isSuccessful() && response.body() != null
                             && response.body().data != null) {
                         childList = response.body().data;
-                        // Show switcher only if more than one child
+
+                        // Show switch button only when more than one child
                         binding.btnSwitchChild.setVisibility(
                             childList.size() > 1 ? View.VISIBLE : View.GONE);
 
+                        // Pick the child: intent extra, or first in list
                         if (childId == -1 && !childList.isEmpty()) {
                             childId = childList.get(0).id;
                         }
+
                         if (childId != -1) {
                             loadChildDetail(childId);
                         } else {
                             binding.progressBar.setVisibility(View.GONE);
-                            showNoChildMessage();
+                            Toast.makeText(ChildDetailActivity.this,
+                                "No children linked to your account.", Toast.LENGTH_LONG).show();
+                            finish();
                         }
                     } else {
                         binding.progressBar.setVisibility(View.GONE);
-                        showNoChildMessage();
                     }
                 }
                 @Override
@@ -106,7 +118,7 @@ public class ChildDetailActivity extends BaseActivity {
             });
     }
 
-    // ── Step 2: load the selected child's detail ───────────────────
+    // ── Step 2: load selected child's detail ────────────────────────────
 
     private void loadChildDetail(int id) {
         binding.progressBar.setVisibility(View.VISIBLE);
@@ -119,9 +131,7 @@ public class ChildDetailActivity extends BaseActivity {
                     binding.progressBar.setVisibility(View.GONE);
                     if (response.code() == 401) { handleUnauthorised(); return; }
                     if (response.isSuccessful() && response.body() != null) {
-                        childData = response.body();
-                        populateHeader(childData);
-                        setupTabs();
+                        populateHeader(response.body());
                     } else {
                         Toast.makeText(ChildDetailActivity.this,
                             "Could not load child information.", Toast.LENGTH_SHORT).show();
@@ -136,7 +146,44 @@ public class ChildDetailActivity extends BaseActivity {
             });
     }
 
-    // ── Child switcher dialog ──────────────────────────────────────
+    // ── Populate the green header ─────────────────────────────────────────
+
+    private void populateHeader(ChildResponse c) {
+        // Full name
+        String name = (c.fullName != null && !c.fullName.isEmpty())
+            ? c.fullName
+            : trim(c.firstName) + " " + trim(c.lastName);
+        name = name.trim();
+        binding.tvName.setText(name.isEmpty() ? "—" : name);
+
+        // Status chip — show diagnosis if available, else enrollment status
+        String chip = (c.diagnosis != null && !c.diagnosis.isEmpty())
+            ? capitalize(c.diagnosis)
+            : capitalize(c.status);
+        binding.tvStatus.setText(chip.isEmpty() ? "Enrolled" : chip);
+
+        // Avatar photo or initial
+        if (c.photo != null && !c.photo.isEmpty()) {
+            binding.ivPhoto.setVisibility(View.VISIBLE);
+            binding.tvPhotoInitial.setVisibility(View.GONE);
+            Glide.with(this).load(c.photo).circleCrop().into(binding.ivPhoto);
+        } else {
+            binding.ivPhoto.setVisibility(View.GONE);
+            binding.tvPhotoInitial.setVisibility(View.VISIBLE);
+            if (!name.isEmpty()) {
+                binding.tvPhotoInitial.setText(
+                    String.valueOf(name.charAt(0)).toUpperCase());
+                binding.tvPhotoInitial.setTextSize(32);
+                binding.tvPhotoInitial.setTextColor(
+                    getResources().getColor(com.alamada.childmonitor.R.color.primary, null));
+            }
+        }
+
+        // Pass child_id to attendance/activities cards
+        childId = c.id;
+    }
+
+    // ── Child switcher dialog ─────────────────────────────────────────────
 
     private void showChildSwitcher() {
         if (childList.isEmpty()) return;
@@ -156,82 +203,12 @@ public class ChildDetailActivity extends BaseActivity {
             .show();
     }
 
-    // ── Populate green header ──────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────
 
-    private void populateHeader(ChildResponse c) {
-        // Full name
-        String displayName = (c.fullName != null && !c.fullName.isEmpty())
-            ? c.fullName
-            : trim(c.firstName) + " " + trim(c.lastName);
-        displayName = displayName.trim();
-
-        binding.tvName.setText(displayName.isEmpty() ? "—" : displayName);
-        binding.tvAge.setText("Age " + c.age + "  ·  " + capitalize(c.gender));
-        binding.tvDiagnosis.setText(safe(c.diagnosis));
-
-        // Guardian info
-        binding.tvGuardian.setText("👥  " + safe(c.guardianName));
-        binding.tvContact.setText("📞  " + safe(c.guardianContact));
-
-        // Enrollment status chip
-        binding.tvStatus.setText(capitalize(c.status));
-
-        // Photo or initial
-        if (!displayName.isEmpty()) {
-            binding.tvPhotoInitial.setText(
-                String.valueOf(displayName.charAt(0)).toUpperCase());
-        }
-        if (c.photo != null && !c.photo.isEmpty()) {
-            binding.ivPhoto.setVisibility(View.VISIBLE);
-            binding.tvPhotoInitial.setVisibility(View.GONE);
-            Glide.with(this).load(c.photo).circleCrop().into(binding.ivPhoto);
-        } else {
-            binding.ivPhoto.setVisibility(View.GONE);
-            binding.tvPhotoInitial.setVisibility(View.VISIBLE);
-        }
-    }
-
-    // ── Setup ViewPager2 tabs ──────────────────────────────────────
-
-    private void setupTabs() {
-        final String[] TABS = {"Attendance", "Activities", "Info"};
-        final int finalChildId = childId;
-
-        binding.viewPager.setAdapter(new FragmentStateAdapter(this) {
-            @Override public int getItemCount() { return 3; }
-            @Override public Fragment createFragment(int position) {
-                switch (position) {
-                    case 0: return AttendanceTabFragment.newInstance(finalChildId);
-                    case 1: return ActivitiesFragment.newInstance(finalChildId);
-                    case 2: return InfoFragment.newInstance(childData);
-                    default: return AttendanceTabFragment.newInstance(finalChildId);
-                }
-            }
-        });
-
-        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
-            (tab, pos) -> tab.setText(TABS[pos])).attach();
-    }
-
-    // ── Helpers ────────────────────────────────────────────────────
-
-    private void showNoChildMessage() {
-        Toast.makeText(this,
-            "No children linked to your account. Contact the learning center.",
-            Toast.LENGTH_LONG).show();
-        finish();
-    }
-
-    private String safe(String s) {
-        return (s != null && !s.trim().isEmpty()) ? s.trim() : "—";
-    }
-
-    private String trim(String s) {
-        return s != null ? s.trim() : "";
-    }
+    private String trim(String s) { return s != null ? s.trim() : ""; }
 
     private String capitalize(String s) {
-        if (s == null || s.trim().isEmpty()) return "—";
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
+        if (s == null || s.trim().isEmpty()) return "";
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 }
