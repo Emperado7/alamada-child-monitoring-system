@@ -141,12 +141,15 @@
             position: fixed; inset: 0; z-index: 9000;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
             display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 22px;
+            align-items: center; justify-content: center; gap: 16px;
         }
         #wakeOverlay img.splash-logo {
-            width: 260px; max-width: 80%;
-            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.12));
+            width: 280px; max-width: 85%;
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.08));
             animation: pulse 1.8s ease-in-out infinite;
+            border-radius: 16px;
+            background: transparent;
+            mix-blend-mode: multiply;
         }
         @keyframes pulse {
             0%,100% { opacity: 1;   transform: scale(1); }
