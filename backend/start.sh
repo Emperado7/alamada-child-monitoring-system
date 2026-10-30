@@ -1,7 +1,9 @@
 ﻿#!/usr/bin/env bash
 # Render runtime entrypoint for the Alamada LGU Laravel backend.
 # Runs deploy steps (caching, migrations, seeding) then starts nginx + php-fpm via supervisor.
-set -u
+# set -u is intentionally NOT used so a missing env var doesn't crash the container before
+# port binding. Missing DB vars surface via /api/health (503) not a crash loop.
+set -e
 
 cd /var/www/html
 
@@ -11,16 +13,16 @@ echo ">>> Writing .env from Render environment variables"
 cat > .env <<ENVEOF
 APP_NAME="${APP_NAME:-AlamadaCMS}"
 APP_ENV="${APP_ENV:-production}"
-APP_KEY="${APP_KEY}"
+APP_KEY="${APP_KEY:-}"
 APP_DEBUG="${APP_DEBUG:-false}"
-APP_URL="${APP_URL}"
+APP_URL="${APP_URL:-https://alamada-child-monitoring.onrender.com}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
-DB_HOST="${DB_HOST}"
+DB_HOST="${DB_HOST:-}"
 DB_PORT="${DB_PORT:-5432}"
-DB_DATABASE="${DB_DATABASE}"
-DB_USERNAME="${DB_USERNAME}"
-DB_PASSWORD="${DB_PASSWORD}"
+DB_DATABASE="${DB_DATABASE:-}"
+DB_USERNAME="${DB_USERNAME:-}"
+DB_PASSWORD="${DB_PASSWORD:-}"
 DB_SSLMODE="${DB_SSLMODE:-require}"
 
 SESSION_DRIVER="${SESSION_DRIVER:-file}"
@@ -28,7 +30,7 @@ CACHE_DRIVER="${CACHE_DRIVER:-file}"
 QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
 FILESYSTEM_DISK="${FILESYSTEM_DISK:-public}"
 
-SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS}"
+SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring.onrender.com}"
 SESSION_DOMAIN="${SESSION_DOMAIN:-.onrender.com}"
 
 LOG_CHANNEL="${LOG_CHANNEL:-errorlog}"
