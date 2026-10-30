@@ -1,19 +1,50 @@
 ﻿#!/bin/sh
 set -e
 
-printf 'APP_NAME=AlamadaCMS\nAPP_ENV=production\nAPP_KEY=%s\nAPP_DEBUG=false\nAPP_URL=%s\nDB_CONNECTION=pgsql\nDB_HOST=%s\nDB_PORT=5432\nDB_DATABASE=%s\nDB_USERNAME=%s\nDB_PASSWORD=%s\nDB_SSLMODE=require\nSESSION_DRIVER=file\nCACHE_DRIVER=file\nQUEUE_CONNECTION=sync\nFILESYSTEM_DISK=public\nSANCTUM_STATEFUL_DOMAINS=%s\nSESSION_DOMAIN=.onrender.com\nLOG_CHANNEL=errorlog\nLOG_LEVEL=error\n' \
-    "$APP_KEY" "$APP_URL" "$DB_HOST" "$DB_DATABASE" "$DB_USERNAME" "$DB_PASSWORD" "$SANCTUM_STATEFUL_DOMAINS" > /app/.env
+echo "=== Writing .env ==="
+cat > /var/www/html/.env << EOF
+APP_NAME=AlamadaCMS
+APP_ENV=production
+APP_KEY=${APP_KEY}
+APP_DEBUG=false
+APP_URL=${APP_URL}
+DB_CONNECTION=pgsql
+DB_HOST=${DB_HOST}
+DB_PORT=5432
+DB_DATABASE=${DB_DATABASE}
+DB_USERNAME=${DB_USERNAME}
+DB_PASSWORD=${DB_PASSWORD}
+DB_SSLMODE=require
+SESSION_DRIVER=file
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+FILESYSTEM_DISK=public
+SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS}
+SESSION_DOMAIN=.onrender.com
+LOG_CHANNEL=errorlog
+LOG_LEVEL=error
+EOF
 
+cd /var/www/html
+
+echo "=== Clearing and caching config ==="
+php artisan config:clear
 php artisan config:cache
 php artisan route:cache
+
+echo "=== Running migrations ==="
 php artisan migrate --force
+
+echo "=== Seeding database ==="
 php artisan db:seed --force --class=DatabaseSeeder
+
+echo "=== Linking storage ==="
 php artisan storage:link --force
 
-# Run the Laravel scheduler every minute in the background.
-# The KeepAlive command (registered at every 14 minutes) will fire
-# automatically from within this loop to prevent Render cold starts.
-(while true; do php artisan schedule:run >> /dev/null 2>&1; sleep 60; done) &
+echo "=== Configuring Apache port: ${PORT:-10000} ==="
+# Update Apache to listen on Render's assigned PORT
+sed -i "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf
+sed -i "s/:80>/:${PORT:-10000}>/" /etc/apache2/sites-available/000-default.conf
 
-# Start Apache in foreground
-exec /entrypoint supervisord
+echo "=== Starting Apache ==="
+exec apache2-foreground
