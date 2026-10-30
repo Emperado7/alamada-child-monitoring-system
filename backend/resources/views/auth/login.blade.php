@@ -17,16 +17,18 @@
             min-height: 100vh;
             min-height: -webkit-fill-available;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: flex-start; justify-content: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: max(40px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
+            padding: max(40px, env(safe-area-inset-top)) 20px max(40px, env(safe-area-inset-bottom));
             -webkit-tap-highlight-color: rgba(0,0,0,0.05);
+            overflow-y: auto;
         }
 
         /* ── Wrapper ── */
         .login-wrapper {
             width: 100%; max-width: 420px;
             display: flex; flex-direction: column; align-items: center;
+            margin: auto;
         }
 
         /* ── Logo ── */
