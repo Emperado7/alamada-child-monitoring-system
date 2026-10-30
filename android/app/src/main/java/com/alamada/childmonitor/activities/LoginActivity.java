@@ -81,6 +81,13 @@ public class LoginActivity extends AppCompatActivity {
         setLoading(true);
         hideError();
 
+        // After 5 s still loading — show a friendly "server waking up" hint
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            if (binding.progressBar.getVisibility() == View.VISIBLE) {
+                showError("⏳ Server is waking up — this can take up to 60 seconds on first use. Please wait…");
+            }
+        }, 5_000);
+
         Map<String, String> body = new HashMap<>();
         body.put("email",    email);
         body.put("password", password);
@@ -138,11 +145,24 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setLoading(boolean loading) {
         binding.btnLogin.setEnabled(!loading);
+        binding.btnLogin.setText(loading ? "Logging in…" : "Log In");
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
     }
 
     private void showError(String message) {
         binding.tvError.setText(message);
+        // Amber colour for informational "waking up" message, red for real errors
+        if (message.startsWith("⏳")) {
+            binding.tvError.setTextColor(
+                getResources().getColor(android.R.color.holo_orange_dark, null));
+            binding.tvError.setBackgroundColor(
+                android.graphics.Color.parseColor("#FFF8E1"));
+        } else {
+            binding.tvError.setTextColor(
+                getResources().getColor(android.R.color.holo_red_dark, null));
+            binding.tvError.setBackgroundColor(
+                android.graphics.Color.parseColor("#FFEBEE"));
+        }
         binding.tvError.setVisibility(View.VISIBLE);
     }
 

@@ -5,65 +5,51 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@drawable/header_green_gradient"
-    android:padding="40dp">
+    android:background="@color/login_bg"
+    android:padding="32dp">
 
-    <!-- School logo circle -->
-    <LinearLayout
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:background="@drawable/circle_white_bg"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"
-        android:elevation="4dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🏫"
-            android:textSize="52sp"/>
-    </LinearLayout>
+    <!-- Real Alamada logo -->
+    <ImageView
+        android:layout_width="260dp"
+        android:layout_height="180dp"
+        android:src="@drawable/alamada_logo"
+        android:scaleType="fitCenter"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="Alamada Learning Center"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alamada"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Learning Center"
-        android:textColor="#E8F5E9"
-        android:textSize="20sp"
-        android:textStyle="bold"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Parents Mobile App"
-        android:textColor="#A5D6A7"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="56dp"/>
-
-    <!-- Spinner -->
+    <!-- Progress bar — visible while server wakes up -->
     <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateTint="#FFFFFF"
-        android:layout_marginBottom="16dp"/>
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="220dp"
+        android:layout_height="6dp"
+        android:indeterminate="true"
+        android:progressTint="@color/primary"
+        android:indeterminateTint="@color/primary"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="12dp"/>
 
-    <!-- Dynamic status — updated while server wakes up -->
+    <!-- Dynamic status message -->
     <TextView
         android:id="@+id/tv_splash_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connecting to server…"
-        android:textColor="#A5D6A7"
+        android:text="Starting up…"
+        android:textColor="#2E7D32"
         android:textSize="13sp"
         android:gravity="center"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Retry button — shown after 20s if server is still loading -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Retry"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:cornerRadius="20dp"
+        app:backgroundTint="@color/primary"
+        xmlns:app="http://schemas.android.com/apk/res-auto"/>
 
 </LinearLayout>
