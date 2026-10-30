@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: alamada-child-monitoring
+    env: php
+    region: singapore
+    rootDir: backend
+    buildCommand: "./build.sh"
+    startCommand: "php artisan serve --host=0.0.0.0 --port=$PORT"
+    envVars:
+      - key: APP_NAME
+        value: "Alamada LGU Child Monitoring System"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: false
+        value: base64:dN5eYOE6wE//4PaqAFuVDlRcm8t2fL/BmZIz3n6GaMk=
+      - key: APP_URL
+        value: https://alamada-child-monitoring.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: alamada-mysql
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: alamada-mysql
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: alamada-mysql
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: alamada-mysql
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: alamada-mysql
+          property: password
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_LIFETIME
+        value: 120
