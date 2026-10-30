@@ -10,5 +10,10 @@ php artisan migrate --force
 php artisan db:seed --force --class=DatabaseSeeder
 php artisan storage:link --force
 
+# Run the Laravel scheduler every minute in the background.
+# The KeepAlive command (registered at every 14 minutes) will fire
+# automatically from within this loop to prevent Render cold starts.
+(while true; do php artisan schedule:run >> /dev/null 2>&1; sleep 60; done) &
+
 # Start Apache in foreground
 exec /entrypoint supervisord

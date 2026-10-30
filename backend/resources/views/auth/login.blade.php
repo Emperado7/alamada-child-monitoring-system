@@ -17,9 +17,9 @@
             min-height: 100vh;
             min-height: -webkit-fill-available;
             background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
-            display: flex; align-items: flex-start; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             font-family: 'Segoe UI', Arial, sans-serif;
-            padding: max(32px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
+            padding: max(40px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
             -webkit-tap-highlight-color: rgba(0,0,0,0.05);
         }
 
@@ -32,17 +32,18 @@
         /* ── Logo ── */
         .logo-area {
             width: 100%; text-align: center;
-            margin-bottom: 10px;
-            padding-top: 8px;
+            margin-bottom: 0;
+            padding-top: 16px;
         }
         .logo-area img {
-            width: 320px;
-            max-width: 92%;
+            width: 340px;
+            max-width: 96%;
             height: auto;
             display: block;
             margin: 0 auto;
             filter: drop-shadow(0 4px 14px rgba(0,0,0,0.10));
             object-fit: contain;
+            object-position: center;
         }
 
         /* ── Login card ── */
@@ -50,8 +51,9 @@
             width: 100%;
             background: #ffffff;
             border-radius: 22px;
-            padding: 30px 30px 24px;
+            padding: 14px 30px 24px;
             box-shadow: 0 8px 40px rgba(46,125,50,0.13);
+            overflow: visible;
         }
 
         /* ── Fields ── */
@@ -132,6 +134,38 @@
         .role-admin  { background:#ffebee; color:#c62828; }
         .role-staff  { background:#e3f2fd; color:#1565c0; }
 
+        /* ── Wake-up splash ── */
+        #wakeOverlay {
+            position: fixed; inset: 0; z-index: 9000;
+            background: linear-gradient(160deg, #f0faf0 0%, #e8f5e9 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 22px;
+        }
+        #wakeOverlay img.splash-logo {
+            width: 260px; max-width: 80%;
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.12));
+            animation: pulse 1.8s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1;   transform: scale(1); }
+            50%      { opacity: .75; transform: scale(.97); }
+        }
+        .wake-label {
+            font-size: .88rem; color: #4caf50; font-weight: 600;
+            letter-spacing: .04em;
+        }
+        .wake-dots span {
+            display: inline-block; width: 8px; height: 8px;
+            background: #4caf50; border-radius: 50%; margin: 0 3px;
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+        .wake-dots span:nth-child(2) { animation-delay: .2s; }
+        .wake-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes bounce {
+            0%,80%,100% { transform: translateY(0); }
+            40%          { transform: translateY(-8px); }
+        }
+
         /* ── Green leaf corners ── */
         .leaf-left {
             position: fixed; bottom:0; left:-10px;
@@ -149,22 +183,34 @@
 </head>
 <body>
 
+<!-- ══ WAKE-UP SPLASH — shown while the server cold-starts ══ -->
+<div id="wakeOverlay">
+    <img class="splash-logo"
+         src="{{ asset('images/logo.png') }}"
+         onerror="this.src='{{ asset('images/logo.svg') }}'"
+         alt="Alamada Learning Center">
+    <div class="wake-label" id="wakeLabel">Starting up, please wait…</div>
+    <div class="wake-dots">
+        <span></span><span></span><span></span>
+    </div>
+</div>
+
 <div class="leaf-left"></div>
 <div class="leaf-right"></div>
 
 <div class="login-wrapper" style="position:relative;z-index:10">
 
-    <!-- ══ LOGO IMAGE ══ -->
-    <div class="logo-area">
-        <img src="{{ asset('images/logo.png') }}"
-             alt="Alamada Learning Center Monitoring System"
-             onerror="this.src='{{ asset('images/logo.svg') }}'"
-             style="width:320px;max-width:92%;height:auto;display:block;margin:0 auto;
-                    filter:drop-shadow(0 4px 14px rgba(0,0,0,0.10));object-fit:contain">
-    </div>
-
-    <!-- ══ LOGIN CARD ══ -->
+    <!-- ══ LOGIN CARD (logo lives inside) ══ -->
     <div class="login-card">
+
+        <!-- ══ LOGO IMAGE ══ -->
+        <div class="logo-area" style="margin-bottom:18px;">
+            <img src="{{ asset('images/logo.png') }}"
+                 alt="Alamada Learning Center Monitoring System"
+                 onerror="this.src='{{ asset('images/logo.svg') }}'"
+                 style="width:340px;max-width:96%;height:auto;display:block;margin:0 auto;
+                        filter:drop-shadow(0 4px 14px rgba(0,0,0,0.10));object-fit:contain">
+        </div>
 
         @if ($errors->any())
         <div class="err-box">
@@ -254,6 +300,54 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// ── Wake-up ping — hides the splash once the server responds ─────────────
+(function wakeUp() {
+    const overlay  = document.getElementById('wakeOverlay');
+    const label    = document.getElementById('wakeLabel');
+    const apiBase  = '{{ rtrim(config("app.url"), "/") }}';
+    const maxWait  = 90;   // seconds before giving up and showing the form anyway
+    const interval = 3000; // ms between retries
+    let   elapsed  = 0;
+
+    const messages = [
+        'Starting up, please wait…',
+        'Waking the server…',
+        'Almost there…',
+        'Connecting to database…',
+        'Loading application…',
+    ];
+    let msgIdx = 0;
+
+    const msgTimer = setInterval(() => {
+        msgIdx = (msgIdx + 1) % messages.length;
+        label.textContent = messages[msgIdx];
+    }, 3500);
+
+    function reveal() {
+        clearInterval(msgTimer);
+        overlay.style.transition = 'opacity .5s ease';
+        overlay.style.opacity    = '0';
+        overlay.style.pointerEvents = 'none';
+        setTimeout(() => overlay.remove(), 520);
+        document.getElementById('emailInput').focus();
+    }
+
+    function ping() {
+        fetch(apiBase + '/api/health', { cache: 'no-store' })
+            .then(r => { if (r.ok) { reveal(); } else { retry(); } })
+            .catch(() => retry());
+    }
+
+    function retry() {
+        elapsed += interval / 1000;
+        if (elapsed >= maxWait) { reveal(); return; }
+        setTimeout(ping, interval);
+    }
+
+    // Start immediately, then retry on failure
+    ping();
+})();
+
 function togglePwd() {
     const p = document.getElementById('pwdInput');
     const i = document.getElementById('eyeIcon');
