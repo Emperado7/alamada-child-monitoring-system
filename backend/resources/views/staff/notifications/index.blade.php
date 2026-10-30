@@ -7,10 +7,30 @@
     <div class="card-body p-0">
         <div class="list-group list-group-flush">
             @forelse($notifications as $n)
+            @php
+                $titleLower       = strtolower($n->title ?? '');
+                $isEnrollApproved = str_contains($titleLower, 'enrollment approved');
+                $isEnrollRejected = str_contains($titleLower, 'enrollment rejected');
+                $isEnrollment     = $isEnrollApproved || $isEnrollRejected;
+            @endphp
             <div class="list-group-item list-group-item-action {{ !$n->is_read ? 'list-group-item-primary' : '' }}">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="flex-grow-1">
-                        <div class="fw-{{ $n->is_read ? 'normal' : 'bold' }} small">{{ $n->title }}</div>
+                        {{-- Title row with enrollment status tag --}}
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                            <span class="fw-{{ $n->is_read ? 'normal' : 'bold' }} small">{{ $n->title }}</span>
+                            @if($isEnrollApproved)
+                            <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                                  style="background:#e8f5e9;color:#2e7d32;font-size:.7rem">
+                                <i class="fas fa-check-circle me-1"></i>Enrollment Approved
+                            </span>
+                            @elseif($isEnrollRejected)
+                            <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                                  style="background:#ffebee;color:#c62828;font-size:.7rem">
+                                <i class="fas fa-times-circle me-1"></i>Enrollment Rejected
+                            </span>
+                            @endif
+                        </div>
                         <div class="text-muted small mt-1">{{ $n->message }}</div>
                         <div class="text-muted mt-1" style="font-size:.72rem">
                             <i class="fas fa-user me-1"></i>{{ $n->sender->name ?? 'System' }}

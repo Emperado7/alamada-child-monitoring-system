@@ -280,15 +280,34 @@
 
                     {{-- Status badge --}}
                     <td>
+                        @php
+                            $isEnrollApproved = str_contains(strtolower($n->title ?? ''), 'enrollment approved');
+                            $isEnrollRejected = str_contains(strtolower($n->title ?? ''), 'enrollment rejected');
+                        @endphp
+
+                        {{-- Enrollment status tag --}}
+                        @if($isEnrollApproved)
+                        <span class="badge rounded-2 px-2 py-1 fw-semibold d-block mb-1"
+                              style="background:#e8f5e9;color:#2e7d32;font-size:.72rem">
+                            <i class="fas fa-check-circle me-1"></i>Enrollment Approved
+                        </span>
+                        @elseif($isEnrollRejected)
+                        <span class="badge rounded-2 px-2 py-1 fw-semibold d-block mb-1"
+                              style="background:#ffebee;color:#c62828;font-size:.72rem">
+                            <i class="fas fa-times-circle me-1"></i>Enrollment Rejected
+                        </span>
+                        @endif
+
+                        {{-- Read/Unread --}}
                         @if($isRead)
-                        <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                              style="background:#e8f5e9;color:#2e7d32;font-size:.78rem">
-                            Read
+                        <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                              style="background:#e8f5e9;color:#2e7d32;font-size:.72rem">
+                            <i class="fas fa-check-double me-1"></i>Read
                         </span>
                         @else
-                        <span class="badge rounded-2 px-3 py-2 fw-semibold"
-                              style="background:#fff3e0;color:#e65100;font-size:.78rem">
-                            Unread
+                        <span class="badge rounded-2 px-2 py-1 fw-semibold"
+                              style="background:#fff3e0;color:#e65100;font-size:.72rem">
+                            <i class="fas fa-envelope me-1"></i>Unread
                         </span>
                         @endif
                     </td>
@@ -431,6 +450,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div class="mb-3" id="modalEnrollmentTag"></div>
                 <div class="mb-3">
                     <div class="small text-muted fw-semibold mb-1">Message</div>
                     <p id="modalMessage" class="mb-0 small"></p>
@@ -465,6 +485,18 @@ function viewNotif(title, message, recipients, sentBy) {
     document.getElementById('modalMessage').textContent    = message;
     document.getElementById('modalRecipients').textContent = recipients;
     document.getElementById('modalSentBy').textContent     = sentBy;
+
+    // Show enrollment status tag if applicable
+    const tagEl    = document.getElementById('modalEnrollmentTag');
+    const tLower   = title.toLowerCase();
+    if (tLower.includes('enrollment approved')) {
+        tagEl.innerHTML = '<span class="badge rounded-2 px-2 py-1 fw-semibold" style="background:#e8f5e9;color:#2e7d32;font-size:.75rem"><i class="fas fa-check-circle me-1"></i>Enrollment Approved</span>';
+    } else if (tLower.includes('enrollment rejected')) {
+        tagEl.innerHTML = '<span class="badge rounded-2 px-2 py-1 fw-semibold" style="background:#ffebee;color:#c62828;font-size:.75rem"><i class="fas fa-times-circle me-1"></i>Enrollment Rejected</span>';
+    } else {
+        tagEl.innerHTML = '';
+    }
+
     new bootstrap.Modal(document.getElementById('viewModal')).show();
 }
 </script>

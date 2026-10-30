@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Child;
 use App\Models\Enrollment;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -122,28 +123,70 @@ class EnrollmentController extends Controller
         if ($enrollment->status !== 'pending') {
             return back()->with('error', 'Only pending enrollments can be approved.');
         }
+
         $enrollment->update([
             'status' => 'approved',
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
         ]);
         $enrollment->child->update(['status' => 'active']);
-        return back()->with('success', 'Enrollment approved successfully.');
+
+        // ── Auto-send Enrollment Approved notification ────────────
+        $child = $enrollment->child;
+        $childName = $child->first_name . ' ' . $child->last_name;
+        $schoolYear = $enrollment->school_year;
+
+        $recipientId = $child->parent_id ?? null;
+        $recipientGroup = $recipientId ? 'specific' : 'parents';
+
+        Notification::create([
+            'title' => 'Enrollment Approved ✅',
+            'message' => "The enrollment of {$childName} for School Year {$schoolYear} has been APPROVED. "
+                . "The child is now active and may attend the Learning Center.",
+            'recipient_group' => $recipientGroup,
+            'recipient_id' => $recipientId,
+            'sent_by' => auth()->id(),
+            'sent_at' => Carbon::now(),
+        ]);
+
+        return back()->with('success', 'Enrollment approved and notification sent.');
     }
 
     public function reject(Request $request, Enrollment $enrollment)
     {
         $request->validate(['remarks' => 'nullable|string|max:500']);
+
         if ($enrollment->status !== 'pending') {
             return back()->with('error', 'Only pending enrollments can be rejected.');
         }
+
         $enrollment->update([
             'status' => 'rejected',
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
             'remarks' => $request->remarks,
         ]);
-        return back()->with('success', 'Enrollment rejected.');
+
+        // ── Auto-send Enrollment Rejected notification ────────────
+        $child = $enrollment->child;
+        $childName = $child->first_name . ' ' . $child->last_name;
+        $schoolYear = $enrollment->school_year;
+        $reason = $request->remarks ? ' Reason: ' . $request->remarks : '';
+
+        $recipientId = $child->parent_id ?? null;
+        $recipientGroup = $recipientId ? 'specific' : 'parents';
+
+        Notification::create([
+            'title' => 'Enrollment Rejected ❌',
+            'message' => "The enrollment of {$childName} for School Year {$schoolYear} has been REJECTED.{$reason} "
+                . "Please contact the Learning Center for more information.",
+            'recipient_group' => $recipientGroup,
+            'recipient_id' => $recipientId,
+            'sent_by' => auth()->id(),
+            'sent_at' => Carbon::now(),
+        ]);
+
+        return back()->with('success', 'Enrollment rejected and notification sent.');
     }
 
     public function destroy(Enrollment $enrollment)
