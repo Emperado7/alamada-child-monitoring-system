@@ -1,8 +1,11 @@
 ﻿#!/bin/sh
 set -e
 
-echo "=== Writing .env ==="
-cat > /var/www/html/.env << EOF
+# Use Render's PORT or default 10000
+APP_PORT="${PORT:-10000}"
+
+echo ">>> Writing .env"
+cat > /app/.env << ENVEOF
 APP_NAME=AlamadaCMS
 APP_ENV=production
 APP_KEY=${APP_KEY}
@@ -23,28 +26,21 @@ SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS}
 SESSION_DOMAIN=.onrender.com
 LOG_CHANNEL=errorlog
 LOG_LEVEL=error
-EOF
+ENVEOF
 
-cd /var/www/html
+echo ">>> Config cache"
+php artisan config:clear --no-ansi 2>&1 || true
+php artisan config:cache --no-ansi 2>&1 || true
+php artisan route:cache  --no-ansi 2>&1 || true
 
-echo "=== Clearing and caching config ==="
-php artisan config:clear
-php artisan config:cache
-php artisan route:cache
+echo ">>> Migrate"
+php artisan migrate --force --no-ansi 2>&1
 
-echo "=== Running migrations ==="
-php artisan migrate --force
+echo ">>> Seed"
+php artisan db:seed --force --class=DatabaseSeeder --no-ansi 2>&1 || true
 
-echo "=== Seeding database ==="
-php artisan db:seed --force --class=DatabaseSeeder
+echo ">>> Storage link"
+php artisan storage:link --force --no-ansi 2>&1 || true
 
-echo "=== Linking storage ==="
-php artisan storage:link --force
-
-echo "=== Configuring Apache port: ${PORT:-10000} ==="
-# Update Apache to listen on Render's assigned PORT
-sed -i "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf
-sed -i "s/:80>/:${PORT:-10000}>/" /etc/apache2/sites-available/000-default.conf
-
-echo "=== Starting Apache ==="
-exec apache2-foreground
+echo ">>> Starting PHP server on 0.0.0.0:${APP_PORT}"
+exec php -S 0.0.0.0:${APP_PORT} -t /app/public /app/public/index.php
