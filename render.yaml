@@ -1,21 +1,37 @@
+# Render Blueprint for the Alamada LGU Child Monitoring backend.
+#
+# The database is an external Supabase (PostgreSQL) instance. Because the
+# connection details are secret, DB_HOST / DB_DATABASE / DB_USERNAME / DB_PASSWORD
+# use `sync: false` and are entered once in the Render dashboard (or during the
+# initial Blueprint creation). See SUPABASE_RENDER_SETUP.md for the values.
 services:
   - type: web
     name: alamada-child-monitoring
     env: docker
     region: singapore
+    plan: free
     rootDir: backend
     dockerfilePath: ./Dockerfile
+    # Render checks this path; it returns 200 only when the DB is reachable, so a
+    # bad DB config surfaces as an unhealthy deploy rather than a silent failure.
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
     envVars:
       - key: APP_KEY
         value: base64:dN5eYOE6wE//4PaqAFuVDlRcm8t2fL/BmZIz3n6GaMk=
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
-        value: false
+        value: "false"
       - key: APP_URL
         value: https://alamada-child-monitoring.onrender.com
       - key: DB_CONNECTION
         value: pgsql
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_SSLMODE
+        value: require
+      # -- Supabase connection details (enter in Render dashboard) --
       - key: DB_HOST
         sync: false
       - key: DB_DATABASE
@@ -24,10 +40,12 @@ services:
         sync: false
       - key: DB_PASSWORD
         sync: false
+      # -- Session / Sanctum --
       - key: SANCTUM_STATEFUL_DOMAINS
         value: alamada-child-monitoring.onrender.com
       - key: SESSION_DOMAIN
         value: .onrender.com
+      # -- Laravel runtime --
       - key: FILESYSTEM_DISK
         value: public
       - key: SESSION_DRIVER
