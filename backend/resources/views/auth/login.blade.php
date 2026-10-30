@@ -191,10 +191,33 @@
          src="{{ asset('images/logo.png') }}"
          onerror="this.src='{{ asset('images/logo.svg') }}'"
          alt="Alamada Learning Center">
+
+    <!-- Progress bar -->
+    <div style="width:220px;height:6px;background:#c8e6c9;border-radius:4px;overflow:hidden">
+        <div id="wakeProgress"
+             style="height:100%;width:5%;background:#2e7d32;border-radius:4px;
+                    transition:width 1s linear"></div>
+    </div>
+
     <div class="wake-label" id="wakeLabel">Starting up, please wait…</div>
+
+    <!-- Elapsed timer -->
+    <div style="font-size:.78rem;color:#9e9e9e" id="wakeTimer">0s</div>
+
+    <!-- Bouncing dots -->
     <div class="wake-dots">
         <span></span><span></span><span></span>
     </div>
+
+    <!-- Retry button — hidden until 30s -->
+    <button id="wakeRetryBtn"
+            onclick="wakeRetry()"
+            style="display:none;margin-top:4px;padding:10px 28px;
+                   background:#2e7d32;color:#fff;border:none;border-radius:20px;
+                   font-size:.88rem;font-weight:700;cursor:pointer;
+                   box-shadow:0 3px 10px rgba(46,125,50,.3)">
+        🔄 Retry
+    </button>
 </div>
 
 <div class="leaf-left"></div>
@@ -303,52 +326,91 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 // ── Wake-up ping — hides the splash once the server responds ─────────────
-(function wakeUp() {
-    const overlay  = document.getElementById('wakeOverlay');
-    const label    = document.getElementById('wakeLabel');
-    const apiBase  = '{{ rtrim(config("app.url"), "/") }}';
-    const maxWait  = 90;   // seconds before giving up and showing the form anyway
-    const interval = 3000; // ms between retries
-    let   elapsed  = 0;
+var wakeStartTime = Date.now();
+var wakeElapsed   = 0;
+var wakeTimer;
+var wakeMaxWait   = 90;   // seconds
 
-    const messages = [
-        'Starting up, please wait…',
-        'Waking the server…',
-        'Almost there…',
-        'Connecting to database…',
-        'Loading application…',
-    ];
-    let msgIdx = 0;
+var wakeMessages = [
+    'Starting up, please wait…',
+    'Waking the server up… (free plan)',
+    'This takes 30–60 seconds on first visit',
+    'Connecting to database…',
+    'Almost ready…',
+    'Still loading — thanks for your patience!',
+];
+var wakeMsgIdx = 0;
 
-    const msgTimer = setInterval(() => {
-        msgIdx = (msgIdx + 1) % messages.length;
-        label.textContent = messages[msgIdx];
-    }, 3500);
+function wakeUpdateTimer() {
+    wakeElapsed = Math.floor((Date.now() - wakeStartTime) / 1000);
+    var timerEl = document.getElementById('wakeTimer');
+    if (timerEl) timerEl.textContent = wakeElapsed + 's';
 
-    function reveal() {
-        clearInterval(msgTimer);
-        overlay.style.transition = 'opacity .5s ease';
-        overlay.style.opacity    = '0';
+    // Update message every 8s
+    if (wakeElapsed % 8 === 0 && wakeElapsed > 0) {
+        wakeMsgIdx = Math.min(wakeMsgIdx + 1, wakeMessages.length - 1);
+        var lbl = document.getElementById('wakeLabel');
+        if (lbl) lbl.textContent = wakeMessages[wakeMsgIdx];
+    }
+
+    // Update progress bar (fills over 60s)
+    var pct = Math.min((wakeElapsed / 60) * 90, 90);
+    var bar = document.getElementById('wakeProgress');
+    if (bar) bar.style.width = pct + '%';
+
+    // Show retry button after 30s
+    if (wakeElapsed >= 30) {
+        var btn = document.getElementById('wakeRetryBtn');
+        if (btn) btn.style.display = 'inline-block';
+    }
+
+    // Hard give-up at maxWait
+    if (wakeElapsed >= wakeMaxWait) {
+        wakeReveal();
+        return;
+    }
+}
+
+function wakeReveal() {
+    clearInterval(wakeTimer);
+    var overlay = document.getElementById('wakeOverlay');
+    if (!overlay) return;
+    // Complete the progress bar
+    var bar = document.getElementById('wakeProgress');
+    if (bar) bar.style.width = '100%';
+    setTimeout(function() {
+        overlay.style.transition   = 'opacity .5s ease';
+        overlay.style.opacity      = '0';
         overlay.style.pointerEvents = 'none';
-        setTimeout(() => overlay.remove(), 520);
-        document.getElementById('emailInput').focus();
-    }
+        setTimeout(function() { overlay.remove(); }, 520);
+        var el = document.getElementById('emailInput');
+        if (el) el.focus();
+    }, 300);
+}
 
-    function ping() {
-        fetch(apiBase + '/api/health', { cache: 'no-store' })
-            .then(r => { if (r.ok) { reveal(); } else { retry(); } })
-            .catch(() => retry());
-    }
+function wakePing() {
+    fetch(window.location.origin + '/api/health', { cache: 'no-store' })
+        .then(function(r) {
+            if (r.ok) { wakeReveal(); }
+            else { setTimeout(wakePing, 3000); }
+        })
+        .catch(function() { setTimeout(wakePing, 3000); });
+}
 
-    function retry() {
-        elapsed += interval / 1000;
-        if (elapsed >= maxWait) { reveal(); return; }
-        setTimeout(ping, interval);
-    }
+function wakeRetry() {
+    wakeStartTime = Date.now();
+    wakeElapsed   = 0;
+    wakeMsgIdx    = 0;
+    var lbl = document.getElementById('wakeLabel');
+    if (lbl) lbl.textContent = 'Retrying…';
+    var btn = document.getElementById('wakeRetryBtn');
+    if (btn) btn.style.display = 'none';
+    wakePing();
+}
 
-    // Start immediately, then retry on failure
-    ping();
-})();
+// Start timer + ping
+wakeTimer = setInterval(wakeUpdateTimer, 1000);
+wakePing();
 
 function togglePwd() {
     const p = document.getElementById('pwdInput');
@@ -375,6 +437,27 @@ document.getElementById('loginForm').addEventListener('submit', function() {
     document.getElementById('btnText').style.display = 'none';
     document.getElementById('btnLoad').style.display = 'inline';
     document.getElementById('loginBtn').disabled = true;
+
+    // After 5s still submitting — show amber "server waking" hint
+    setTimeout(function() {
+        var btn = document.getElementById('loginBtn');
+        if (btn && btn.disabled) {
+            // Insert / update a banner below the button
+            var existing = document.getElementById('slowLoginBanner');
+            if (!existing) {
+                var banner = document.createElement('div');
+                banner.id = 'slowLoginBanner';
+                banner.style.cssText =
+                    'margin-top:10px;padding:10px 14px;border-radius:10px;' +
+                    'background:#fff8e1;border:1px solid #ffe082;color:#e65100;' +
+                    'font-size:.82rem;text-align:center;line-height:1.4';
+                banner.innerHTML =
+                    '⏳ <strong>Server is waking up</strong> — free plan sleeps after inactivity.' +
+                    '<br>This can take <strong>30–60 seconds</strong>. Please wait…';
+                btn.parentNode.insertBefore(banner, btn.nextSibling);
+            }
+        }
+    }, 5000);
 });
 </script>
 </body>
