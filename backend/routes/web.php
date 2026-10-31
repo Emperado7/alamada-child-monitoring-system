@@ -19,9 +19,16 @@ Route::get('/', fn() => redirect()->route('login'));
 Route::get('/install', fn() => view('install'))->name('app.install');
 Route::get('/download', fn() => view('install'))->name('app.download');
 
-// ── Direct APK download — redirects to GitHub Release ────────────────────
+// ── Direct APK download — served from public/alamada-app.apk ─────────────
 Route::get('/install/apk', function () {
-    return redirect('https://github.com/Emperado7/alamada-child-monitoring-system/releases/download/latest-apk/alamada-parent-app.apk');
+    $path = public_path('alamada-app.apk');
+    if (!file_exists($path)) {
+        // Fallback to GitHub release if local file missing
+        return redirect('https://github.com/Emperado7/alamada-child-monitoring-system/releases/download/latest-apk/alamada-parent-app.apk');
+    }
+    return response()->download($path, 'AlamadaLearningCenter.apk', [
+        'Content-Type' => 'application/vnd.android.package-archive',
+    ]);
 })->name('app.apk');
 
 // ── Health check for Railway deployment ──────────────────────────────────
