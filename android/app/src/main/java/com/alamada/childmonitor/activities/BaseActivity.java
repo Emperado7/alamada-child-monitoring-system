@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.alamada.childmonitor.models.MessageResponse;
 import com.alamada.childmonitor.network.ApiClient;
@@ -17,6 +16,10 @@ import retrofit2.Response;
 /**
  * Base class for all activities.
  * Provides shared session-expiry handling and logout.
+ *
+ * NOTE: Firebase / FCM removed — placeholder google-services.json
+ * caused INSTALL_FAILED_INVALID_APK on some devices. Re-add Firebase
+ * once a real Firebase project is configured.
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -26,19 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         session = new SessionManager(this);
-
-        // Create notification channel for FCM pushes (Android 8.0+)
-        com.alamada.childmonitor.network.AlamadaMessagingService.createNotificationChannel(this);
-
-        // Request POST_NOTIFICATIONS permission on Android 13+ (API 33+)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.POST_NOTIFICATIONS)
-                != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                androidx.core.app.ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
-            }
-        }
     }
 
     // ── Call this whenever an API returns 401 ─────────────────────
@@ -51,12 +41,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void doLogout() {
         String token = session.getBearerToken();
-        // Fire-and-forget — we clear the session regardless of response
         try {
             ApiClient.getInstance(token)
                 .logout()
                 .enqueue(new Callback<MessageResponse>() {
-                    @Override public void onResponse(Call<MessageResponse> c, Response<MessageResponse> r) {}
+                    @Override public void onResponse(Call<MessageResponse> c,
+                                                     Response<MessageResponse> r) {}
                     @Override public void onFailure(Call<MessageResponse> c, Throwable t) {}
                 });
         } catch (Exception ignored) {}

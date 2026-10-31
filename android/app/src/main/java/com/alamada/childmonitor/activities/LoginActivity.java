@@ -9,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.alamada.childmonitor.databinding.ActivityLoginBinding;
 import com.alamada.childmonitor.models.AuthResponse;
-import com.alamada.childmonitor.models.MessageResponse;
 import com.alamada.childmonitor.network.ApiClient;
 import com.alamada.childmonitor.utils.SessionManager;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,12 +79,12 @@ public class LoginActivity extends AppCompatActivity {
         setLoading(true);
         hideError();
 
-        // After 5 s still loading — show a friendly "server waking up" hint
+        // After 3 s still loading — show a friendly "server waking up" hint
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
             if (binding.progressBar.getVisibility() == View.VISIBLE) {
-                showError("⏳ Server is waking up — this can take up to 60 seconds on first use. Please wait…");
+                showError("⏳ Logging in… the server may be starting up. Please wait a moment.");
             }
-        }, 5_000);
+        }, 3_000);
 
         Map<String, String> body = new HashMap<>();
         body.put("email",    email);
@@ -110,7 +108,8 @@ public class LoginActivity extends AppCompatActivity {
                         );
 
                         // Register FCM token with the backend for push notifications
-                        registerFcmToken(auth.token);
+                        // (Firebase disabled — no placeholder google-services.json)
+                        // registerFcmToken(auth.token);
 
                         // Route based on role: staff/admin → staff dashboard, parent → parent dashboard
                         Class<?> target = "parent".equals(auth.user.role)
@@ -174,27 +173,11 @@ public class LoginActivity extends AppCompatActivity {
      * Sends the FCM registration token to the backend so the server can
      * send push notifications to this device.
      */
+    /**
+     * FCM disabled — requires a real google-services.json from Firebase Console.
+     * Push notifications will work once a real Firebase project is configured.
+     */
     private void registerFcmToken(String token) {
-        FirebaseMessaging.getInstance()
-            .getToken()
-            .addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) return;
-                String fcmToken = task.getResult();
-                if (fcmToken == null || fcmToken.isEmpty()) return;
-
-                getSharedPreferences("AlamadaFCM", MODE_PRIVATE)
-                    .edit().putString("fcm_token", fcmToken).apply();
-
-                Map<String, String> body = new HashMap<>();
-                body.put("fcm_token", fcmToken);
-
-                ApiClient.getInstance("Bearer " + token)
-                    .registerDeviceToken(body)
-                    .enqueue(new retrofit2.Callback<MessageResponse>() {
-                        @Override public void onResponse(retrofit2.Call<MessageResponse> c,
-                            retrofit2.Response<MessageResponse> r) {}
-                        @Override public void onFailure(retrofit2.Call<MessageResponse> c, Throwable t) {}
-                    });
-            });
+        // No-op until real Firebase project is set up
     }
 }
