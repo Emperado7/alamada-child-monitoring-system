@@ -170,13 +170,10 @@ public class ChildDetailActivity extends BaseActivity {
         } else {
             binding.ivPhoto.setVisibility(View.GONE);
             binding.tvPhotoInitial.setVisibility(View.VISIBLE);
-            if (!name.isEmpty()) {
-                binding.tvPhotoInitial.setText(
-                    String.valueOf(name.charAt(0)).toUpperCase());
-                binding.tvPhotoInitial.setTextSize(32);
-                binding.tvPhotoInitial.setTextColor(
-                    getResources().getColor(com.alamada.childmonitor.R.color.primary, null));
-            }
+            // Show child emoji — gender-aware if available
+            String gender = c.gender != null ? c.gender.toLowerCase() : "";
+            binding.tvPhotoInitial.setText("female".equals(gender) ? "👧" : "👦");
+            binding.tvPhotoInitial.setTextSize(44);
         }
 
         // Pass child_id to attendance/activities cards
