@@ -210,67 +210,30 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script>
-const REPO      = 'Emperado7/alamada-child-monitoring-system';
-const RELEASE   = 'latest-apk';
-const API_URL   = `https://api.github.com/repos/${REPO}/releases/tags/${RELEASE}`;
 const PAGE_URL  = '{{ url("/download") }}';
 
-// ── Fetch latest release from GitHub API ──────────────────────────────────
-async function loadRelease() {
+// ── Direct download — APK hosted on this server ──────────────────────────
+(function() {
     const btnWrap = document.getElementById('download-btn-wrap');
     const status  = document.getElementById('build-status');
+    const apkUrl  = '{{ route("app.install") }}';
+    const apkSize = '7.4 MB';
 
-    try {
-        const res = await fetch(API_URL, {
-            headers: { 'Accept': 'application/vnd.github.v3+json' }
-        });
+    // Immediately show the download button — no waiting for external API
+    status.innerHTML =
+        '<span class="dot dot-green"></span>Ready to download';
 
-        if (!res.ok) throw new Error('Release not found yet');
+    btnWrap.innerHTML = `
+      <a href="${apkUrl}"
+         class="btn-download">
+        <i class="fas fa-download" style="font-size:1.1rem"></i>
+        Download APK
+        <span class="size-badge">${apkSize}</span>
+      </a>`;
 
-        const data = await res.json();
-
-        // Find the APK asset
-        const asset = (data.assets || []).find(a =>
-            a.name.endsWith('.apk') || a.name.includes('apk')
-        );
-
-        if (!asset) throw new Error('APK not in release');
-
-        // Update meta row
-        const pubDate = new Date(asset.updated_at || data.published_at);
-        document.getElementById('meta-version').textContent = 'v1.0';
-        document.getElementById('meta-size').textContent    =
-            (asset.size / 1048576).toFixed(1) + ' MB';
-
-        // Status
-        const dateStr = pubDate.toLocaleDateString('en-PH', {
-            month: 'short', day: 'numeric', year: 'numeric'
-        });
-        status.innerHTML =
-            '<span class="dot dot-green"></span>Build ready · ' + dateStr;
-
-        // Download button
-        btnWrap.innerHTML = `
-          <a href="${asset.browser_download_url}"
-             class="btn-download"
-             download="${asset.name}">
-            <i class="fas fa-download" style="font-size:1.1rem"></i>
-            Download APK
-            <span class="size-badge">${(asset.size/1048576).toFixed(1)} MB</span>
-          </a>`;
-
-    } catch (err) {
-        // APK not built yet
-        status.innerHTML =
-            '<span class="dot dot-gray"></span>Build not available yet';
-
-        btnWrap.innerHTML = `
-          <div class="btn-unavailable">
-            <i class="fas fa-hourglass-half"></i>
-            APK is being built — check back shortly
-          </div>`;
-    }
-}
+    document.getElementById('meta-version').textContent = 'v1.0';
+    document.getElementById('meta-size').textContent    = apkSize;
+})();
 
 // ── Generate QR code for this page ───────────────────────────────────────
 new QRCode(document.getElementById('qr-canvas'), {
@@ -281,9 +244,6 @@ new QRCode(document.getElementById('qr-canvas'), {
     colorLight:     '#ffffff',
     correctLevel:   QRCode.CorrectLevel.M
 });
-
-// Load on page ready
-loadRelease();
 </script>
 
 </body>

@@ -17,6 +17,18 @@ Route::get('/', fn() => redirect()->route('login'));
 // ── App download page (public — no auth needed) ───────────────────────────
 Route::get('/download', fn() => view('download'))->name('app.download');
 
+// ── Direct APK download (served from public/alamada-app.apk) ─────────────
+Route::get('/install', function () {
+    $path = public_path('alamada-app.apk');
+    if (!file_exists($path)) {
+        abort(404, 'APK not found.');
+    }
+    return response()->download($path, 'AlamadaLearningCenter.apk', [
+        'Content-Type' => 'application/vnd.android.package-archive',
+        'Content-Disposition' => 'attachment; filename="AlamadaLearningCenter.apk"',
+    ]);
+})->name('app.install');
+
 // ── Health check for Railway deployment ──────────────────────────────────
 Route::get('/health', fn() => response()->json(['status' => 'ok'], 200));
 
