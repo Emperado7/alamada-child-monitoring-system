@@ -7,6 +7,7 @@ use App\Models\Child;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 
 class EnrollmentController extends Controller
 {
@@ -53,7 +54,7 @@ class EnrollmentController extends Controller
             'address' => 'required|string|max:255',
             'guardian_name' => 'required|string|max:200',
             'guardian_contact' => 'required|string|max:20',
-            'guardian_relationship' => 'required|in:Mother,Father,Grandmother,Grandfather,Aunt,Uncle,Older Sibling,Guardian,Other',
+            'guardian_relationship' => ['required', Rule::in(['Mother', 'Father', 'Grandmother', 'Grandfather', 'Aunt', 'Uncle', 'Older Sibling', 'Guardian', 'Other'])],
             'guardian_gender' => 'nullable|in:male,female',
             'diagnosis' => 'required|in:ADHD,Autism,Mental Disability,Cerebral Palsy,Blindness,Other',
             'diagnosis_notes' => 'nullable|string|max:500',

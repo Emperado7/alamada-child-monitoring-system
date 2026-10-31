@@ -7,6 +7,7 @@ use App\Models\Child;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ChildController extends Controller
 {
@@ -54,7 +55,7 @@ class ChildController extends Controller
             'address' => 'required|string|max:255',
             'guardian_name' => 'required|string|max:200',
             'guardian_contact' => 'required|string|max:20',
-            'guardian_relationship' => 'required|in:Mother,Father,Grandmother,Grandfather,Aunt,Uncle,Older Sibling,Guardian,Other',
+            'guardian_relationship' => ['required', Rule::in(['Mother', 'Father', 'Grandmother', 'Grandfather', 'Aunt', 'Uncle', 'Older Sibling', 'Guardian', 'Other'])],
             'guardian_gender' => 'nullable|in:male,female',
             'diagnosis' => 'required|string',
             'diagnosis_notes' => 'nullable|string',
@@ -101,7 +102,7 @@ class ChildController extends Controller
             'address' => 'required|string|max:255',
             'guardian_name' => 'required|string|max:200',
             'guardian_contact' => 'required|string|max:20',
-            'guardian_relationship' => 'required|in:Mother,Father,Grandmother,Grandfather,Aunt,Uncle,Older Sibling,Guardian,Other',
+            'guardian_relationship' => ['required', Rule::in(['Mother', 'Father', 'Grandmother', 'Grandfather', 'Aunt', 'Uncle', 'Older Sibling', 'Guardian', 'Other'])],
             'guardian_gender' => 'nullable|in:male,female',
             'diagnosis' => 'required|string',
             'diagnosis_notes' => 'nullable|string',
