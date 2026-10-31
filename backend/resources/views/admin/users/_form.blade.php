@@ -37,6 +37,14 @@
         <option value="inactive" {{ old('status',$user->status)=='inactive' ? 'selected':'' }}>Inactive</option>
     </select>
 </div>
+@else
+<div class="mb-3">
+    <label class="form-label">Status</label>
+    <select name="status" class="form-select">
+        <option value="active"   selected>Active</option>
+        <option value="inactive" {{ old('status')=='inactive' ? 'selected':'' }}>Inactive</option>
+    </select>
+</div>
 @endif
 
 <hr class="my-3">

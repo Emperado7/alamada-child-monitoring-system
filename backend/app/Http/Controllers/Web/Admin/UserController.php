@@ -44,11 +44,17 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|in:admin,staff,parent',
+            'status' => 'nullable|in:active,inactive',
             'password' => 'required|string|min:8|confirmed',
         ]);
+
         $data['password'] = Hash::make($data['password']);
+        $data['status'] = $data['status'] ?? 'active';   // default to active
+
         User::create($data);
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'User created successfully.');
     }
 
     public function edit(User $user)
