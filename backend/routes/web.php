@@ -14,20 +14,15 @@ use Illuminate\Support\Facades\Route;
 // ── Root redirect ────────────────────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
 
-// ── App download page (public — no auth needed) ───────────────────────────
-Route::get('/download', fn() => view('download'))->name('app.download');
+// ── App install page (public — no auth needed) ────────────────────────────
+// Both /install and /download show the same install page
+Route::get('/install', fn() => view('install'))->name('app.install');
+Route::get('/download', fn() => view('install'))->name('app.download');
 
-// ── Direct APK download (served from public/alamada-app.apk) ─────────────
-Route::get('/install', function () {
-    $path = public_path('alamada-app.apk');
-    if (!file_exists($path)) {
-        abort(404, 'APK not found.');
-    }
-    return response()->download($path, 'AlamadaLearningCenter.apk', [
-        'Content-Type' => 'application/vnd.android.package-archive',
-        'Content-Disposition' => 'attachment; filename="AlamadaLearningCenter.apk"',
-    ]);
-})->name('app.install');
+// ── Direct APK download — redirects to GitHub Release ────────────────────
+Route::get('/install/apk', function () {
+    return redirect('https://github.com/Emperado7/alamada-child-monitoring-system/releases/download/latest-apk/alamada-parent-app.apk');
+})->name('app.apk');
 
 // ── Health check for Railway deployment ──────────────────────────────────
 Route::get('/health', fn() => response()->json(['status' => 'ok'], 200));
