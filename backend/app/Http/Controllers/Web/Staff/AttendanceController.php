@@ -20,8 +20,8 @@ class AttendanceController extends Controller
         $selectedDate = $request->input('date', Carbon::today()->toDateString());
         $month = Carbon::parse($selectedDate)->format('Y-m');
 
-        // Build children query
-        $query = Child::where('staff_id', $staffId)->where('status', 'active');
+        // Build children query — show ALL active children (not just this staff's)
+        $query = Child::where('status', 'active');
 
         // Search filter
         if ($request->filled('search')) {
@@ -89,8 +89,8 @@ class AttendanceController extends Controller
         foreach ($request->attendance as $childId => $status) {
             // Verify the child belongs to this staff member
             $child = Child::find($childId);
-            if (!$child || $child->staff_id !== $staffId)
-                continue;
+            if (!$child)
+                continue;  // skip invalid child IDs only
 
             Attendance::updateOrCreate(
                 ['child_id' => $childId, 'attendance_date' => $date],

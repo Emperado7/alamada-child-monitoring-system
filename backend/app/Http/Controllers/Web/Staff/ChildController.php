@@ -10,8 +10,8 @@ class ChildController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Child::with(['currentEnrollment'])
-            ->where('staff_id', auth()->id());
+        $query = Child::with(['currentEnrollment']);
+        // Show ALL children — not just those assigned to this staff member
 
         if ($request->filled('search')) {
             $s = $request->search;

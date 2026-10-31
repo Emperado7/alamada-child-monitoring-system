@@ -12,8 +12,7 @@ class EnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Enrollment::with(['child', 'approver:id,name'])
-            ->whereHas('child', fn($q) => $q->where('staff_id', auth()->id()));
+        $query = Enrollment::with(['child', 'approver:id,name']);
 
         if ($request->filled('status'))
             $query->where('status', $request->status);
