@@ -29,11 +29,8 @@ public class DashboardActivity extends BaseActivity {
         if (name != null && !name.isEmpty()) {
             // Show full name with exclamation mark, e.g. "Juan Dela Cruz!"
             binding.tvWelcome.setText(name + "!");
-            // Replace the default emoji with the first letter of the name
+            // Show first letter of name as avatar initial
             binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
-            binding.tvAvatar.setTextSize(34);
-            binding.tvAvatar.setTextColor(
-                getResources().getColor(android.R.color.white, null));
         }
 
         // ── Card clicks ─────────────────────────────────────────────
