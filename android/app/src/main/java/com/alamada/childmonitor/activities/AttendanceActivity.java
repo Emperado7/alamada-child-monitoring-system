@@ -202,6 +202,7 @@ public class AttendanceActivity extends BaseActivity {
                                 binding.tvRate.setText(s.attendanceRate);
                                 return;
                             }
+                        }
                     }
                     binding.cardSummary.setVisibility(View.GONE);
                 }
