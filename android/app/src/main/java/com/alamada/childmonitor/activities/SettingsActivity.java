@@ -41,12 +41,12 @@ public class SettingsActivity extends BaseActivity {
 
         binding.tvRoleLabel.setText(roleLabel);
 
-        // Avatar — show first letter of name
+        // Avatar — show first letter of name in green
         if (name != null && !name.isEmpty()) {
             binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
-            binding.tvAvatar.setTextSize(32);
+            binding.tvAvatar.setTextSize(34);
             binding.tvAvatar.setTextColor(
-                getResources().getColor(android.R.color.white, null));
+                getResources().getColor(R.color.primary, null));
         }
 
         // ── Bottom nav ─────────────────────────────────────────────
