@@ -111,7 +111,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:hint="Username"
+                        android:hint="Email Address"
                         android:textColorHint="#BDBDBD"
                         android:textColor="#212121"
                         android:textSize="15sp"

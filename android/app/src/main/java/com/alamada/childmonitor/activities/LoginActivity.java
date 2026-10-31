@@ -66,7 +66,12 @@ public class LoginActivity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString().trim();
 
         if (email.isEmpty()) {
-            binding.etEmail.setError("Username is required");
+            binding.etEmail.setError("Email address is required");
+            binding.etEmail.requestFocus();
+            return;
+        }
+        if (!email.contains("@")) {
+            binding.etEmail.setError("Please enter your email address (e.g. juan@gmail.com)");
             binding.etEmail.requestFocus();
             return;
         }
@@ -121,11 +126,13 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
 
                     } else if (response.code() == 422) {
-                        showError("Invalid email or password. Please try again.");
+                        showError("Wrong email or password. Please check and try again.");
                     } else if (response.code() == 403) {
                         showError("Your account is inactive. Contact the administrator.");
+                    } else if (response.code() == 500 || response.code() == 503) {
+                        showError("⏳ Server is waking up. Please wait 30 seconds and try again.");
                     } else {
-                        showError("Login failed. Please try again later.");
+                        showError("Login failed (error " + response.code() + "). Please try again.");
                     }
                 }
 
