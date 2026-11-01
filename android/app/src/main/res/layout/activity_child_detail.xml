@@ -92,7 +92,16 @@
                     android:layout_height="88dp"
                     android:background="@drawable/circle_avatar_bg"/>
 
-                <!-- Child photo (if available) -->
+                <!-- Illustrated cartoon avatar (default) -->
+                <ImageView
+                    android:id="@+id/iv_avatar_default"
+                    android:layout_width="88dp"
+                    android:layout_height="88dp"
+                    android:src="@drawable/ic_child_avatar"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Child avatar"/>
+
+                <!-- Child photo (if available — overlays illustrated avatar) -->
                 <ImageView
                     android:id="@+id/iv_photo"
                     android:layout_width="88dp"
@@ -102,14 +111,15 @@
                     android:visibility="gone"
                     android:contentDescription="Child photo"/>
 
-                <!-- Initial / emoji fallback -->
+                <!-- Emoji fallback (hidden by default) -->
                 <TextView
                     android:id="@+id/tv_photo_initial"
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:gravity="center"
                     android:text="👦"
-                    android:textSize="44sp"/>
+                    android:textSize="44sp"
+                    android:visibility="gone"/>
 
             </FrameLayout>
 

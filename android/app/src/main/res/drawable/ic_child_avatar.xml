@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="88dp"
+    android:height="88dp"
+    android:viewportWidth="88"
+    android:viewportHeight="88">
+
+    <!-- Light green circle background -->
+    <path
+        android:fillColor="#E8F5E9"
+        android:pathData="M44,44m-44,0a44,44 0,1 1,88 0a44,44 0,1 1,-88 0"/>
+
+    <!-- Neck -->
+    <path
+        android:fillColor="#FFCC99"
+        android:pathData="M36,60 Q36,68 44,68 Q52,68 52,60 L52,56 Q44,58 36,56 Z"/>
+
+    <!-- Green shirt/collar -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M28,82 Q28,72 36,68 Q44,72 44,72 Q44,72 52,68 Q60,72 60,82 Z"/>
+
+    <!-- White collar inner -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,68 L44,76 L48,68 Q44,70 40,68 Z"/>
+
+    <!-- Face (skin tone) -->
+    <path
+        android:fillColor="#FFCC99"
+        android:pathData="M44,16 C30,16 22,26 22,38 C22,52 30,62 44,62 C58,62 66,52 66,38 C66,26 58,16 44,16 Z"/>
+
+    <!-- Hair top -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M22,36 C22,22 30,14 44,14 C58,14 66,22 66,36 C66,28 62,20 54,17 C50,15 46,15 44,15 C42,15 38,15 34,17 C26,20 22,28 22,36 Z"/>
+
+    <!-- Hair left side -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M22,36 C20,32 20,26 24,22 C22,26 22,32 24,38 Z"/>
+
+    <!-- Hair right side -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M66,36 C68,32 68,26 64,22 C66,26 66,32 64,38 Z"/>
+
+    <!-- Left ear -->
+    <path
+        android:fillColor="#FFCC99"
+        android:pathData="M22,38 C18,38 16,42 18,46 C20,50 24,50 24,46 L24,38 Z"/>
+
+    <!-- Right ear -->
+    <path
+        android:fillColor="#FFCC99"
+        android:pathData="M66,38 C70,38 72,42 70,46 C68,50 64,50 64,46 L64,38 Z"/>
+
+    <!-- Left eyebrow -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M30,34 Q34,31 38,33"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+
+    <!-- Right eyebrow -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M50,33 Q54,31 58,34"
+        android:strokeColor="#1A1A2E"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+
+    <!-- Left eye white -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,38 C30,34 38,34 38,38 C38,42 30,42 30,38 Z"/>
+
+    <!-- Right eye white -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M50,38 C50,34 58,34 58,38 C58,42 50,42 50,38 Z"/>
+
+    <!-- Left pupil -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M34,38 C34,36 36,36 36,38 C36,40 34,40 34,38 Z"/>
+
+    <!-- Right pupil -->
+    <path
+        android:fillColor="#1A1A2E"
+        android:pathData="M52,38 C52,36 54,36 54,38 C54,40 52,40 52,38 Z"/>
+
+    <!-- Left eye shine -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M35,37 C35,36 36,36 36,37 Z"/>
+
+    <!-- Right eye shine -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M53,37 C53,36 54,36 54,37 Z"/>
+
+    <!-- Nose -->
+    <path
+        android:fillColor="#FFAA77"
+        android:pathData="M42,46 Q44,48 46,46"
+        android:strokeColor="#FFAA77"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+
+    <!-- Smile -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M34,52 Q44,60 54,52"
+        android:strokeColor="#CC6633"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+
+    <!-- Left cheek blush -->
+    <path
+        android:fillColor="#FFAABB"
+        android:alpha="0.4"
+        android:pathData="M26,48 C26,44 32,44 32,48 C32,52 26,52 26,48 Z"/>
+
+    <!-- Right cheek blush -->
+    <path
+        android:fillColor="#FFAABB"
+        android:alpha="0.4"
+        android:pathData="M56,48 C56,44 62,44 62,48 C62,52 56,52 56,48 Z"/>
+
+</vector>

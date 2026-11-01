@@ -164,16 +164,25 @@ public class ChildDetailActivity extends BaseActivity {
 
         // Avatar photo or initial
         if (c.photo != null && !c.photo.isEmpty()) {
+            // Real photo available — show it, hide illustrated avatar
             binding.ivPhoto.setVisibility(View.VISIBLE);
+            binding.ivAvatarDefault.setVisibility(View.GONE);
             binding.tvPhotoInitial.setVisibility(View.GONE);
             Glide.with(this).load(c.photo).circleCrop().into(binding.ivPhoto);
         } else {
+            // No photo — show illustrated cartoon avatar
             binding.ivPhoto.setVisibility(View.GONE);
-            binding.tvPhotoInitial.setVisibility(View.VISIBLE);
-            // Show child emoji — gender-aware if available
+            binding.tvPhotoInitial.setVisibility(View.GONE);
+            // Gender-aware: use girl avatar if female
             String gender = c.gender != null ? c.gender.toLowerCase() : "";
-            binding.tvPhotoInitial.setText("female".equals(gender) ? "👧" : "👦");
-            binding.tvPhotoInitial.setTextSize(44);
+            if ("female".equals(gender)) {
+                binding.ivAvatarDefault.setImageResource(
+                    com.alamada.childmonitor.R.drawable.ic_child_avatar_girl);
+            } else {
+                binding.ivAvatarDefault.setImageResource(
+                    com.alamada.childmonitor.R.drawable.ic_child_avatar);
+            }
+            binding.ivAvatarDefault.setVisibility(View.VISIBLE);
         }
 
         // Pass child_id to attendance/activities cards
