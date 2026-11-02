@@ -24,13 +24,10 @@ public class DashboardActivity extends BaseActivity {
 
         if (getSupportActionBar() != null) getSupportActionBar().hide();
 
-        // ── Welcome: name + avatar initial ─────────────────────────
+        // Welcome: show parent name — avatar is illustrated (set in XML)
         String name = session.getUserName();
         if (name != null && !name.isEmpty()) {
-            // Show full name with exclamation mark, e.g. "Juan Dela Cruz!"
             binding.tvWelcome.setText(name + "!");
-            // Show first letter of name as avatar initial
-            binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
         }
 
         // ── Card clicks ─────────────────────────────────────────────

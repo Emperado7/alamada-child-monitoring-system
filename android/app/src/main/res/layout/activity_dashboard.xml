@@ -145,16 +145,14 @@
                                 android:layout_height="82dp"
                                 android:background="@drawable/circle_avatar_bg"/>
 
-                            <!-- Letter initial (shown by default) -->
-                            <TextView
+                            <!-- Illustrated parent avatar -->
+                            <ImageView
                                 android:id="@+id/tv_avatar"
                                 android:layout_width="82dp"
                                 android:layout_height="82dp"
-                                android:gravity="center"
-                                android:text="P"
-                                android:textSize="34sp"
-                                android:textStyle="bold"
-                                android:textColor="#FFFFFF"/>
+                                android:src="@drawable/ic_parent_avatar"
+                                android:scaleType="fitCenter"
+                                android:contentDescription="Parent avatar"/>
 
                         </FrameLayout>
 
@@ -199,10 +197,11 @@
                             android:background="@drawable/quick_icon_bg_green">
 
                             <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_child_card"
+                                android:src="@drawable/ic_child_avatar"
+                                android:scaleType="fitCenter"
                                 android:contentDescription="Child"/>
                         </FrameLayout>
 
