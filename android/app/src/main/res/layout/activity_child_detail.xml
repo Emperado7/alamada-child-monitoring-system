@@ -466,7 +466,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_child_avatar"
+                    android:src="@drawable/ic_child_nav"
                     android:scaleType="fitCenter"
                     android:contentDescription="Child Info"/>
 
