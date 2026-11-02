@@ -7,27 +7,25 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- ══ GREEN HEADER ═══════════════════════════════════════════════ -->
-    <LinearLayout
+    <!--    DARK GREEN HEADER                                            -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/header_green_gradient"
-        android:paddingStart="20dp"
-        android:paddingEnd="0dp"
-        android:paddingTop="44dp"
-        android:paddingBottom="20dp">
+        android:background="@drawable/header_green_solid"
+        android:paddingTop="44dp">
 
-        <!-- ── Back arrow + Title row ───────────────────────────────── -->
+        <!--    Back arrow + Title row    -->
         <LinearLayout
+            android:id="@+id/ll_title_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingEnd="20dp"
-            android:layout_marginBottom="20dp">
+            android:paddingStart="12dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            android:layout_alignParentTop="true">
 
-            <!-- Back button -->
             <FrameLayout
                 android:id="@+id/btn_back"
                 android:layout_width="36dp"
@@ -35,7 +33,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:background="?attr/selectableItemBackgroundBorderless">
-
                 <ImageView
                     android:layout_width="26dp"
                     android:layout_height="26dp"
@@ -44,7 +41,6 @@
                     android:contentDescription="Back"/>
             </FrameLayout>
 
-            <!-- Title centred -->
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -55,7 +51,6 @@
                 android:textStyle="bold"
                 android:gravity="center"/>
 
-            <!-- Switch child (shown only when >1 child) -->
             <TextView
                 android:id="@+id/btn_switch_child"
                 android:layout_width="wrap_content"
@@ -73,26 +68,29 @@
                 android:visibility="gone"/>
         </LinearLayout>
 
-        <!-- ── Child profile row ────────────────────────────────────── -->
+        <!--    Child profile row: avatar + name + school building    -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="bottom"
+            android:paddingStart="16dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="0dp"
+            android:layout_below="@id/ll_title_row">
 
-            <!-- Avatar circle — light green bg with child face -->
+            <!-- Avatar circle -->
             <FrameLayout
                 android:layout_width="88dp"
                 android:layout_height="88dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="12dp">
 
-                <!-- Circle bg (light green with border) -->
                 <View
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:background="@drawable/circle_avatar_bg"/>
 
-                <!-- Illustrated cartoon avatar (default) -->
                 <ImageView
                     android:id="@+id/iv_avatar_default"
                     android:layout_width="88dp"
@@ -101,7 +99,6 @@
                     android:scaleType="fitCenter"
                     android:contentDescription="Child avatar"/>
 
-                <!-- Child photo (if available — overlays illustrated avatar) -->
                 <ImageView
                     android:id="@+id/iv_photo"
                     android:layout_width="88dp"
@@ -111,37 +108,35 @@
                     android:visibility="gone"
                     android:contentDescription="Child photo"/>
 
-                <!-- Emoji fallback (hidden by default) -->
                 <TextView
                     android:id="@+id/tv_photo_initial"
                     android:layout_width="88dp"
                     android:layout_height="88dp"
                     android:gravity="center"
-                    android:text="👦"
+                    android:text="  "
                     android:textSize="44sp"
                     android:visibility="gone"/>
-
             </FrameLayout>
 
-            <!-- Name + grade chip -->
+            <!-- Name + chip   aligned to bottom of avatar -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="16dp">
 
                 <TextView
                     android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="—"
+                    android:text=" "
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp"
+                    android:textSize="19sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="10dp"/>
 
-                <!-- Grade / status chip — white pill -->
                 <TextView
                     android:id="@+id/tv_status"
                     android:layout_width="wrap_content"
@@ -157,105 +152,21 @@
                     android:background="@drawable/circle_white_bg"/>
             </LinearLayout>
 
-            <!-- School building illustration (right) -->
-            <RelativeLayout
-                android:layout_width="140dp"
-                android:layout_height="100dp">
-
-                <!-- Clouds -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="☁"
-                    android:textSize="14sp"
-                    android:textColor="#FFFFFF"
-                    android:alpha="0.8"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="28dp"
-                    android:layout_marginTop="0dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="☁"
-                    android:textSize="10sp"
-                    android:textColor="#FFFFFF"
-                    android:alpha="0.65"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="4dp"
-                    android:layout_marginTop="10dp"/>
-
-                <!-- Flag -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🚩"
-                    android:textSize="11sp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="14dp"/>
-
-                <!-- Building body -->
-                <LinearLayout
-                    android:layout_width="120dp"
-                    android:layout_height="62dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/school_building_bg"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌲"
-                        android:textSize="20sp"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🕐"
-                            android:textSize="16sp"
-                            android:gravity="center"/>
-
-                        <View
-                            android:layout_width="14dp"
-                            android:layout_height="20dp"
-                            android:background="#5D4037"
-                            android:layout_marginTop="2dp"
-                            android:layout_gravity="center_horizontal"/>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌲"
-                        android:textSize="20sp"/>
-                </LinearLayout>
-
-                <!-- Ground strip -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="#1B5E20"
-                    android:alpha="0.55"/>
-            </RelativeLayout>
+            <!-- Illustrated school building (right, flush to edge) -->
+            <ImageView
+                android:layout_width="160dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_school_building"
+                android:scaleType="fitEnd"
+                android:layout_gravity="bottom"
+                android:contentDescription="School building"
+                android:adjustViewBounds="true"/>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
 
-    <!-- ══ SCROLLABLE WHITE BODY ══════════════════════════════════════ -->
+    <!--    SCROLLABLE WHITE BODY                                        -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -282,7 +193,7 @@
                 android:visibility="gone"
                 android:layout_marginBottom="12dp"/>
 
-            <!-- ── Card: Attendance Record ────────────────────────── -->
+            <!--    Card: Attendance Record                            -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_attendance"
                 android:layout_width="match_parent"
@@ -353,7 +264,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── Card: Daily Activities ─────────────────────────── -->
+            <!--    Card: Daily Activities                             -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_activities"
                 android:layout_width="match_parent"
@@ -421,7 +332,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── Card: Notifications ────────────────────────────── -->
+            <!--    Card: Notifications                                -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_notifications"
                 android:layout_width="match_parent"
@@ -492,7 +403,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ══ BOTTOM NAVIGATION — Child Info ACTIVE ══════════════════════ -->
+    <!--    BOTTOM NAVIGATION   Child Info ACTIVE                        -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

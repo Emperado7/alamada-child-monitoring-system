@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Illustrated school building matching the mockup:
+    - Yellow/cream main building body
+    - Dark green triangular roof
+    - Clock in roof peak
+    - Green door in centre
+    - Window grid (3 columns x 2 rows)
+    - Green trees on both sides
+    - Clouds top-right
+    - Flag on roof peak
+    - Green grass ground strip
+    viewportWidth=200, viewportHeight=140
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="140dp"
+    android:viewportWidth="200"
+    android:viewportHeight="140">
+
+    <!--    Sky / background (transparent   header bg shows through)    -->
+
+    <!--    Cloud left    -->
+    <path android:fillColor="#FFFFFF" android:alpha="0.85"
+        android:pathData="M18,22 C18,18 22,16 26,18 C27,14 32,13 35,16 C38,13 44,14 44,18 C47,18 48,21 46,23 L20,23 C18,24 17,22 18,22 Z"/>
+
+    <!--    Cloud right    -->
+    <path android:fillColor="#FFFFFF" android:alpha="0.85"
+        android:pathData="M148,16 C148,12 152,10 156,12 C157,8 163,7 166,10 C170,7 176,9 176,13 C179,13 181,16 179,18 L150,18 C148,19 147,17 148,16 Z"/>
+
+    <!--    Flag pole    -->
+    <path android:fillColor="#FFFFFF" android:alpha="0.9"
+        android:strokeColor="#FFFFFF" android:strokeWidth="1.5"
+        android:pathData="M100,8 L100,28"
+        />
+
+    <!--    Flag    -->
+    <path android:fillColor="#4CAF50"
+        android:pathData="M100,8 L112,13 L100,18 Z"/>
+
+    <!--    Roof (dark green triangle)    -->
+    <path android:fillColor="#1B5E20"
+        android:pathData="M55,60 L100,28 L145,60 Z"/>
+
+    <!--    Roof ridge cap    -->
+    <path android:fillColor="#2E7D32"
+        android:pathData="M55,58 L145,58 L145,62 L55,62 Z"/>
+
+    <!--    Clock circle on roof    -->
+    <path android:fillColor="#F5F5F5"
+        android:pathData="M100,44 m-10,0 a10,10 0,1,1 20,0 a10,10 0,1,1 -20,0"/>
+    <!-- Clock face -->
+    <path android:fillColor="#E0E0E0"
+        android:pathData="M100,44 m-8,0 a8,8 0,1,1 16,0 a8,8 0,1,1 -16,0"/>
+    <!-- Clock hour hand -->
+    <path android:strokeColor="#212121" android:strokeWidth="1.5" android:strokeLineCap="round"
+        android:pathData="M100,44 L100,38" android:fillColor="#00000000"/>
+    <!-- Clock minute hand -->
+    <path android:strokeColor="#212121" android:strokeWidth="1.2" android:strokeLineCap="round"
+        android:pathData="M100,44 L104,44" android:fillColor="#00000000"/>
+    <!-- Clock centre dot -->
+    <path android:fillColor="#212121"
+        android:pathData="M100,44 m-1.2,0 a1.2,1.2 0,1,1 2.4,0 a1.2,1.2 0,1,1 -2.4,0"/>
+
+    <!--    Main building body (yellow/cream)    -->
+    <path android:fillColor="#F5DEB3"
+        android:pathData="M48,60 L48,115 L152,115 L152,60 Z"/>
+
+    <!--    Building outline    -->
+    <path android:fillColor="#00000000" android:strokeColor="#D4A856" android:strokeWidth="1"
+        android:pathData="M48,60 L48,115 L152,115 L152,60 Z"/>
+
+    <!--    Windows row 1 (3 windows)    -->
+    <!-- Left window row1 -->
+    <path android:fillColor="#B3E5FC"
+        android:pathData="M58,66 L78,66 L78,82 L58,82 Z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#1565C0" android:strokeWidth="1"
+        android:pathData="M58,66 L78,66 L78,82 L58,82 Z"/>
+    <!-- Window cross left -->
+    <path android:strokeColor="#1565C0" android:strokeWidth="0.8"
+        android:pathData="M68,66 L68,82 M58,74 L78,74" android:fillColor="#00000000"/>
+
+    <!-- Centre window row1 -->
+    <path android:fillColor="#B3E5FC"
+        android:pathData="M88,66 L112,66 L112,82 L88,82 Z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#1565C0" android:strokeWidth="1"
+        android:pathData="M88,66 L112,66 L112,82 L88,82 Z"/>
+    <path android:strokeColor="#1565C0" android:strokeWidth="0.8"
+        android:pathData="M100,66 L100,82 M88,74 L112,74" android:fillColor="#00000000"/>
+
+    <!-- Right window row1 -->
+    <path android:fillColor="#B3E5FC"
+        android:pathData="M122,66 L142,66 L142,82 L122,82 Z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#1565C0" android:strokeWidth="1"
+        android:pathData="M122,66 L142,66 L142,82 L122,82 Z"/>
+    <path android:strokeColor="#1565C0" android:strokeWidth="0.8"
+        android:pathData="M132,66 L132,82 M122,74 L142,74" android:fillColor="#00000000"/>
+
+    <!--    Green door (centre bottom)    -->
+    <path android:fillColor="#2E7D32"
+        android:pathData="M88,115 L88,92 Q100,88 112,92 L112,115 Z"/>
+    <!-- Door arch -->
+    <path android:fillColor="#1B5E20"
+        android:pathData="M88,92 Q100,84 112,92 Q100,90 88,92 Z"/>
+    <!-- Door knob -->
+    <path android:fillColor="#FFD700"
+        android:pathData="M107,104 m-2,0 a2,2 0,1,1 4,0 a2,2 0,1,1 -4,0"/>
+    <!-- Door steps -->
+    <path android:fillColor="#D4A856"
+        android:pathData="M84,115 L116,115 L116,117 L84,117 Z"/>
+    <path android:fillColor="#C49A3C"
+        android:pathData="M82,117 L118,117 L118,119 L82,119 Z"/>
+
+    <!--    Left tree trunk    -->
+    <path android:fillColor="#795548"
+        android:pathData="M28,100 L32,100 L32,115 L28,115 Z"/>
+    <!-- Left tree top (3-layer) -->
+    <path android:fillColor="#388E3C"
+        android:pathData="M20,100 L30,78 L40,100 Z"/>
+    <path android:fillColor="#2E7D32"
+        android:pathData="M18,108 L30,84 L42,108 Z"/>
+    <path android:fillColor="#1B5E20"
+        android:pathData="M16,115 L30,90 L44,115 Z"/>
+
+    <!--    Right tree trunk    -->
+    <path android:fillColor="#795548"
+        android:pathData="M168,100 L172,100 L172,115 L168,115 Z"/>
+    <!-- Right tree top (3-layer) -->
+    <path android:fillColor="#388E3C"
+        android:pathData="M160,100 L170,78 L180,100 Z"/>
+    <path android:fillColor="#2E7D32"
+        android:pathData="M158,108 L170,84 L182,108 Z"/>
+    <path android:fillColor="#1B5E20"
+        android:pathData="M156,115 L170,90 L184,115 Z"/>
+
+    <!--    Grass ground strip    -->
+    <path android:fillColor="#2E7D32"
+        android:pathData="M0,115 L200,115 L200,130 Q100,125 0,130 Z"/>
+    <path android:fillColor="#388E3C"
+        android:pathData="M0,118 Q50,122 100,120 Q150,118 200,121 L200,115 L0,115 Z"/>
+
+    <!--    Small bushes near building    -->
+    <path android:fillColor="#388E3C"
+        android:pathData="M44,114 C44,108 52,108 52,114 Z"/>
+    <path android:fillColor="#388E3C"
+        android:pathData="M148,114 C148,108 156,108 156,114 Z"/>
+
+</vector>

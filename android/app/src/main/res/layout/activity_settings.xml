@@ -7,11 +7,11 @@
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- ══ DARK GREEN HEADER — same as Dashboard ══════════════════════ -->
+    <!--    DARK GREEN HEADER   same as Dashboard                        -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@drawable/header_green_gradient"
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_green_solid"
         android:paddingStart="22dp"
         android:paddingEnd="0dp"
         android:paddingTop="48dp"
@@ -45,115 +45,20 @@
                 android:layout_marginTop="6dp"/>
         </LinearLayout>
 
-        <!-- School building illustration (right) -->
-        <LinearLayout
+        <!-- School building illustration (right)   illustrated vector -->
+        <ImageView
             android:layout_width="180dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="bottom"
+            android:layout_height="160dp"
+            android:src="@drawable/ic_school_building"
+            android:scaleType="fitEnd"
+            android:adjustViewBounds="true"
             android:layout_alignParentEnd="true"
-            android:paddingBottom="0dp">
-
-            <!-- Clouds -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="☁"
-                    android:textSize="22sp"
-                    android:textColor="#FFFFFF"
-                    android:alpha="0.85"
-                    android:layout_marginEnd="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="☁"
-                    android:textSize="16sp"
-                    android:textColor="#FFFFFF"
-                    android:alpha="0.70"
-                    android:layout_marginTop="10dp"/>
-            </LinearLayout>
-
-            <!-- Building -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="120dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🚩"
-                    android:textSize="13sp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="0dp"/>
-
-                <LinearLayout
-                    android:layout_width="110dp"
-                    android:layout_height="72dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="0dp"
-                    android:background="@drawable/school_building_bg"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="6dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌲"
-                        android:textSize="24sp"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🕐"
-                            android:textSize="18sp"
-                            android:gravity="center"/>
-
-                        <View
-                            android:layout_width="16dp"
-                            android:layout_height="22dp"
-                            android:background="#5D4037"
-                            android:layout_marginTop="2dp"
-                            android:layout_gravity="center_horizontal"/>
-                    </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🌲"
-                        android:textSize="24sp"/>
-                </LinearLayout>
-
-                <!-- Ground -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="12dp"
-                    android:layout_alignParentBottom="true"
-                    android:background="#1B5E20"
-                    android:alpha="0.6"/>
-            </RelativeLayout>
-
-        </LinearLayout>
+            android:layout_alignParentBottom="true"
+            android:contentDescription="School building"/>
 
     </RelativeLayout>
 
-    <!-- ══ SCROLLABLE WHITE BODY ══════════════════════════════════════ -->
+    <!--    SCROLLABLE WHITE BODY                                        -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -182,7 +87,7 @@
                 android:gravity="center"
                 android:layout_marginBottom="22dp"/>
 
-            <!-- ── User info row ──────────────────────────────────── -->
+            <!--    User info row                                      -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -259,7 +164,7 @@
                 android:textColor="#2E7D32"
                 android:layout_marginBottom="14dp"/>
 
-            <!-- ── Card: Profile ──────────────────────────────────── -->
+            <!--    Card: Profile                                      -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_profile"
                 android:layout_width="match_parent"
@@ -330,7 +235,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── Card: Security ─────────────────────────────────── -->
+            <!--    Card: Security                                     -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_security"
                 android:layout_width="match_parent"
@@ -398,7 +303,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- ── Card: Notifications ────────────────────────────── -->
+            <!--    Card: Notifications                                -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_notifications"
                 android:layout_width="match_parent"
@@ -485,7 +390,7 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- ══ BOTTOM NAVIGATION — Settings ACTIVE ════════════════════════ -->
+    <!--    BOTTOM NAVIGATION   Settings ACTIVE                          -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
