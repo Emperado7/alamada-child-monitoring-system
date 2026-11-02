@@ -11,23 +11,23 @@
 
     <!-- Neck -->
     <path android:fillColor="#F5C09A"
-        android:pathData="M43,65 L43,72 Q50,75 57,72 L57,65 Q50,67 43,65 Z"/>
+        android:pathData="M43,64 L43,72 Q50,75 57,72 L57,64 Q50,67 43,64 Z"/>
 
     <!-- Green shirt -->
     <path android:fillColor="#2E7D32"
-        android:pathData="M25,100 Q25,80 37,74 Q43,78 50,78 Q57,78 63,74 Q75,80 75,100 Z"/>
+        android:pathData="M20,100 L20,78 Q34,70 43,72 Q46,74 50,74 Q54,74 57,72 Q66,70 80,78 L80,100 Z"/>
 
-    <!-- White collar left -->
+    <!-- White left collar -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M43,74 L50,85 L50,78 Q46,78 43,74 Z"/>
+        android:pathData="M43,72 L50,84 L50,74 Q46,74 43,72 Z"/>
 
-    <!-- White collar right -->
+    <!-- White right collar -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M57,74 L50,85 L50,78 Q54,78 57,74 Z"/>
+        android:pathData="M57,72 L50,84 L50,74 Q54,74 57,72 Z"/>
 
-    <!-- Face -->
+    <!-- Face skin -->
     <path android:fillColor="#F5C09A"
-        android:pathData="M50,18 C34,18 26,28 26,42 C26,56 34,67 50,67 C66,67 74,56 74,42 C74,28 66,18 50,18 Z"/>
+        android:pathData="M50,18 C34,18 26,28 26,42 C26,56 34,66 50,66 C66,66 74,56 74,42 C74,28 66,18 50,18 Z"/>
 
     <!-- Left ear -->
     <path android:fillColor="#F5C09A"
@@ -37,79 +37,69 @@
     <path android:fillColor="#F5C09A"
         android:pathData="M74,42 C79,41 81,46 79,50 C77,54 73,53 73,49 Z"/>
 
-    <!-- Hair top -->
+    <!-- HAIR - solid dark block, drawn AFTER face so it overlaps top -->
     <path android:fillColor="#1C1C1E"
-        android:pathData="M26,40 C26,25 34,16 50,16 C66,16 74,25 74,40 C74,30 68,20 58,17 C54,15 50,15 42,17 C32,20 26,30 26,40 Z"/>
-
-    <!-- Hair left -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M26,40 C24,36 24,30 27,25 L27,42 Z"/>
-
-    <!-- Hair right -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M74,40 C76,36 76,30 73,25 L73,42 Z"/>
-
-    <!-- Left eye white -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M35,42 C35,38 44,38 44,42 C44,46 35,46 35,42 Z"/>
-
-    <!-- Right eye white -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M56,42 C56,38 65,38 65,42 C65,46 56,46 56,42 Z"/>
-
-    <!-- Left pupil -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M39,42 C39,39.5 41,39.5 41,42 C41,44.5 39,44.5 39,42 Z"/>
-
-    <!-- Right pupil -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M59,42 C59,39.5 61,39.5 61,42 C61,44.5 59,44.5 59,42 Z"/>
-
-    <!-- Left shine -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M39.5,40.5 C39.5,39.8 40.5,39.8 40.5,40.5 C40.5,41.2 39.5,41.2 39.5,40.5 Z"/>
-
-    <!-- Right shine -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M59.5,40.5 C59.5,39.8 60.5,39.8 60.5,40.5 C60.5,41.2 59.5,41.2 59.5,40.5 Z"/>
+        android:pathData="M26,40 L26,28 C26,14 34,8 50,8 C66,8 74,14 74,28 L74,40 C72,26 64,16 50,16 C36,16 28,26 26,40 Z"/>
 
     <!-- Left brow -->
     <path android:fillColor="#1C1C1E"
         android:strokeColor="#1C1C1E"
-        android:strokeWidth="2"
+        android:strokeWidth="2.2"
         android:strokeLineCap="round"
-        android:pathData="M35,37 Q40,34 44,36"/>
+        android:pathData="M34,36 Q39,33 44,35"/>
 
     <!-- Right brow -->
     <path android:fillColor="#1C1C1E"
         android:strokeColor="#1C1C1E"
-        android:strokeWidth="2"
+        android:strokeWidth="2.2"
         android:strokeLineCap="round"
-        android:pathData="M56,36 Q60,34 65,37"/>
+        android:pathData="M56,35 Q61,33 66,36"/>
 
-    <!-- Nose left -->
-    <path android:fillColor="#E8956D"
-        android:pathData="M47,52 C47,50.5 48.5,50.5 48.5,52 C48.5,53.5 47,53.5 47,52 Z"/>
+    <!-- Left eye white -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M34,42 C34,38 44,38 44,42 C44,46 34,46 34,42 Z"/>
 
-    <!-- Nose right -->
+    <!-- Right eye white -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M56,42 C56,38 66,38 66,42 C66,46 56,46 56,42 Z"/>
+
+    <!-- Left iris -->
+    <path android:fillColor="#1C1C1E"
+        android:pathData="M38,42 C38,39.5 40.5,39.5 40.5,42 C40.5,44.5 38,44.5 38,42 Z"/>
+
+    <!-- Right iris -->
+    <path android:fillColor="#1C1C1E"
+        android:pathData="M59.5,42 C59.5,39.5 62,39.5 62,42 C62,44.5 59.5,44.5 59.5,42 Z"/>
+
+    <!-- Left shine -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M38.5,40.2 C38.5,39.5 39.8,39.5 39.8,40.2 C39.8,40.9 38.5,40.9 38.5,40.2 Z"/>
+
+    <!-- Right shine -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M60,40.2 C60,39.5 61.3,39.5 61.3,40.2 C61.3,40.9 60,40.9 60,40.2 Z"/>
+
+    <!-- Nose -->
     <path android:fillColor="#E8956D"
-        android:pathData="M51.5,52 C51.5,50.5 53,50.5 53,52 C53,53.5 51.5,53.5 51.5,52 Z"/>
+        android:pathData="M47,51 C47,49.5 49,49.5 49,51 C49,52.5 47,52.5 47,51 Z"/>
+    <path android:fillColor="#E8956D"
+        android:pathData="M51,51 C51,49.5 53,49.5 53,51 C53,52.5 51,52.5 51,51 Z"/>
 
     <!-- Smile -->
     <path android:fillColor="#00000000"
         android:strokeColor="#C0623A"
         android:strokeWidth="2.5"
         android:strokeLineCap="round"
-        android:pathData="M38,57 Q50,65 62,57"/>
+        android:pathData="M37,57 Q50,65 63,57"/>
 
-    <!-- Left blush -->
+    <!-- Cheek left -->
     <path android:fillColor="#F48FB1"
-        android:alpha="0.35"
-        android:pathData="M28,52 C28,47 36,47 36,52 C36,57 28,57 28,52 Z"/>
+        android:alpha="0.3"
+        android:pathData="M27,51 C27,47 34,47 34,51 C34,55 27,55 27,51 Z"/>
 
-    <!-- Right blush -->
+    <!-- Cheek right -->
     <path android:fillColor="#F48FB1"
-        android:alpha="0.35"
-        android:pathData="M64,52 C64,47 72,47 72,52 C72,57 64,57 64,52 Z"/>
+        android:alpha="0.3"
+        android:pathData="M66,51 C66,47 73,47 73,51 C73,55 66,55 66,51 Z"/>
 
 </vector>
