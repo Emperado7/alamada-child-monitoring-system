@@ -41,12 +41,11 @@ public class SettingsActivity extends BaseActivity {
 
         binding.tvRoleLabel.setText(roleLabel);
 
-        // Avatar — show first letter of name in green
+        // Avatar — illustrated cartoon face by default, show initial as fallback
         if (name != null && !name.isEmpty()) {
-            binding.tvAvatar.setText(String.valueOf(name.charAt(0)).toUpperCase());
-            binding.tvAvatar.setTextSize(34);
-            binding.tvAvatar.setTextColor(
-                getResources().getColor(R.color.primary, null));
+            // Keep the illustrated avatar visible (set in XML)
+            // Just hide the text fallback
+            binding.tvAvatar.setVisibility(android.view.View.GONE);
         }
 
         // ── Bottom nav ─────────────────────────────────────────────

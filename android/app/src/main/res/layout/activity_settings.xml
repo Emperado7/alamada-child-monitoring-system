@@ -106,15 +106,16 @@
                         android:layout_height="76dp"
                         android:background="@drawable/circle_avatar_bg"/>
 
+                    <!-- Illustrated cartoon face (default) -->
                     <ImageView
                         android:id="@+id/iv_avatar"
                         android:layout_width="76dp"
                         android:layout_height="76dp"
-                        android:scaleType="centerCrop"
-                        android:background="@drawable/circle_avatar_bg"
-                        android:visibility="gone"
+                        android:src="@drawable/ic_child_avatar"
+                        android:scaleType="fitCenter"
                         android:contentDescription="Avatar"/>
 
+                    <!-- Letter fallback (hidden by default) -->
                     <TextView
                         android:id="@+id/tv_avatar"
                         android:layout_width="76dp"
@@ -123,6 +124,7 @@
                         android:text="P"
                         android:textSize="34sp"
                         android:textStyle="bold"
+                        android:visibility="gone"
                         android:textColor="#2E7D32"/>
 
                 </FrameLayout>
