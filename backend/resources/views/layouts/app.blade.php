@@ -586,7 +586,7 @@
             <a href="{{ route('admin.notifications.index') }}"
                class="nav-link-s {{ request()->routeIs('admin.notifications.*') ? 'active':'' }}">
                 <i class="fas fa-bell"></i> Notifications
-                @if($nb > 0)
+                @if(isset($nb) && $nb > 0)
                 <span class="nav-badge">{{ $nb > 9 ? '9+' : $nb }}</span>
                 @endif
             </a>
@@ -738,26 +738,32 @@
         @auth
         {{-- Notification bell with dropdown --}}
         @php
-            $userId = auth()->id();
-            $readIds = \Illuminate\Support\Facades\DB::table('notification_reads')
-                ->where('user_id', $userId)->pluck('notification_id')->toArray();
-            $bellRoute = auth()->user()->isAdmin()
-                ? route('admin.notifications.index')
-                : route('staff.notifications.index');
-            $markAllRoute = auth()->user()->isAdmin()
-                ? route('admin.notifications.read-all')
-                : route('staff.notifications.read-all');
-            if (auth()->user()->isAdmin()) {
-                $nb = \App\Models\Notification::whereNotIn('id', $readIds)->count();
-                $recentNotifs = \App\Models\Notification::with('sender:id,name')
-                    ->orderBy('created_at','desc')->limit(5)->get();
-            } else {
-                $nb = \App\Models\Notification::where(function($q) use($userId) {
-                    $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
-                })->whereNotIn('id', $readIds)->count();
-                $recentNotifs = \App\Models\Notification::where(function($q) use($userId) {
-                    $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
-                })->with('sender:id,name')->orderBy('created_at','desc')->limit(5)->get();
+            try {
+                $userId   = auth()->id();
+                $userRole = auth()->user()->role ?? 'parent';
+                $readIds  = \Illuminate\Support\Facades\DB::table('notification_reads')
+                    ->where('user_id', $userId)->pluck('notification_id')->toArray();
+
+                if ($userRole === 'admin') {
+                    $bellRoute    = route('admin.notifications.index');
+                    $markAllRoute = route('admin.notifications.read-all');
+                    $nb           = \App\Models\Notification::whereNotIn('id', $readIds)->count();
+                    $recentNotifs = \App\Models\Notification::with('sender:id,name')
+                        ->orderBy('created_at','desc')->limit(5)->get();
+                } else {
+                    $bellRoute    = route('staff.notifications.index');
+                    $markAllRoute = route('staff.notifications.read-all');
+                    $nb           = \App\Models\Notification::where(function($q) use($userId) {
+                        $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
+                    })->whereNotIn('id', $readIds)->count();
+                    $recentNotifs = \App\Models\Notification::where(function($q) use($userId) {
+                        $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
+                    })->with('sender:id,name')->orderBy('created_at','desc')->limit(5)->get();
+                }
+            } catch (\Throwable $e) {
+                $nb = 0; $readIds = []; $recentNotifs = collect();
+                $bellRoute = '#'; $markAllRoute = '#';
+                $userRole = 'admin';
             }
         @endphp
         <div class="dropdown" id="notif-dropdown-wrap">
@@ -825,7 +831,7 @@
                                 @if(!$isRead)
                                 &nbsp;·&nbsp;
                                 <form method="POST"
-                                      action="{{ auth()->user()->isAdmin()
+                                      action="{{ $userRole === 'admin'
                                           ? route('admin.notifications.read', $rn->id)
                                           : route('staff.notifications.read', $rn->id) }}"
                                       class="d-inline m-0">
