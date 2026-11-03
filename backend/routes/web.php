@@ -79,6 +79,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/notifications', [Admin\NotificationController::class, 'index'])->name('notifications.index');
     Route::get('/notifications/create', [Admin\NotificationController::class, 'create'])->name('notifications.create');
     Route::post('/notifications', [Admin\NotificationController::class, 'store'])->name('notifications.store');
+    Route::post('/notifications/read-all', [Admin\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::get('/notifications/unread-count', [Admin\NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/recent', [Admin\NotificationController::class, 'recent'])->name('notifications.recent');
+    Route::post('/notifications/{notification}/read', [Admin\NotificationController::class, 'markRead'])->name('notifications.read');
     Route::delete('/notifications/{notification}', [Admin\NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Users
@@ -119,6 +123,9 @@ Route::middleware(['auth', 'role:staff'])->prefix('staff')->name('staff.')->grou
 
     // Notifications (view only)
     Route::get('/notifications', [Staff\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [Staff\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::get('/notifications/unread-count', [Staff\NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
+    Route::get('/notifications/recent', [Staff\NotificationController::class, 'recent'])->name('notifications.recent');
     Route::post('/notifications/{notification}/read', [Staff\NotificationController::class, 'markRead'])->name('notifications.read');
 
     // Settings

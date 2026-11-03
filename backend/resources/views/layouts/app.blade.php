@@ -586,11 +586,8 @@
             <a href="{{ route('admin.notifications.index') }}"
                class="nav-link-s {{ request()->routeIs('admin.notifications.*') ? 'active':'' }}">
                 <i class="fas fa-bell"></i> Notifications
-                @php
-                    $unread = \App\Models\Notification::count();
-                @endphp
-                @if($unread > 0)
-                <span class="nav-badge">{{ $unread > 9 ? '9+' : $unread }}</span>
+                @if($nb > 0)
+                <span class="nav-badge">{{ $nb > 9 ? '9+' : $nb }}</span>
                 @endif
             </a>
         </li>
@@ -739,25 +736,127 @@
     </div>
     <div class="topnav-right">
         @auth
-        {{-- Notification bell --}}
-        <a href="{{ auth()->user()->isAdmin() ? route('admin.notifications.index') : route('staff.notifications.index') }}"
-           style="position:relative;display:inline-flex;align-items:center;justify-content:center;
-                  width:40px;height:40px;border-radius:50%;color:#555;text-decoration:none;
-                  transition:background .15s;cursor:pointer;"
-           onmouseover="this.style.background='#f5f5f5'"
-           onmouseout="this.style.background='transparent'">
-            <i class="fas fa-bell" style="font-size:1.2rem;pointer-events:none;"></i>
-            @php $nb = \App\Models\Notification::count(); @endphp
-            @if($nb > 0)
-            <span style="position:absolute;top:2px;right:2px;
+        {{-- Notification bell with dropdown --}}
+        @php
+            $userId = auth()->id();
+            $readIds = \Illuminate\Support\Facades\DB::table('notification_reads')
+                ->where('user_id', $userId)->pluck('notification_id')->toArray();
+            $bellRoute = auth()->user()->isAdmin()
+                ? route('admin.notifications.index')
+                : route('staff.notifications.index');
+            $markAllRoute = auth()->user()->isAdmin()
+                ? route('admin.notifications.read-all')
+                : route('staff.notifications.read-all');
+            if (auth()->user()->isAdmin()) {
+                $nb = \App\Models\Notification::whereNotIn('id', $readIds)->count();
+                $recentNotifs = \App\Models\Notification::with('sender:id,name')
+                    ->orderBy('created_at','desc')->limit(5)->get();
+            } else {
+                $nb = \App\Models\Notification::where(function($q) use($userId) {
+                    $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
+                })->whereNotIn('id', $readIds)->count();
+                $recentNotifs = \App\Models\Notification::where(function($q) use($userId) {
+                    $q->whereIn('recipient_group',['all','staff'])->orWhere('recipient_id',$userId);
+                })->with('sender:id,name')->orderBy('created_at','desc')->limit(5)->get();
+            }
+        @endphp
+        <div class="dropdown" id="notif-dropdown-wrap">
+            <button type="button"
+                    style="position:relative;display:inline-flex;align-items:center;justify-content:center;
+                           width:40px;height:40px;border-radius:50%;color:#555;background:transparent;
+                           border:none;cursor:pointer;transition:background .15s;"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    id="notifBellBtn"
+                    onmouseover="this.style.background='#f5f5f5'"
+                    onmouseout="this.style.background='transparent'">
+                <i class="fas fa-bell" style="font-size:1.2rem;pointer-events:none;"></i>
+                <span id="notif-badge" style="position:absolute;top:2px;right:2px;
                          background:#ef5350;color:#fff;font-size:.6rem;font-weight:700;
                          width:16px;height:16px;border-radius:50%;
-                         display:flex;align-items:center;justify-content:center;
+                         display:{{ $nb > 0 ? 'flex' : 'none' }};
+                         align-items:center;justify-content:center;
                          border:2px solid #fff;pointer-events:none;">
-                {{ $nb > 9 ? '9+' : $nb }}
-            </span>
-            @endif
-        </a>
+                    {{ $nb > 9 ? '9+' : $nb }}
+                </span>
+            </button>
+
+            {{-- Dropdown panel --}}
+            <div class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-0"
+                 style="width:340px;max-height:420px;overflow:hidden;">
+
+                {{-- Header --}}
+                <div class="d-flex align-items-center justify-content-between px-3 py-2 border-bottom">
+                    <span class="fw-bold" style="font-size:.9rem;">Notifications</span>
+                    @if($nb > 0)
+                    <form method="POST" action="{{ $markAllRoute }}" class="m-0">
+                        @csrf
+                        <button type="submit" class="btn btn-link btn-sm p-0 text-decoration-none"
+                                style="font-size:.78rem;color:#2e7d32;">
+                            Mark all as read
+                        </button>
+                    </form>
+                    @endif
+                </div>
+
+                {{-- List --}}
+                <div style="max-height:300px;overflow-y:auto;">
+                    @forelse($recentNotifs as $rn)
+                    @php $isRead = in_array($rn->id, $readIds); @endphp
+                    <div class="d-flex align-items-start px-3 py-2 border-bottom"
+                         style="background:{{ $isRead ? '#fff' : '#f0faf0' }};gap:10px;">
+                        <div style="flex-shrink:0;width:34px;height:34px;border-radius:50%;
+                                    background:{{ $isRead ? '#e0e0e0' : '#c8e6c9' }};
+                                    display:flex;align-items:center;justify-content:center;
+                                    font-size:.9rem;color:{{ $isRead ? '#9e9e9e' : '#2e7d32' }};">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:.82rem;font-weight:{{ $isRead ? '400' : '600' }};
+                                        color:#212121;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                {{ $rn->title }}
+                            </div>
+                            <div style="font-size:.75rem;color:#757575;
+                                        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                {{ \Illuminate\Support\Str::limit($rn->message, 55) }}
+                            </div>
+                            <div style="font-size:.7rem;color:#9e9e9e;margin-top:2px;">
+                                {{ $rn->created_at->diffForHumans() }}
+                                @if(!$isRead)
+                                &nbsp;·&nbsp;
+                                <form method="POST"
+                                      action="{{ auth()->user()->isAdmin()
+                                          ? route('admin.notifications.read', $rn->id)
+                                          : route('staff.notifications.read', $rn->id) }}"
+                                      class="d-inline m-0">
+                                    @csrf
+                                    <button type="submit"
+                                            style="background:none;border:none;padding:0;
+                                                   font-size:.7rem;color:#2e7d32;cursor:pointer;">
+                                        Mark read
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="text-center py-4" style="color:#9e9e9e;font-size:.85rem;">
+                        <i class="fas fa-bell-slash mb-2 d-block" style="font-size:1.5rem;"></i>
+                        No notifications
+                    </div>
+                    @endforelse
+                </div>
+
+                {{-- Footer --}}
+                <div class="text-center py-2 border-top">
+                    <a href="{{ $bellRoute }}"
+                       style="font-size:.8rem;color:#2e7d32;text-decoration:none;font-weight:600;">
+                        View all notifications →
+                    </a>
+                </div>
+            </div>
+        </div>
 
         {{-- Admin pill dropdown --}}
         <div class="dropdown">

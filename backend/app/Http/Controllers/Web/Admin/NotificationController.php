@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class NotificationController extends Controller
 {
@@ -25,8 +27,28 @@ class NotificationController extends Controller
         if ($request->filled('date_to'))
             $query->whereDate('created_at', '<=', $request->date_to);
 
+        // Fix: read_status filter now works
+        $readIds = \Illuminate\Support\Facades\DB::table('notification_reads')
+            ->where('user_id', auth()->id())
+            ->pluck('notification_id')
+            ->toArray();
+
+        if ($request->filled('read_status')) {
+            if ($request->read_status === 'read') {
+                $query->whereIn('id', $readIds);
+            } elseif ($request->read_status === 'unread') {
+                $query->whereNotIn('id', $readIds);
+            }
+        }
+
         $notifications = $query->orderBy('created_at', 'desc')
             ->paginate(10)->withQueryString();
+
+        // Attach is_read flag
+        $notifications->getCollection()->transform(function ($n) use ($readIds) {
+            $n->is_read = in_array($n->id, $readIds);
+            return $n;
+        });
 
         return view('admin.notifications.index', compact('notifications'));
     }
@@ -56,5 +78,69 @@ class NotificationController extends Controller
     {
         $notification->delete();
         return back()->with('success', 'Notification deleted.');
+    }
+
+    /** POST /admin/notifications/{notification}/read */
+    public function markRead(Notification $notification)
+    {
+        \Illuminate\Support\Facades\DB::table('notification_reads')->updateOrInsert(
+            ['notification_id' => $notification->id, 'user_id' => auth()->id()],
+            ['read_at' => Carbon::now(), 'updated_at' => Carbon::now(), 'created_at' => Carbon::now()]
+        );
+        return back()->with('success', 'Notification marked as read.');
+    }
+
+    /** POST /admin/notifications/read-all */
+    public function markAllRead()
+    {
+        $userId = auth()->id();
+        $alreadyRead = \Illuminate\Support\Facades\DB::table('notification_reads')
+            ->where('user_id', $userId)->pluck('notification_id')->toArray();
+
+        $toMark = Notification::whereNotIn('id', $alreadyRead)->pluck('id');
+        $now = Carbon::now();
+        $rows = $toMark->map(fn($id) => [
+            'notification_id' => $id,
+            'user_id' => $userId,
+            'read_at' => $now,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ])->toArray();
+
+        if (!empty($rows)) {
+            \Illuminate\Support\Facades\DB::table('notification_reads')->insert($rows);
+        }
+        return back()->with('success', 'All notifications marked as read.');
+    }
+
+    /** GET /admin/notifications/unread-count (AJAX) */
+    public function unreadCount()
+    {
+        $readIds = \Illuminate\Support\Facades\DB::table('notification_reads')
+            ->where('user_id', auth()->id())->pluck('notification_id');
+        $count = Notification::whereNotIn('id', $readIds)->count();
+        return response()->json(['count' => $count]);
+    }
+
+    /** GET /admin/notifications/recent (AJAX dropdown) */
+    public function recent()
+    {
+        $readIds = \Illuminate\Support\Facades\DB::table('notification_reads')
+            ->where('user_id', auth()->id())->pluck('notification_id')->toArray();
+
+        $notifications = Notification::with('sender:id,name')
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(fn($n) => [
+                'id' => $n->id,
+                'title' => $n->title,
+                'message' => \Illuminate\Support\Str::limit($n->message, 60),
+                'is_read' => in_array($n->id, $readIds),
+                'time' => $n->created_at->diffForHumans(),
+                'sender' => $n->sender?->name ?? 'System',
+            ]);
+
+        return response()->json($notifications);
     }
 }

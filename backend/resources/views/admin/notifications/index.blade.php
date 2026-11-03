@@ -15,11 +15,22 @@
             <span class="text-muted">Notifications</span>
         </nav>
     </div>
-    <a href="{{ route('admin.notifications.create') }}"
-       class="btn rounded-3 px-4 py-2 fw-semibold d-flex align-items-center gap-2"
-       style="background:#2e7d32;color:#fff;border:none;font-size:.88rem">
-        <i class="fas fa-plus"></i> New Notification
-    </a>
+    <div class="d-flex gap-2">
+        <form method="POST" action="{{ route('admin.notifications.read-all') }}">
+            @csrf
+            <button type="button"
+                    onclick="if(confirm('Mark all notifications as read?')) this.closest('form').submit()"
+                    class="btn rounded-3 px-3 py-2 fw-semibold d-flex align-items-center gap-2"
+                    style="background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;font-size:.88rem">
+                <i class="fas fa-check-double"></i> Mark All Read
+            </button>
+        </form>
+        <a href="{{ route('admin.notifications.create') }}"
+           class="btn rounded-3 px-4 py-2 fw-semibold d-flex align-items-center gap-2"
+           style="background:#2e7d32;color:#fff;border:none;font-size:.88rem">
+            <i class="fas fa-plus"></i> New Notification
+        </a>
+    </div>
 </div>
 
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
@@ -27,7 +38,9 @@
     $totalNotifs     = \App\Models\Notification::count();
     $sentThisMonth   = \App\Models\Notification::whereMonth('created_at', now()->month)
                            ->whereYear('created_at', now()->year)->count();
-    $unreadCount     = \App\Models\Notification::whereDoesntHave('readers')->count();
+    $myReadIds       = \Illuminate\Support\Facades\DB::table('notification_reads')
+                           ->where('user_id', auth()->id())->pluck('notification_id')->toArray();
+    $unreadCount     = \App\Models\Notification::whereNotIn('id', $myReadIds)->count();
     $recipientsCount = \App\Models\User::whereIn('role',['parent','staff'])->count();
 @endphp
 
@@ -348,6 +361,18 @@
                                             <i class="fas fa-eye me-2 text-muted"></i>View
                                         </button>
                                     </li>
+                                    @if(!$n->is_read)
+                                    <li>
+                                        <form method="POST"
+                                              action="{{ route('admin.notifications.read', $n) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                    class="dropdown-item rounded-2 small py-2 text-success">
+                                                <i class="fas fa-check me-2"></i>Mark as Read
+                                            </button>
+                                        </form>
+                                    </li>
+                                    @endif
                                     <li><hr class="dropdown-divider my-1"></li>
                                     <li>
                                         <form method="POST"
