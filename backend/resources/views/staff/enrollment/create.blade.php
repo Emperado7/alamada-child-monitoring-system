@@ -226,12 +226,15 @@
                                 Enrollment Date <span class="text-danger">*</span>
                             </label>
                             <input type="date" name="enrollment_date"
+                                   id="enrollment_date"
                                    value="{{ old('enrollment_date', now()->toDateString()) }}"
                                    class="form-control @error('enrollment_date') is-invalid @enderror"
+                                   min="{{ now()->toDateString() }}"
                                    required>
                             @error('enrollment_date')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            <small class="text-muted">Past dates are not allowed.</small>
                         </div>
 
                         <div class="col-12">
@@ -282,6 +285,29 @@
 @endsection
 
 @push('scripts')
+<style>
+/* Grey out / blacken past dates in the native date picker */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+}
+</style>
+<script>
+// Reject past dates on the enrollment date field
+document.addEventListener('DOMContentLoaded', function () {
+    var enrollmentDate = document.getElementById('enrollment_date');
+    if (enrollmentDate) {
+        var today = new Date().toISOString().split('T')[0];
+        enrollmentDate.min = today;
+
+        enrollmentDate.addEventListener('change', function () {
+            if (this.value < today) {
+                this.value = today;
+                alert('Past dates are not allowed for enrollment.');
+            }
+        });
+    }
+});
+</script>
 <script>
 function computeAge(dob) {
     if (!dob) return;
