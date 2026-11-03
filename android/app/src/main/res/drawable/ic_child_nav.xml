@@ -5,51 +5,59 @@
     android:viewportWidth="100"
     android:viewportHeight="100">
 
-    <!-- Green shirt body -->
+    <!-- Green shirt -->
     <path android:fillColor="#2E7D32"
-        android:pathData="M18,100 L18,78 Q32,70 43,73 Q46,75 50,75 Q54,75 57,73 Q68,70 82,78 L82,100 Z"/>
+        android:pathData="M15,100 L15,76 L35,68 L43,72 L50,74 L57,72 L65,68 L85,76 L85,100 Z"/>
 
-    <!-- White left collar -->
+    <!-- White collar left -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M43,73 L50,85 L50,75 Q46,75 43,73 Z"/>
+        android:pathData="M43,72 L50,85 L50,74 Z"/>
 
-    <!-- White right collar -->
+    <!-- White collar right -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M57,73 L50,85 L50,75 Q54,75 57,73 Z"/>
+        android:pathData="M57,72 L50,85 L50,74 Z"/>
 
     <!-- Neck -->
     <path android:fillColor="#EEEEEE"
-        android:pathData="M43,64 L43,73 Q50,76 57,73 L57,64 Q50,67 43,64 Z"/>
+        android:pathData="M43,63 L43,73 L57,73 L57,63 Z"/>
 
     <!-- Face white -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M50,16 C34,16 26,27 26,41 C26,55 34,65 50,65 C66,65 74,55 74,41 C74,27 66,16 50,16 Z"/>
-
-    <!-- HAIR dark green solid block -->
-    <path android:fillColor="#1B4D1B"
-        android:pathData="M26,40 L26,28 C26,14 34,8 50,8 C66,8 74,14 74,28 L74,40 C72,26 64,16 50,16 C36,16 28,26 26,40 Z"/>
-
-    <!-- Left eye -->
-    <path android:fillColor="#1B4D1B"
-        android:pathData="M34,42 C34,38 43,38 43,42 C43,46 34,46 34,42 Z"/>
-
-    <!-- Right eye -->
-    <path android:fillColor="#1B4D1B"
-        android:pathData="M57,42 C57,38 66,38 66,42 C66,46 57,46 57,42 Z"/>
-
-    <!-- Smile -->
-    <path android:fillColor="#00000000"
-        android:strokeColor="#1B4D1B"
-        android:strokeWidth="3"
-        android:strokeLineCap="round"
-        android:pathData="M37,57 Q50,65 63,57"/>
+        android:pathData="M25,42 C25,22 34,13 50,13 C66,13 75,22 75,42 C75,57 65,67 50,67 C35,67 25,57 25,42 Z"/>
 
     <!-- Left ear -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M26,41 C21,40 19,45 21,49 C23,53 27,52 27,48 Z"/>
+        android:pathData="M25,40 C19,39 17,45 20,50 C22,54 26,52 26,48 Z"/>
 
     <!-- Right ear -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M74,41 C79,40 81,45 79,49 C77,53 73,52 73,48 Z"/>
+        android:pathData="M75,40 C81,39 83,45 80,50 C78,54 74,52 74,48 Z"/>
+
+    <!-- HAIR BLOCK - dark green solid, drawn over face top -->
+    <path android:fillColor="#1B4020"
+        android:pathData="M25,42 L25,26 C25,14 34,7 50,7 C66,7 75,14 75,26 L75,42 C75,30 68,20 58,16 L50,14 L42,16 C32,20 25,30 25,42 Z"/>
+
+    <!-- Hair left side -->
+    <path android:fillColor="#1B4020"
+        android:pathData="M25,42 L25,32 L28,28 L28,42 Z"/>
+
+    <!-- Hair right side -->
+    <path android:fillColor="#1B4020"
+        android:pathData="M75,42 L75,32 L72,28 L72,42 Z"/>
+
+    <!-- Left eye -->
+    <path android:fillColor="#1B4020"
+        android:pathData="M34,43 C34,39 43,39 43,43 C43,47 34,47 34,43 Z"/>
+
+    <!-- Right eye -->
+    <path android:fillColor="#1B4020"
+        android:pathData="M57,43 C57,39 66,39 66,43 C66,47 57,47 57,43 Z"/>
+
+    <!-- Smile -->
+    <path android:fillColor="#00000000"
+        android:strokeColor="#1B4020"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M37,57 Q50,65 63,57"/>
 
 </vector>

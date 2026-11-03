@@ -5,85 +5,95 @@
     android:viewportWidth="100"
     android:viewportHeight="100">
 
-    <!-- Light green circle background -->
+    <!-- Background circle -->
     <path android:fillColor="#C8E6C9"
         android:pathData="M50,50 m-50,0 a50,50 0,1,1 100,0 a50,50 0,1,1 -100,0"/>
 
-    <!-- Neck -->
-    <path android:fillColor="#F5C09A"
-        android:pathData="M43,64 L43,72 Q50,75 57,72 L57,64 Q50,67 43,64 Z"/>
-
     <!-- Green shirt -->
     <path android:fillColor="#2E7D32"
-        android:pathData="M20,100 L20,78 Q34,70 43,72 Q46,74 50,74 Q54,74 57,72 Q66,70 80,78 L80,100 Z"/>
+        android:pathData="M15,100 L15,76 L35,68 L42,72 L50,74 L58,72 L65,68 L85,76 L85,100 Z"/>
 
-    <!-- White left collar -->
+    <!-- White collar left -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M43,72 L50,84 L50,74 Q46,74 43,72 Z"/>
+        android:pathData="M42,72 L50,85 L50,74 Z"/>
 
-    <!-- White right collar -->
+    <!-- White collar right -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M57,72 L50,84 L50,74 Q54,74 57,72 Z"/>
+        android:pathData="M58,72 L50,85 L50,74 Z"/>
 
-    <!-- Face skin -->
+    <!-- Neck -->
     <path android:fillColor="#F5C09A"
-        android:pathData="M50,18 C34,18 26,28 26,42 C26,56 34,66 50,66 C66,66 74,56 74,42 C74,28 66,18 50,18 Z"/>
+        android:pathData="M43,63 L43,73 L57,73 L57,63 Z"/>
+
+    <!-- Face -->
+    <path android:fillColor="#F5C09A"
+        android:pathData="M25,42 C25,22 34,13 50,13 C66,13 75,22 75,42 C75,57 65,67 50,67 C35,67 25,57 25,42 Z"/>
 
     <!-- Left ear -->
     <path android:fillColor="#F5C09A"
-        android:pathData="M26,42 C21,41 19,46 21,50 C23,54 27,53 27,49 Z"/>
+        android:pathData="M25,40 C19,39 17,45 20,50 C22,54 26,52 26,48 Z"/>
 
     <!-- Right ear -->
     <path android:fillColor="#F5C09A"
-        android:pathData="M74,42 C79,41 81,46 79,50 C77,54 73,53 73,49 Z"/>
+        android:pathData="M75,40 C81,39 83,45 80,50 C78,54 74,52 74,48 Z"/>
 
-    <!-- HAIR - solid dark block, drawn AFTER face so it overlaps top -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M26,40 L26,28 C26,14 34,8 50,8 C66,8 74,14 74,28 L74,40 C72,26 64,16 50,16 C36,16 28,26 26,40 Z"/>
+    <!-- HAIR BLOCK - solid rectangle covering top portion, drawn over face -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M25,42 L25,26 C25,14 34,7 50,7 C66,7 75,14 75,26 L75,42 C75,30 68,20 58,16 L50,14 L42,16 C32,20 25,30 25,42 Z"/>
 
-    <!-- Left brow -->
-    <path android:fillColor="#1C1C1E"
-        android:strokeColor="#1C1C1E"
-        android:strokeWidth="2.2"
+    <!-- Hair left side solid -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M25,42 L25,32 L28,28 L28,42 Z"/>
+
+    <!-- Hair right side solid -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M75,42 L75,32 L72,28 L72,42 Z"/>
+
+    <!-- Left eyebrow -->
+    <path android:fillColor="#1A1A1A"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:pathData="M34,36 Q39,33 44,35"/>
 
-    <!-- Right brow -->
-    <path android:fillColor="#1C1C1E"
-        android:strokeColor="#1C1C1E"
-        android:strokeWidth="2.2"
+    <!-- Right eyebrow -->
+    <path android:fillColor="#1A1A1A"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="2.5"
         android:strokeLineCap="round"
         android:pathData="M56,35 Q61,33 66,36"/>
 
     <!-- Left eye white -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M34,42 C34,38 44,38 44,42 C44,46 34,46 34,42 Z"/>
+        android:pathData="M34,43 C34,39 43,39 43,43 C43,47 34,47 34,43 Z"/>
 
     <!-- Right eye white -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M56,42 C56,38 66,38 66,42 C66,46 56,46 56,42 Z"/>
+        android:pathData="M57,43 C57,39 66,39 66,43 C66,47 57,47 57,43 Z"/>
 
-    <!-- Left iris -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M38,42 C38,39.5 40.5,39.5 40.5,42 C40.5,44.5 38,44.5 38,42 Z"/>
+    <!-- Left pupil -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M37,43 C37,40 41,40 41,43 C41,46 37,46 37,43 Z"/>
 
-    <!-- Right iris -->
-    <path android:fillColor="#1C1C1E"
-        android:pathData="M59.5,42 C59.5,39.5 62,39.5 62,42 C62,44.5 59.5,44.5 59.5,42 Z"/>
+    <!-- Right pupil -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M59,43 C59,40 63,40 63,43 C63,46 59,46 59,43 Z"/>
 
-    <!-- Left shine -->
+    <!-- Left eye shine -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M38.5,40.2 C38.5,39.5 39.8,39.5 39.8,40.2 C39.8,40.9 38.5,40.9 38.5,40.2 Z"/>
+        android:pathData="M37.5,41 C37.5,40 39,40 39,41 C39,42 37.5,42 37.5,41 Z"/>
 
-    <!-- Right shine -->
+    <!-- Right eye shine -->
     <path android:fillColor="#FFFFFF"
-        android:pathData="M60,40.2 C60,39.5 61.3,39.5 61.3,40.2 C61.3,40.9 60,40.9 60,40.2 Z"/>
+        android:pathData="M59.5,41 C59.5,40 61,40 61,41 C61,42 59.5,42 59.5,41 Z"/>
 
-    <!-- Nose -->
+    <!-- Nose left dot -->
     <path android:fillColor="#E8956D"
-        android:pathData="M47,51 C47,49.5 49,49.5 49,51 C49,52.5 47,52.5 47,51 Z"/>
+        android:pathData="M47,52 C47,50 49,50 49,52 C49,54 47,54 47,52 Z"/>
+
+    <!-- Nose right dot -->
     <path android:fillColor="#E8956D"
-        android:pathData="M51,51 C51,49.5 53,49.5 53,51 C53,52.5 51,52.5 51,51 Z"/>
+        android:pathData="M51,52 C51,50 53,50 53,52 C53,54 51,54 51,52 Z"/>
 
     <!-- Smile -->
     <path android:fillColor="#00000000"
@@ -92,12 +102,12 @@
         android:strokeLineCap="round"
         android:pathData="M37,57 Q50,65 63,57"/>
 
-    <!-- Cheek left -->
+    <!-- Left cheek blush -->
     <path android:fillColor="#F48FB1"
         android:alpha="0.3"
         android:pathData="M27,51 C27,47 34,47 34,51 C34,55 27,55 27,51 Z"/>
 
-    <!-- Cheek right -->
+    <!-- Right cheek blush -->
     <path android:fillColor="#F48FB1"
         android:alpha="0.3"
         android:pathData="M66,51 C66,47 73,47 73,51 C73,55 66,55 66,51 Z"/>
