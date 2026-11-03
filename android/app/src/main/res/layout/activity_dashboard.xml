@@ -23,7 +23,7 @@
             <!--    DARK GREEN HEADER                                  -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:background="@drawable/header_green_solid"
                 android:paddingStart="22dp"
                 android:paddingEnd="0dp"
