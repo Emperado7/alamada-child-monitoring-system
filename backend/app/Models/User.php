@@ -63,7 +63,8 @@ class User extends Authenticatable
         return $this->hasMany(Child::class, 'parent_id');
     }
 
-    public function notifications()
+    /** Pivot: notifications this user has read (via notification_reads table) */
+    public function notificationReads()
     {
         return $this->belongsToMany(Notification::class, 'notification_reads', 'user_id', 'notification_id')
             ->withPivot('read_at')

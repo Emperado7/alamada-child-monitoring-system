@@ -105,4 +105,50 @@ class AttendanceController extends Controller
         $attendance->delete();
         return back()->with('success', 'Attendance record deleted.');
     }
+
+    // ── Bug fix: Admin mark attendance form ──────────────────────────────
+
+    public function markForm(Request $request)
+    {
+        $date = $request->input('date', Carbon::today()->toDateString());
+        $children = Child::where('status', 'active')
+            ->with(['attendances' => fn($q) => $q->where('attendance_date', $date)])
+            ->orderBy('last_name')
+            ->get();
+
+        return view('admin.attendance.mark', compact('children', 'date'));
+    }
+
+    public function markSave(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'attendance' => 'required|array',
+            'attendance.*' => 'required|in:present,absent,excused',
+            'fetched_by' => 'nullable|array',
+            'fetched_by.*' => 'nullable|string|max:100',
+        ]);
+
+        $date = $request->date;
+        $adminId = auth()->id();
+
+        foreach ($request->attendance as $childId => $status) {
+            if (!Child::where('id', $childId)->where('status', 'active')->exists()) {
+                continue;
+            }
+            Attendance::updateOrCreate(
+                ['child_id' => $childId, 'attendance_date' => $date],
+                [
+                    'status' => $status,
+                    'fetched_by' => $request->fetched_by[$childId] ?? null,
+                    'remarks' => $request->remarks[$childId] ?? null,
+                    'recorded_by' => $adminId,
+                ]
+            );
+        }
+
+        return redirect()
+            ->route('admin.attendance.index', ['date' => $date])
+            ->with('success', 'Attendance saved for ' . Carbon::parse($date)->format('F d, Y') . '.');
+    }
 }

@@ -40,8 +40,11 @@ class Child extends Model
         return trim("{$this->first_name} {$this->middle_name} {$this->last_name}");
     }
 
-    public function getAgeAttribute(): int
+    public function getAgeAttribute(): int|string
     {
+        if (!$this->date_of_birth) {
+            return '—';
+        }
         return $this->date_of_birth->age;
     }
 

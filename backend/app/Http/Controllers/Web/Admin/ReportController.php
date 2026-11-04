@@ -43,6 +43,12 @@ class ReportController extends Controller
         return redirect()->route('admin.reports.index')->with('success', 'Report deleted.');
     }
 
+    public function show(Report $report)
+    {
+        return redirect()->route('admin.reports.index')
+            ->with('info', 'Report: ' . $report->title . ' (generated ' . $report->generated_at?->format('M d, Y') . ')');
+    }
+
     public function enrollment(Request $request)
     {
         $currentYear = Carbon::now()->year;
@@ -113,6 +119,17 @@ class ReportController extends Controller
                 'rate' => $total ? round($present / $total * 100, 1) : 0,
             ];
         })->values();
+
+        // Log the attendance report (Bug fix: attendance report was not being logged)
+        Report::create([
+            'report_type' => 'attendance',
+            'title' => 'Attendance Report — ' . Carbon::create($yr, $mo)->format('F Y'),
+            'filters' => ['month' => $month],
+            'format' => 'pdf',
+            'status' => 'generated',
+            'generated_by' => auth()->id(),
+            'generated_at' => Carbon::now(),
+        ]);
 
         return view('admin.reports.attendance', compact('summary', 'month'));
     }

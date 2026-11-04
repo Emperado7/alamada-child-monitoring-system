@@ -168,27 +168,13 @@
                                style="border:1.5px solid #e0e0e0">
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label small fw-semibold mb-1">Date of Birth</label>
-                        <div class="input-group">
-                            <input type="date" name="date_of_birth"
-                                   value="{{ auth()->user()->date_of_birth ?? '1990-01-01' }}"
-                                   class="form-control rounded-start-3"
-                                   style="border:1.5px solid #e0e0e0;border-right:none">
-                            <span class="input-group-text bg-white"
-                                  style="border:1.5px solid #e0e0e0;border-left:none;
-                                         border-radius:0 10px 10px 0">
-                                <i class="fas fa-calendar-alt text-muted" style="font-size:.8rem"></i>
-                            </span>
-                        </div>
+                        <label class="form-label small fw-semibold mb-1">Role</label>
+                        <input type="text"
+                               value="{{ ucfirst(auth()->user()->role) }}"
+                               class="form-control rounded-3"
+                               style="border:1.5px solid #e0e0e0;background:#f9f9f9"
+                               readonly>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label small fw-semibold mb-1">Address</label>
-                    <input type="text" name="address"
-                           value="{{ auth()->user()->address ?? 'Alamada, North Cotabato, Philippines' }}"
-                           class="form-control rounded-3"
-                           style="border:1.5px solid #e0e0e0">
                 </div>
 
                 <div class="d-flex justify-content-end mt-3">
@@ -329,12 +315,9 @@
     </div>
 
     <div class="d-flex justify-content-end mt-4">
-        <button type="button"
-                onclick="alert('Preferences saved.')"
-                class="btn rounded-3 px-4 py-2 fw-semibold d-flex align-items-center gap-2"
-                style="background:#2e7d32;color:#fff;border:none;font-size:.88rem">
-            <i class="fas fa-save"></i> Save Preferences
-        </button>
+        <span class="text-muted small fst-italic">
+            <i class="fas fa-info-circle me-1"></i>Preferences are saved automatically.
+        </span>
     </div>
 </div>
 
@@ -406,11 +389,9 @@
         @endforeach
     </div>
     <div class="d-flex justify-content-end mt-4">
-        <button onclick="alert('Preferences saved.')"
-                class="btn rounded-3 px-4 py-2 fw-semibold"
-                style="background:#2e7d32;color:#fff;border:none;font-size:.88rem">
-            <i class="fas fa-save me-2"></i>Save Preferences
-        </button>
+        <span class="text-muted small fst-italic">
+            <i class="fas fa-info-circle me-1"></i>Preferences are saved automatically.
+        </span>
     </div>
 </div>
 

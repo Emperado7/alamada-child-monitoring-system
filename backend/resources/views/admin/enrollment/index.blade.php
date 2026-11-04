@@ -441,7 +441,7 @@
 <div class="modal fade" id="rejectModal" tabindex="-1">
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow">
-            <form method="POST" id="rejectForm">
+            <form method="POST" id="rejectForm" action="#">
                 @csrf
                 <div class="modal-header border-0 pb-1">
                     <h6 class="modal-title fw-bold">Reject Enrollment</h6>

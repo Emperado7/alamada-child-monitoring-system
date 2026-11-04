@@ -214,10 +214,11 @@
                     $status = $att ? $att->status : null;
                     // Assign group based on id for display (placeholder — replace with real group field)
                     $group  = ($child->id % 2 === 0) ? 'Pre-School B' : 'Pre-School A';
-                    // Apply group filter
                     $groupFilter = request('group');
-                    if ($groupFilter && $group !== $groupFilter) continue;
                 @endphp
+                @if($groupFilter && $group !== $groupFilter)
+                @continue
+                @endif
                 <tr>
                     {{-- ID --}}
                     <td class="px-3 fw-semibold small" style="color:#2e7d32">

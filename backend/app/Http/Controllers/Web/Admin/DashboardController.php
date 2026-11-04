@@ -86,7 +86,9 @@ class DashboardController extends Controller
                 'ic' => '#1565c0',
                 'title' => 'Report generated',
                 'sub' => $latestReport->title,
-                'time' => $latestReport->generated_at->diffForHumans(null, true, true),
+                'time' => $latestReport->generated_at
+                    ? $latestReport->generated_at->diffForHumans(null, true, true)
+                    : $latestReport->created_at->diffForHumans(null, true, true),
             ]);
         }
 
@@ -97,7 +99,7 @@ class DashboardController extends Controller
                 'ibg' => '#f3e5f5',
                 'ic' => '#6a1b9a',
                 'title' => 'New notification sent',
-                'sub' => \Str::limit($latestNotif->message, 60),
+                'sub' => \Illuminate\Support\Str::limit($latestNotif->message, 60),
                 'time' => $latestNotif->created_at->diffForHumans(null, true, true),
             ]);
         }

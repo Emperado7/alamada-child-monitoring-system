@@ -26,9 +26,14 @@
                     @csrf
                     <button class="btn btn-success btn-sm"><i class="fas fa-check me-1"></i>Approve</button>
                 </form>
-                <button class="btn btn-danger btn-sm" onclick="document.getElementById('rejectForm').submit()">
-                    <i class="fas fa-times me-1"></i>Reject
-                </button>
+                <form method="POST" action="{{ route('admin.enrollment.reject',$enrollment) }}"
+                      onsubmit="return confirm('Reject this enrollment?')">
+                    @csrf
+                    <input type="hidden" name="reason" value="Rejected by admin.">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-times me-1"></i>Reject
+                    </button>
+                </form>
             </div>
             @endif
         </div>

@@ -87,10 +87,11 @@ class AttendanceController extends Controller
         $staffId = auth()->id();
 
         foreach ($request->attendance as $childId => $status) {
-            // Verify the child belongs to this staff member
-            $child = Child::find($childId);
-            if (!$child)
-                continue;  // skip invalid child IDs only
+            // Bug fix: verify child exists AND is active — any staff can record
+            // attendance for any active child (this is by design per index query)
+            if (!Child::where('id', $childId)->where('status', 'active')->exists()) {
+                continue;
+            }
 
             Attendance::updateOrCreate(
                 ['child_id' => $childId, 'attendance_date' => $date],

@@ -141,13 +141,15 @@ class EnrollmentController extends Controller
         $recipientGroup = $recipientId ? 'specific' : 'parents';
 
         Notification::create([
-            'title' => 'Enrollment Approved ✅',
+            'title' => 'Enrollment Approved',
             'message' => "The enrollment of {$childName} for School Year {$schoolYear} has been APPROVED. "
                 . "The child is now active and may attend the Learning Center.",
             'recipient_group' => $recipientGroup,
             'recipient_id' => $recipientId,
             'sent_by' => auth()->id(),
             'sent_at' => Carbon::now(),
+            'type' => 'enrollment_approved',
+            'enrollment_id' => $enrollment->id,
         ]);
 
         return back()->with('success', 'Enrollment approved and notification sent.');
@@ -178,13 +180,15 @@ class EnrollmentController extends Controller
         $recipientGroup = $recipientId ? 'specific' : 'parents';
 
         Notification::create([
-            'title' => 'Enrollment Rejected ❌',
+            'title' => 'Enrollment Rejected',
             'message' => "The enrollment of {$childName} for School Year {$schoolYear} has been REJECTED.{$reason} "
                 . "Please contact the Learning Center for more information.",
             'recipient_group' => $recipientGroup,
             'recipient_id' => $recipientId,
             'sent_by' => auth()->id(),
             'sent_at' => Carbon::now(),
+            'type' => 'enrollment_rejected',
+            'enrollment_id' => $enrollment->id,
         ]);
 
         return back()->with('success', 'Enrollment rejected and notification sent.');

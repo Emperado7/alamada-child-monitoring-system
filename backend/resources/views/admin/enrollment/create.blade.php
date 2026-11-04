@@ -267,7 +267,7 @@
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox"
                                        name="auto_approve" value="1" id="autoApprove"
-                                       {{ old('auto_approve') ? 'checked' : 'checked' }}>
+                                       {{ old('auto_approve') ? 'checked' : '' }}>
                                 <label class="form-check-label small fw-semibold"
                                        for="autoApprove">
                                     Approve enrollment immediately

@@ -7,6 +7,7 @@ use App\Models\Child;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class EnrollmentController extends Controller
@@ -65,45 +66,34 @@ class EnrollmentController extends Controller
             'remarks' => 'nullable|string|max:500',
         ]);
 
-        // Create the child record assigned to this staff
-        $child = Child::create([
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'middle_name' => $data['middle_name'] ?? null,
-            'date_of_birth' => $data['date_of_birth'],
-            'gender' => $data['gender'],
-            'address' => $data['address'],
-            'guardian_name' => $data['guardian_name'],
-            'guardian_contact' => $data['guardian_contact'],
-            'guardian_relationship' => $data['guardian_relationship'],
-            'guardian_gender' => $data['guardian_gender'] ?? null,
-            'diagnosis' => $data['diagnosis'],
-            'diagnosis_notes' => $data['diagnosis_notes'] ?? null,
-            'status' => 'active',
-            'staff_id' => auth()->id(),
-        ]);
+        // Bug fix: wrap in DB transaction so if enrollment creation fails,
+        // the child record is also rolled back automatically
+        \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+            $child = Child::create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'middle_name' => $data['middle_name'] ?? null,
+                'date_of_birth' => $data['date_of_birth'],
+                'gender' => $data['gender'],
+                'address' => $data['address'],
+                'guardian_name' => $data['guardian_name'],
+                'guardian_contact' => $data['guardian_contact'],
+                'guardian_relationship' => $data['guardian_relationship'],
+                'guardian_gender' => $data['guardian_gender'] ?? null,
+                'diagnosis' => $data['diagnosis'],
+                'diagnosis_notes' => $data['diagnosis_notes'] ?? null,
+                'status' => 'active',
+                'staff_id' => auth()->id(),
+            ]);
 
-        // Check if child already has enrollment for this year
-        $exists = Enrollment::where('child_id', $child->id)
-            ->where('school_year', $data['school_year'])
-            ->whereIn('status', ['pending', 'approved'])
-            ->exists();
-
-        if ($exists) {
-            $child->delete(); // rollback child creation
-            return back()
-                ->withInput()
-                ->withErrors(['school_year' => 'This child already has an enrollment for that school year.']);
-        }
-
-        // Create the enrollment (pending admin approval)
-        Enrollment::create([
-            'child_id' => $child->id,
-            'enrollment_date' => $data['enrollment_date'],
-            'school_year' => $data['school_year'],
-            'remarks' => $data['remarks'] ?? null,
-            'status' => 'pending',
-        ]);
+            Enrollment::create([
+                'child_id' => $child->id,
+                'enrollment_date' => $data['enrollment_date'],
+                'school_year' => $data['school_year'],
+                'remarks' => $data['remarks'] ?? null,
+                'status' => 'pending',
+            ]);
+        });
 
         return redirect()->route('staff.enrollment.index')
             ->with('success', 'Child enrolled successfully! Awaiting admin approval.');

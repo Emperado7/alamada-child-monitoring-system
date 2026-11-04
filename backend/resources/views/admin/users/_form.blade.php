@@ -51,7 +51,7 @@
 <p class="text-muted small mb-2">{{ isset($user) ? 'Leave password blank to keep unchanged.' : 'Set a strong password.' }}</p>
 
 <div class="mb-3">
-    <label class="form-label">Password {{ isset($user) ? '' : '<span class="text-danger">*</span>' }}</label>
+    <label class="form-label">Password {!! isset($user) ? '' : '<span class="text-danger">*</span>' !!}</label>
     <input type="password" name="password"
            class="form-control @error('password') is-invalid @enderror"
            {{ isset($user) ? '' : 'required' }} minlength="8">

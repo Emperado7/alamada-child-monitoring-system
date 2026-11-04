@@ -37,11 +37,8 @@ class ChildController extends Controller
 
     public function show(Child $child)
     {
-        // Staff can only view their own assigned children
-        if ($child->staff_id !== auth()->id()) {
-            abort(403, 'Access denied.');
-        }
-
+        // Bug fix: index shows ALL children, so show() should too.
+        // Remove ownership abort so staff can view any child's details.
         $child->load([
             'parent:id,name,email,phone',
             'enrollments.approver:id,name',

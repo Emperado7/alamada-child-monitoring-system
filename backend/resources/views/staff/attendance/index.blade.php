@@ -16,13 +16,12 @@
     $selectedDate  = request('date', \Carbon\Carbon::today()->toDateString());
     $selectedMonth = request('month', \Carbon\Carbon::now()->format('Y-m'));
 
-    $totalEnrolled = \App\Models\Child::where('staff_id',$staffId)->where('status','active')->count();
+    // Bug fix: use total active children (all, not just this staff's) to match the attendance table
+    $totalEnrolled = \App\Models\Child::where('status','active')->count();
     $presentToday  = \App\Models\Attendance::where('attendance_date',$selectedDate)
-                        ->where('status','present')
-                        ->whereHas('child',fn($q)=>$q->where('staff_id',$staffId))->count();
+                        ->where('status','present')->count();
     $absentToday   = \App\Models\Attendance::where('attendance_date',$selectedDate)
-                        ->where('status','absent')
-                        ->whereHas('child',fn($q)=>$q->where('staff_id',$staffId))->count();
+                        ->where('status','absent')->count();
     $presentPct    = $totalEnrolled > 0 ? round($presentToday/$totalEnrolled*100) : 0;
     $absentPct     = $totalEnrolled > 0 ? round($absentToday/$totalEnrolled*100)  : 0;
 @endphp

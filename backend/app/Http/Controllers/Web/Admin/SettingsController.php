@@ -17,23 +17,35 @@ class SettingsController extends Controller
     {
         $user = auth()->user();
 
-        $request->validate([
-            'name'             => 'required|string|max:255',
-            'email'            => "required|email|unique:users,email,{$user->id}",
-            'phone'            => 'nullable|string|max:20',
-            'current_password' => 'nullable|string',
-            'new_password'     => 'nullable|string|min:8|confirmed',
-        ]);
+        // ── Password change (Security tab) ───────────────────────────────
+        if ($request->filled('current_password') || $request->filled('new_password')) {
+            $request->validate([
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:8|confirmed',
+            ]);
 
-        $user->update($request->only('name','email','phone'));
-
-        if ($request->filled('current_password')) {
             if (!Hash::check($request->current_password, $user->password)) {
-                return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+                return back()->withErrors(['current_password' => 'Current password is incorrect.'])
+                    ->with('tab', 'security');
             }
+
+            if (!$request->filled('new_password')) {
+                return back()->withErrors(['new_password' => 'Please enter a new password.'])
+                    ->with('tab', 'security');
+            }
+
             $user->update(['password' => Hash::make($request->new_password)]);
+            return back()->with('success', 'Password updated successfully.')->with('tab', 'security');
         }
 
-        return back()->with('success','Settings updated successfully.');
+        // ── Profile update (Account tab) ─────────────────────────────────
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => "required|email|unique:users,email,{$user->id}",
+            'phone' => 'nullable|string|max:20',
+        ]);
+
+        $user->update($request->only('name', 'email', 'phone'));
+        return back()->with('success', 'Settings updated successfully.');
     }
 }
