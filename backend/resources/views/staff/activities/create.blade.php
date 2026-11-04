@@ -57,6 +57,7 @@
                         </label>
                         <input type="date" name="activity_date"
                                value="{{ old('activity_date', today()->toDateString()) }}"
+                               min="{{ today()->toDateString() }}"
                                max="{{ today()->toDateString() }}"
                                class="form-control @error('activity_date') is-invalid @enderror"
                                required>

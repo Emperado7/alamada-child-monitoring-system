@@ -139,6 +139,7 @@
                     <input type="date" name="date"
                            value="{{ $selectedDate }}"
                            class="form-control border-0 shadow-none"
+                           min="{{ now()->toDateString() }}"
                            max="{{ now()->toDateString() }}"
                            style="font-size:.88rem"
                            onchange="document.getElementById('dateForm').submit()">

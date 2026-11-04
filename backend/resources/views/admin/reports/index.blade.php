@@ -113,6 +113,7 @@
             <div class="input-group" style="width:240px">
                 <input type="date" name="date_from"
                        value="{{ request('date_from', now()->startOfMonth()->toDateString()) }}"
+                       min="{{ now()->startOfYear()->toDateString() }}"
                        max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm">
                 <span class="input-group-text bg-white px-1 border-start-0 border-end-0"

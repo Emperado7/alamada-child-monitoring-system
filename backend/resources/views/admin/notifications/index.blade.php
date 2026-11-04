@@ -152,6 +152,7 @@
                 </span>
                 <input type="date" name="date_from"
                        value="{{ request('date_from') }}"
+                       min="{{ now()->startOfYear()->toDateString() }}"
                        max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm border-start-0 border-end-0 ps-1"
                        style="max-width:110px"
