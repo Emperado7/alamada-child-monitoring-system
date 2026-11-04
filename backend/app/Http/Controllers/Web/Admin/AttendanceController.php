@@ -44,6 +44,16 @@ class AttendanceController extends Controller
             );
         }
 
+        // School year filter — filter by children enrolled in that year
+        if ($request->filled('school_year')) {
+            $sy = $request->school_year;
+            $query->whereHas(
+                'enrollments',
+                fn($q) =>
+                    $q->where('school_year', $sy)
+            );
+        }
+
         $children = $query->orderBy('last_name')->paginate(10)->withQueryString();
 
         // Summary stats passed separately

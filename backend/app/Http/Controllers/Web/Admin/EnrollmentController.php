@@ -18,25 +18,32 @@ class EnrollmentController extends Controller
         $perPage = (int) $request->input('per_page', 10);
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        $query = Enrollment::with(['child', 'approver:id,name']);
+        // Join children upfront so we can filter AND sort by child name
+        $query = Enrollment::with(['child', 'approver:id,name'])
+            ->join('children', 'enrollments.child_id', '=', 'children.id')
+            ->select('enrollments.*');
 
+        // Filters — use fully-qualified column names after join
         if ($request->filled('status'))
-            $query->where('status', $request->status);
+            $query->where('enrollments.status', $request->status);
+
         if ($request->filled('school_year'))
-            $query->where('school_year', $request->school_year);
+            $query->where('enrollments.school_year', $request->school_year);
+
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->whereHas('child', fn($q) =>
-                $q->where('first_name', 'ilike', "%$s%")
-                    ->orWhere('last_name', 'ilike', "%$s%")
-                    ->orWhere('guardian_name', 'ilike', "%$s%"));
+            $query->where(
+                fn($q) =>
+                    $q->where('children.first_name', 'ilike', "%$s%")
+                        ->orWhere('children.last_name', 'ilike', "%$s%")
+                        ->orWhere('children.guardian_name', 'ilike', "%$s%")
+            );
         }
 
-        $enrollments = $query->join('children', 'enrollments.child_id', '=', 'children.id')
-            ->orderBy('children.last_name')
+        $enrollments = $query->orderBy('children.last_name')
             ->orderBy('children.first_name')
-            ->select('enrollments.*')
             ->paginate($perPage)->withQueryString();
+
         $years = Enrollment::selectRaw('DISTINCT school_year')
             ->orderBy('school_year', 'desc')->pluck('school_year');
 

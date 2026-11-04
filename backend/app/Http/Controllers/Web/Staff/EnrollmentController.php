@@ -14,27 +14,28 @@ class EnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Enrollment::with(['child', 'approver:id,name']);
+        // Join children upfront for alphabetical sort + filter by child name
+        $query = Enrollment::with(['child', 'approver:id,name'])
+            ->join('children', 'enrollments.child_id', '=', 'children.id')
+            ->select('enrollments.*');
 
+        // Filters — use fully-qualified column names after join
         if ($request->filled('status'))
-            $query->where('status', $request->status);
+            $query->where('enrollments.status', $request->status);
 
         if ($request->filled('search')) {
             $s = $request->search;
-            $query->whereHas(
-                'child',
+            $query->where(
                 fn($q) =>
-                    $q->where('first_name', 'ilike', "%$s%")
-                        ->orWhere('last_name', 'ilike', "%$s%")
-                        ->orWhere('guardian_name', 'ilike', "%$s%")
-                        ->orWhereRaw("'CHD-' || LPAD(id::text, 3, '0') ILIKE ?", ["%$s%"])
+                    $q->where('children.first_name', 'ilike', "%$s%")
+                        ->orWhere('children.last_name', 'ilike', "%$s%")
+                        ->orWhere('children.guardian_name', 'ilike', "%$s%")
+                        ->orWhereRaw("'CHD-' || LPAD(children.id::text, 3, '0') ILIKE ?", ["%$s%"])
             );
         }
 
-        $enrollments = $query->join('children', 'enrollments.child_id', '=', 'children.id')
-            ->orderBy('children.last_name')
+        $enrollments = $query->orderBy('children.last_name')
             ->orderBy('children.first_name')
-            ->select('enrollments.*')
             ->paginate(10)->withQueryString();
 
         return view('staff.enrollment.index', compact('enrollments'));
