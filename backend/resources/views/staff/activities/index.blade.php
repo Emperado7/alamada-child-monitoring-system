@@ -110,6 +110,7 @@
                     <option value="not_started" {{ request('completion_status')=='not_started' ? 'selected':'' }}>Not Started</option>
                 </select>
                 <input type="date" name="date" value="{{ request('date') }}"
+                       max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm" style="max-width:160px">
                 <button class="btn btn-outline-primary btn-sm rounded-3">
                     <i class="fas fa-filter me-1"></i>Filter
