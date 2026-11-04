@@ -152,6 +152,7 @@
                 </span>
                 <input type="date" name="date_from"
                        value="{{ request('date_from') }}"
+                       max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm border-start-0 border-end-0 ps-1"
                        style="max-width:110px"
                        placeholder="From">
@@ -159,6 +160,7 @@
                       style="font-size:.75rem;color:#9e9e9e">-</span>
                 <input type="date" name="date_to"
                        value="{{ request('date_to') }}"
+                       max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm border-start-0"
                        style="max-width:110px"
                        placeholder="To">

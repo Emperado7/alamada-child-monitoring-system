@@ -113,11 +113,13 @@
             <div class="input-group" style="width:240px">
                 <input type="date" name="date_from"
                        value="{{ request('date_from', now()->startOfMonth()->toDateString()) }}"
+                       max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm">
                 <span class="input-group-text bg-white px-1 border-start-0 border-end-0"
                       style="font-size:.75rem;color:#9e9e9e">–</span>
                 <input type="date" name="date_to"
                        value="{{ request('date_to', now()->toDateString()) }}"
+                       max="{{ now()->toDateString() }}"
                        class="form-control form-control-sm border-start-0">
                 <span class="input-group-text bg-white border-start-0"
                       style="cursor:pointer">
