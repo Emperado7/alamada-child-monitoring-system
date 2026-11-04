@@ -6,16 +6,13 @@
 
 {{-- ── Stat Cards ────────────────────────────────────────────── --}}
 @php
-    $staffId      = auth()->id();
-    $totalToday   = \App\Models\Activity::whereHas('child', fn($q)=>$q->where('staff_id',$staffId))
-                        ->whereDate('activity_date', today())->count();
-    $totalCompleted = \App\Models\Activity::whereHas('child', fn($q)=>$q->where('staff_id',$staffId))
-                        ->where('completion_status','completed')
-                        ->whereMonth('activity_date', now()->month)->count();
-    $totalInProgress = \App\Models\Activity::whereHas('child', fn($q)=>$q->where('staff_id',$staffId))
-                        ->where('completion_status','in_progress')
-                        ->whereMonth('activity_date', now()->month)->count();
-    $totalChildren  = \App\Models\Child::where('staff_id',$staffId)->where('status','active')->count();
+    // Bug fix: show stats for ALL active children, not just staff-assigned ones
+    $totalToday      = \App\Models\Activity::whereDate('activity_date', today())->count();
+    $totalCompleted  = \App\Models\Activity::where('completion_status','completed')
+                           ->whereMonth('activity_date', now()->month)->count();
+    $totalInProgress = \App\Models\Activity::where('completion_status','in_progress')
+                           ->whereMonth('activity_date', now()->month)->count();
+    $totalChildren   = \App\Models\Child::where('status','active')->count();
 @endphp
 
 <div class="row g-3 mb-4">
