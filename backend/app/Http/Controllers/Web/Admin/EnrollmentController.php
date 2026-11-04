@@ -32,7 +32,10 @@ class EnrollmentController extends Controller
                     ->orWhere('guardian_name', 'ilike', "%$s%"));
         }
 
-        $enrollments = $query->orderBy('created_at', 'desc')
+        $enrollments = $query->join('children', 'enrollments.child_id', '=', 'children.id')
+            ->orderBy('children.last_name')
+            ->orderBy('children.first_name')
+            ->select('enrollments.*')
             ->paginate($perPage)->withQueryString();
         $years = Enrollment::selectRaw('DISTINCT school_year')
             ->orderBy('school_year', 'desc')->pluck('school_year');

@@ -31,7 +31,10 @@ class EnrollmentController extends Controller
             );
         }
 
-        $enrollments = $query->orderBy('created_at', 'desc')
+        $enrollments = $query->join('children', 'enrollments.child_id', '=', 'children.id')
+            ->orderBy('children.last_name')
+            ->orderBy('children.first_name')
+            ->select('enrollments.*')
             ->paginate(10)->withQueryString();
 
         return view('staff.enrollment.index', compact('enrollments'));
