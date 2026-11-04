@@ -396,10 +396,28 @@
         /* ═══════════════════════════════════════════
            MISC
         ═══════════════════════════════════════════ */
-        .badge-green  { background: #e8f5e9; color: #2e7d32; }
-        .badge-orange { background: #fff3e0; color: #e65100; }
-        .badge-red    { background: #ffebee; color: #c62828; }
-        .badge-blue   { background: #e3f2fd; color: #1565c0; }
+        .badge-green    { background: #e8f5e9; color: #2e7d32; }
+        .badge-orange   { background: #fff3e0; color: #e65100; }
+        .badge-red      { background: #ffebee; color: #c62828; }
+        .badge-blue     { background: #e3f2fd; color: #1565c0; }
+
+        /* ── Status badge aliases ── */
+        .badge-approved  { background: #e8f5e9; color: #2e7d32; }
+        .badge-active    { background: #e8f5e9; color: #2e7d32; }
+        .badge-pending   { background: #fff3e0; color: #e65100; }
+        .badge-rejected  { background: #ffebee; color: #c62828; }
+        .badge-inactive  { background: #fafafa; color: #9e9e9e; border: 1px solid #e0e0e0; }
+        .badge-graduated { background: #f3e5f5; color: #6a1b9a; }
+        .badge-present   { background: #e8f5e9; color: #2e7d32; }
+        .badge-absent    { background: #ffebee; color: #c62828; }
+        .badge-excused   { background: #e3f2fd; color: #1565c0; }
+        .badge-late      { background: #fff3e0; color: #e65100; }
+        .badge-completed    { background: #e8f5e9; color: #2e7d32; }
+        .badge-in_progress  { background: #fff3e0; color: #e65100; }
+        .badge-not_started  { background: #fafafa; color: #9e9e9e; border: 1px solid #e0e0e0; }
+        .badge-admin  { background: #fce4ec; color: #c62828; }
+        .badge-staff  { background: #e3f2fd; color: #1565c0; }
+        .badge-parent { background: #e8f5e9; color: #2e7d32; }
         .table thead th { background: #f8f9fa; font-weight: 600; border: none; color: #555; font-size: .83rem; }
         .table td { vertical-align: middle; font-size: .87rem; }
 

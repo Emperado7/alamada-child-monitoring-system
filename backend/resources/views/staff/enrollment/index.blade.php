@@ -21,13 +21,12 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    $staffId       = auth()->id();
-    $totalEnrolled = \App\Models\Child::where('staff_id',$staffId)->where('status','active')->count();
+    // Fix: show stats for ALL children, not just staff-assigned ones
+    $totalEnrolled = \App\Models\Child::where('status','active')->count();
     $newThisMonth  = \App\Models\Enrollment::where('status','approved')
                         ->whereMonth('created_at', now()->month)
-                        ->whereYear('created_at',  now()->year)
-                        ->whereHas('child',fn($q)=>$q->where('staff_id',$staffId))->count();
-    $totalRecords  = \App\Models\Enrollment::whereHas('child',fn($q)=>$q->where('staff_id',$staffId))->count();
+                        ->whereYear('created_at',  now()->year)->count();
+    $totalRecords  = \App\Models\Enrollment::count();
 @endphp
 
 <div class="row g-3 mb-4">
