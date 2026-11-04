@@ -125,6 +125,7 @@
             <div class="input-group" style="width:175px">
                 <input type="date" name="date" value="{{ $date }}"
                        class="form-control form-control-sm"
+                       max="{{ now()->toDateString() }}"
                        onchange="document.getElementById('filterForm').submit()">
                 <span class="input-group-text bg-white border-start-0"
                       style="font-size:.8rem;color:#9e9e9e;cursor:pointer"
@@ -404,3 +405,27 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+/* Grey out future dates in the native date picker */
+input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; }
+/* JS validation fallback */
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var dateInputs = document.querySelectorAll('input[type="date"][max]');
+    dateInputs.forEach(function(input) {
+        input.addEventListener('change', function () {
+            var today = new Date().toISOString().split('T')[0];
+            if (this.value > today) {
+                this.value = today;
+            }
+        });
+    });
+});
+</script>
+@endpush

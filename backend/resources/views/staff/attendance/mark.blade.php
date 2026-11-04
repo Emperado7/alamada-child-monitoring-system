@@ -106,6 +106,7 @@
                     </span>
                     <input type="date" name="date_select" id="dateInput"
                            value="{{ $date }}"
+                           max="{{ now()->toDateString() }}"
                            class="form-control form-control-sm border-start-0"
                            onchange="updateDate(this.value)">
                     <span class="input-group-text bg-white border-start-0"
