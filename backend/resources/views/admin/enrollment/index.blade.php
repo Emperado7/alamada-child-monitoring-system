@@ -139,9 +139,10 @@
             {{-- School year filter --}}
             <label class="small text-muted mb-0 fw-semibold">School Year</label>
             <form method="GET" id="yearForm" class="d-flex gap-2 align-items-center">
-                <input type="hidden" name="per_page"  value="{{ request('per_page',10) }}">
-                <input type="hidden" name="search"    value="{{ request('search') }}">
-                <input type="hidden" name="status"    value="{{ request('status') }}">
+                <input type="hidden" name="per_page"     value="{{ request('per_page',10) }}">
+                <input type="hidden" name="search"       value="{{ request('search') }}">
+                <input type="hidden" name="status"       value="{{ request('status') }}">
+                <input type="hidden" name="child_status" value="{{ request('child_status') }}">
                 <select name="school_year"
                         class="form-select form-select-sm rounded-2"
                         style="width:140px"
@@ -152,6 +153,17 @@
                             {{ $y }} - {{ $y+1 }}
                         </option>
                     @endforeach
+                </select>
+
+                {{-- Child Status filter --}}
+                <select name="child_status"
+                        class="form-select form-select-sm rounded-2"
+                        style="width:140px"
+                        onchange="document.getElementById('yearForm').submit()">
+                    <option value="">All Students</option>
+                    <option value="active"    {{ request('child_status')=='active'    ?'selected':'' }}>Active</option>
+                    <option value="inactive"  {{ request('child_status')=='inactive'  ?'selected':'' }}>Inactive</option>
+                    <option value="graduated" {{ request('child_status')=='graduated' ?'selected':'' }}>Graduated</option>
                 </select>
             </form>
 
@@ -168,9 +180,10 @@
 
         <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
             <form method="GET" class="d-flex gap-2">
-                <input type="hidden" name="per_page"    value="{{ request('per_page',10) }}">
-                <input type="hidden" name="school_year" value="{{ request('school_year') }}">
-                <input type="hidden" name="status"      value="{{ request('status') }}">
+                <input type="hidden" name="per_page"     value="{{ request('per_page',10) }}">
+                <input type="hidden" name="school_year"  value="{{ request('school_year') }}">
+                <input type="hidden" name="child_status" value="{{ request('child_status') }}">
+                <input type="hidden" name="status"       value="{{ request('status') }}">
                 <div class="input-group" style="max-width:260px">
                     <input type="text" name="search"
                            value="{{ request('search') }}"

@@ -163,7 +163,18 @@
                        placeholder="Search by child name or ID...">
             </div>
 
-            {{-- Status filter --}}
+            {{-- Child Status filter --}}
+            <select name="child_status"
+                    class="form-select form-select-sm rounded-3"
+                    style="width:150px"
+                    onchange="this.form.submit()">
+                <option value="">All Students</option>
+                <option value="active"    {{ request('child_status')=='active'    ?'selected':'' }}>Active</option>
+                <option value="inactive"  {{ request('child_status')=='inactive'  ?'selected':'' }}>Inactive</option>
+                <option value="graduated" {{ request('child_status')=='graduated' ?'selected':'' }}>Graduated</option>
+            </select>
+
+            {{-- Enrollment Status filter --}}
             <select name="status"
                     class="form-select form-select-sm rounded-3 ms-auto"
                     style="width:150px"

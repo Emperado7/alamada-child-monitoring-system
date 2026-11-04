@@ -23,6 +23,10 @@ class EnrollmentController extends Controller
         if ($request->filled('status'))
             $query->where('enrollments.status', $request->status);
 
+        // Child status filter (Active / Inactive / Graduated)
+        if ($request->filled('child_status'))
+            $query->where('children.status', $request->child_status);
+
         if ($request->filled('search')) {
             $s = $request->search;
             $query->where(
