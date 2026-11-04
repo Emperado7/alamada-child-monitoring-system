@@ -109,8 +109,7 @@ class EnrollmentController extends Controller
 
     public function show(Enrollment $enrollment)
     {
-        if ($enrollment->child->staff_id !== auth()->id())
-            abort(403);
+        // Bug fix: removed staff ownership check — any staff can view any enrollment
         $enrollment->load(['child', 'approver:id,name']);
         return view('staff.enrollment.show', compact('enrollment'));
     }
