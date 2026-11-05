@@ -24,10 +24,10 @@
 
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    $totalAll    = \App\Models\Child::count();
-    $totalMale   = \App\Models\Child::where('gender','male')->count();
-    $totalFemale = \App\Models\Child::where('gender','female')->count();
-    $avgAge      = round(\App\Models\Child::selectRaw(
+    $totalAll    = \App\Models\Child::where('status','active')->count();
+    $totalMale   = \App\Models\Child::where('status','active')->where('gender','male')->count();
+    $totalFemale = \App\Models\Child::where('status','active')->where('gender','female')->count();
+    $avgAge      = round(\App\Models\Child::where('status','active')->selectRaw(
         "AVG(DATE_PART('year', AGE(date_of_birth))) as a"
     )->value('a'), 1);
 @endphp
