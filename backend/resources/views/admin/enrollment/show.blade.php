@@ -29,7 +29,7 @@
                 <form method="POST" action="{{ route('admin.enrollment.reject',$enrollment) }}"
                       onsubmit="return confirm('Reject this enrollment?')">
                     @csrf
-                    <input type="hidden" name="reason" value="Rejected by admin.">
+                    <input type="hidden" name="remarks" value="Rejected by admin.">
                     <button type="submit" class="btn btn-danger btn-sm">
                         <i class="fas fa-times me-1"></i>Reject
                     </button>

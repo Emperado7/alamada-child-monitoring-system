@@ -56,7 +56,13 @@ class ReportController extends Controller
 
         $query = Enrollment::where('enrollments.status', 'approved')
             ->join('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('children.*', 'enrollments.school_year', 'enrollments.enrollment_date', 'enrollments.id as enrollment_id');
+            ->whereNull('children.deleted_at')   // Bug fix #6: exclude soft-deleted children
+            ->select(
+                'children.*',
+                'enrollments.school_year',
+                'enrollments.enrollment_date',
+                'enrollments.id as enrollment_id'
+            );
 
         if ($request->filled('gender'))
             $query->where('children.gender', $request->gender);
@@ -79,19 +85,30 @@ class ReportController extends Controller
 
         $byDiagnosis = $data->groupBy('diagnosis')->map->count();
 
-        // Save report log — format must be one of: pdf, excel, csv
-        Report::create([
-            'report_type' => 'enrollment',
-            'title' => 'Enrollment Report — ' . Carbon::now()->format('F Y'),
-            'filters' => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
-            'format' => 'pdf',   // web view renders inline; 'pdf' satisfies the CHECK constraint
-            'status' => 'generated',
-            'generated_by' => auth()->id(),
-            'generated_at' => Carbon::now(),
-        ]);
+        // Bug fix #5: only log a Report record when the user explicitly clicks "Export"
+        // (POST request), not on every GET page view / filter change.
+        if ($request->isMethod('post')) {
+            Report::create([
+                'report_type' => 'enrollment',
+                'title' => 'Enrollment Report — ' . Carbon::now()->format('F Y'),
+                'filters' => $request->only(['gender', 'school_year', 'age_min', 'age_max']),
+                'format' => 'pdf',
+                'status' => 'generated',
+                'generated_by' => auth()->id(),
+                'generated_at' => Carbon::now(),
+            ]);
+        }
 
         $years = Enrollment::selectRaw('DISTINCT school_year')->orderBy('school_year', 'desc')->pluck('school_year');
-        return view('admin.reports.enrollment', compact('data', 'stats', 'byDiagnosis', 'currentYear', 'previousYear', 'years'));
+
+        return view('admin.reports.enrollment', compact(
+            'data',
+            'stats',
+            'byDiagnosis',
+            'currentYear',
+            'previousYear',
+            'years'
+        ));
     }
 
     public function attendance(Request $request)
@@ -99,37 +116,41 @@ class ReportController extends Controller
         $month = $request->input('month', Carbon::now()->format('Y-m'));
         [$yr, $mo] = explode('-', $month);
 
+        // Bug fix #6: removed the redundant JOIN (eager-load handles the relation);
+        // also guards against soft-deleted children appearing via a raw join.
         $records = Attendance::with('child:id,first_name,last_name,gender,diagnosis')
-            ->whereYear('attendance_date', $yr)->whereMonth('attendance_date', $mo)
-            ->join('children', 'attendances.child_id', '=', 'children.id')
-            ->select('attendances.*')
+            ->whereYear('attendance_date', $yr)
+            ->whereMonth('attendance_date', $mo)
+            ->whereHas('child')   // only records whose child still exists (not soft-deleted)
             ->get();
 
         $summary = $records->groupBy('child_id')->map(function ($group) {
             $child = $group->first()->child;
             $total = $group->count();
             $present = $group->where('status', 'present')->count();
+
             return [
                 'child' => $child,
                 'present' => $present,
                 'absent' => $group->where('status', 'absent')->count(),
-                'late' => $group->where('status', 'late')->count(),
                 'excused' => $group->where('status', 'excused')->count(),
                 'total' => $total,
                 'rate' => $total ? round($present / $total * 100, 1) : 0,
             ];
         })->values();
 
-        // Log the attendance report (Bug fix: attendance report was not being logged)
-        Report::create([
-            'report_type' => 'attendance',
-            'title' => 'Attendance Report — ' . Carbon::create($yr, $mo)->format('F Y'),
-            'filters' => ['month' => $month],
-            'format' => 'pdf',
-            'status' => 'generated',
-            'generated_by' => auth()->id(),
-            'generated_at' => Carbon::now(),
-        ]);
+        // Bug fix #5: only log when the user explicitly exports (POST).
+        if ($request->isMethod('post')) {
+            Report::create([
+                'report_type' => 'attendance',
+                'title' => 'Attendance Report — ' . Carbon::create($yr, $mo)->format('F Y'),
+                'filters' => ['month' => $month],
+                'format' => 'pdf',
+                'status' => 'generated',
+                'generated_by' => auth()->id(),
+                'generated_at' => Carbon::now(),
+            ]);
+        }
 
         return view('admin.reports.attendance', compact('summary', 'month'));
     }

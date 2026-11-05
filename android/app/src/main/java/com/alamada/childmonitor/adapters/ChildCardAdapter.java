@@ -57,14 +57,22 @@ public class ChildCardAdapter extends RecyclerView.Adapter<ChildCardAdapter.View
         h.tvStatus.setText(capitalize(status));
         switch (status) {
             case "active":
+                // Green — student is currently enrolled and attending
                 h.tvStatus.setTextColor(Color.parseColor("#2E7D32"));
                 h.tvStatus.getBackground().setTint(Color.parseColor("#E8F5E9"));
                 break;
+            case "inactive":
+                // Amber — student is registered but not currently active
+                h.tvStatus.setTextColor(Color.parseColor("#E65100"));
+                h.tvStatus.getBackground().setTint(Color.parseColor("#FFF3E0"));
+                break;
             case "graduated":
+                // Blue — student has completed the program
                 h.tvStatus.setTextColor(Color.parseColor("#0277BD"));
                 h.tvStatus.getBackground().setTint(Color.parseColor("#E1F5FE"));
                 break;
             default:
+                // Grey fallback for unknown/empty status
                 h.tvStatus.setTextColor(Color.parseColor("#616161"));
                 h.tvStatus.getBackground().setTint(Color.parseColor("#EEEEEE"));
         }

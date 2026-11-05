@@ -51,6 +51,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Children
     Route::resource('children', Admin\ChildController::class);
+    Route::patch('children/{child}/toggle-status', [Admin\ChildController::class, 'toggleStatus'])->name('children.toggle-status');
 
     // Enrollment
     Route::get('/enrollment', [Admin\EnrollmentController::class, 'index'])->name('enrollment.index');
@@ -70,8 +71,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Reports
     Route::get('/reports', [Admin\ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/enrollment', [Admin\ReportController::class, 'enrollment'])->name('reports.enrollment');
-    Route::get('/reports/attendance', [Admin\ReportController::class, 'attendance'])->name('reports.attendance');
+    Route::match(['get', 'post'], '/reports/enrollment', [Admin\ReportController::class, 'enrollment'])->name('reports.enrollment');
+    Route::match(['get', 'post'], '/reports/attendance', [Admin\ReportController::class, 'attendance'])->name('reports.attendance');
     Route::get('/reports/{report}', [Admin\ReportController::class, 'show'])->name('reports.show');
     Route::delete('/reports/{report}', [Admin\ReportController::class, 'destroy'])->name('reports.destroy');
 

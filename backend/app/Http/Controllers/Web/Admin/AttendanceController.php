@@ -60,7 +60,6 @@ class AttendanceController extends Controller
         $summary = [
             'present' => Attendance::where('attendance_date', $date)->where('status', 'present')->count(),
             'absent' => Attendance::where('attendance_date', $date)->where('status', 'absent')->count(),
-            'late' => Attendance::where('attendance_date', $date)->where('status', 'late')->count(),
             'excused' => Attendance::where('attendance_date', $date)->where('status', 'excused')->count(),
         ];
 
@@ -96,7 +95,6 @@ class AttendanceController extends Controller
         $summary = [
             'present' => $records->where('status', 'present')->count(),
             'absent' => $records->where('status', 'absent')->count(),
-            'late' => $records->where('status', 'late')->count(),
             'excused' => $records->where('status', 'excused')->count(),
             'total' => $records->count(),
         ];

@@ -43,6 +43,18 @@
             <button type="button" onclick="window.print()" class="btn btn-sm btn-outline-secondary w-100"><i class="fas fa-print me-1"></i>Print</button>
         </div>
     </form>
+    {{-- Export (POST) logs a Report record --}}
+    <form method="POST" action="{{ route('admin.reports.enrollment') }}" class="mt-2">
+        @csrf
+        @foreach(request()->except('_token') as $k => $v)
+            <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+        @endforeach
+        <button type="submit"
+                class="btn btn-sm btn-success"
+                style="background:#2e7d32;border:none">
+            <i class="fas fa-save me-1"></i>Save to Reports Log
+        </button>
+    </form>
 </div>
 
 {{-- Summary stats --}}

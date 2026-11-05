@@ -32,8 +32,8 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm text-center p-3">
-            <div class="fs-2 fw-bold text-warning">{{ $summary['late'] }}</div>
-            <div class="small text-muted">Late</div>
+            <div class="fs-2 fw-bold" style="color:#1565c0">{{ $summary['excused'] }}</div>
+            <div class="small text-muted">Excused</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
@@ -75,7 +75,6 @@
                             $colors = [
                                 'present' => ['bg'=>'#E8F5E9','color'=>'#2E7D32'],
                                 'absent'  => ['bg'=>'#FFEBEE','color'=>'#C62828'],
-                                'late'    => ['bg'=>'#FFF8E1','color'=>'#E65100'],
                                 'excused' => ['bg'=>'#E3F2FD','color'=>'#1565C0'],
                             ];
                             $c = $colors[$r->status] ?? ['bg'=>'#F5F5F5','color'=>'#616161'];

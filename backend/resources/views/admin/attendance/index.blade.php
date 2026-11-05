@@ -125,7 +125,6 @@
             <div class="input-group" style="width:175px">
                 <input type="date" name="date" value="{{ $date }}"
                        class="form-control form-control-sm"
-                       min="{{ now()->toDateString() }}"
                        max="{{ now()->toDateString() }}"
                        onchange="document.getElementById('filterForm').submit()">
                 <span class="input-group-text bg-white border-start-0"
@@ -134,21 +133,6 @@
                     <i class="fas fa-calendar-alt" style="color:#2e7d32"></i>
                 </span>
             </div>
-
-            {{-- Class / Group --}}
-            <label class="small text-muted mb-0 fw-semibold">Class / Group</label>
-            <select name="group"
-                    class="form-select form-select-sm rounded-2"
-                    style="width:115px"
-                    onchange="document.getElementById('filterForm').submit()">
-                <option value="">All</option>
-                <option value="Pre-School A" {{ request('group')=='Pre-School A'?'selected':'' }}>
-                    Pre-School A
-                </option>
-                <option value="Pre-School B" {{ request('group')=='Pre-School B'?'selected':'' }}>
-                    Pre-School B
-                </option>
-            </select>
 
             {{-- Search + Filters (pushed right) --}}
             <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
@@ -177,7 +161,6 @@
                             ''        => ['All Status',  '#9e9e9e'],
                             'present' => ['Present',     '#2e7d32'],
                             'absent'  => ['Absent',      '#c62828'],
-                            'late'    => ['Late',        '#e65100'],
                             'excused' => ['Excused',     '#1565c0'],
                         ] as $val => [$label, $dot])
                         <li>
@@ -203,7 +186,7 @@
                     <th class="px-3 py-3 small fw-bold" style="color:#2e7d32">ID</th>
                     <th class="py-3 small fw-bold" style="color:#2e7d32">Photo</th>
                     <th class="py-3 small fw-bold" style="color:#2e7d32">Child Name</th>
-                    <th class="py-3 small fw-bold" style="color:#2e7d32">Class / Group</th>
+                    <th class="py-3 small fw-bold" style="color:#2e7d32">Diagnosis</th>
                     <th class="py-3 small fw-bold" style="color:#2e7d32">Time In</th>
                     <th class="py-3 small fw-bold" style="color:#2e7d32">Status</th>
                     <th class="py-3 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
@@ -214,13 +197,7 @@
                 @php
                     $att    = $child->attendances->first();
                     $status = $att ? $att->status : null;
-                    // Assign group based on id for display (placeholder — replace with real group field)
-                    $group  = ($child->id % 2 === 0) ? 'Pre-School B' : 'Pre-School A';
-                    $groupFilter = request('group');
                 @endphp
-                @if($groupFilter && $group !== $groupFilter)
-                @continue
-                @endif
                 <tr>
                     {{-- ID --}}
                     <td class="px-3 fw-semibold small" style="color:#2e7d32">
@@ -254,12 +231,12 @@
                         </div>
                     </td>
 
-                    {{-- Class / Group --}}
-                    <td class="small text-muted">{{ $group }}</td>
+                    {{-- Diagnosis --}}
+                    <td class="small text-muted">{{ $child->diagnosis }}</td>
 
                     {{-- Time In --}}
                     <td class="small">
-                        @if($att && in_array($status, ['present','late']))
+                        @if($att && $status === 'present')
                             <span class="fw-semibold">
                                 {{ \Carbon\Carbon::parse($att->updated_at)->format('g:i A') }}
                             </span>
@@ -274,7 +251,6 @@
                             $badgeMap = [
                                 'present' => ['#e8f5e9','#2e7d32','Present'],
                                 'absent'  => ['#ffebee','#c62828','Absent'],
-                                'late'    => ['#fff3e0','#e65100','Late'],
                                 'excused' => ['#e3f2fd','#1565c0','Excused'],
                             ];
                             $b = $badgeMap[$status] ?? ['#f5f5f5','#9e9e9e','Not Recorded'];

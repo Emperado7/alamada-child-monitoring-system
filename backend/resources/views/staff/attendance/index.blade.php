@@ -139,7 +139,6 @@
                     <input type="date" name="date"
                            value="{{ $selectedDate }}"
                            class="form-control border-0 shadow-none"
-                           min="{{ now()->toDateString() }}"
                            max="{{ now()->toDateString() }}"
                            style="font-size:.88rem"
                            onchange="document.getElementById('dateForm').submit()">
@@ -179,7 +178,6 @@
                     <option value="">All Status</option>
                     <option value="present" {{ request('status')=='present'?'selected':'' }}>Present</option>
                     <option value="absent"  {{ request('status')=='absent' ?'selected':'' }}>Absent</option>
-                    <option value="late"    {{ request('status')=='late'   ?'selected':'' }}>Late</option>
                     <option value="excused" {{ request('status')=='excused'?'selected':'' }}>Excused</option>
                 </select>
             </form>
@@ -338,7 +336,7 @@
                         <td colspan="7" class="text-center py-5">
                             <div style="color:#bdbdbd">
                                 <i class="fas fa-child fa-3x mb-3 d-block"></i>
-                                <div class="fw-semibold">No active children assigned to you.</div>
+                                <div class="fw-semibold">No active children found.</div>
                                 <div class="small text-muted mt-1">
                                     Enroll children first to mark attendance.
                                 </div>

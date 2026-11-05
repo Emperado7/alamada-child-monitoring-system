@@ -134,7 +134,7 @@
                     class="form-select form-select-sm rounded-2"
                     style="width:140px">
                 <option value="">All Types</option>
-                @foreach(['enrollment'=>'Enrollment','attendance'=>'Attendance','activity'=>'Activity','other'=>'Other'] as $v=>$l)
+                @foreach(['enrollment'=>'Enrollment','attendance'=>'Attendance','activity'=>'Activity'] as $v=>$l)
                     <option value="{{ $v }}" {{ request('report_type')==$v?'selected':'' }}>{{ $l }}</option>
                 @endforeach
             </select>
@@ -218,7 +218,6 @@
                         'attendance' => ['icon'=>'fa-calendar-check', 'bg'=>'#fff3e0','color'=>'#e65100'],
                         'activity'   => ['icon'=>'fa-puzzle-piece',   'bg'=>'#f3e5f5','color'=>'#6a1b9a'],
                         'summary'    => ['icon'=>'fa-chart-bar',      'bg'=>'#e3f2fd','color'=>'#1565c0'],
-                        'other'      => ['icon'=>'fa-file-alt',       'bg'=>'#f3e5f5','color'=>'#6a1b9a'],
                     ];
                     $ti = $typeMap[$r->report_type] ?? ['icon'=>'fa-file-alt','bg'=>'#f5f5f5','color'=>'#757575'];
 
@@ -228,7 +227,6 @@
                         'attendance' => 'Attendance Summary Report',
                         'activity'   => 'Activity Report',
                         'summary'    => 'Summary Statistics Report',
-                        'other'      => 'Child Information Report',
                     ];
                     $reportName = $r->title ?? ($nameMap[$r->report_type] ?? 'Report');
 

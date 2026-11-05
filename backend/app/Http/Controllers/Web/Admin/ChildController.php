@@ -129,4 +129,17 @@ class ChildController extends Controller
         $child->delete();
         return redirect()->route('admin.children.index')->with('success', 'Child record deleted.');
     }
+
+    /**
+     * PATCH /admin/children/{child}/toggle-status
+     * Cycles: active → inactive → active (graduated stays graduated unless explicitly edited)
+     */
+    public function toggleStatus(Child $child)
+    {
+        $newStatus = $child->status === 'active' ? 'inactive' : 'active';
+        $child->update(['status' => $newStatus]);
+
+        $label = ucfirst($newStatus);
+        return back()->with('success', "{$child->first_name} {$child->last_name} is now {$label}.");
+    }
 }

@@ -216,6 +216,7 @@
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Guardian</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Contact Number</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Diagnosis</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">Status</th>
                     <th class="py-2 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
                 </tr>
             </thead>
@@ -318,6 +319,43 @@
                         </div>
                     </td>
 
+                    {{-- Status badge (clickable toggle for admin) --}}
+                    <td>
+                        @php
+                            $st = strtolower($child->status ?? 'active');
+                            $stMap = [
+                                'active'    => ['bg'=>'#e8f5e9','c'=>'#2e7d32','icon'=>'fa-check-circle'],
+                                'inactive'  => ['bg'=>'#fafafa','c'=>'#757575','icon'=>'fa-pause-circle'],
+                                'graduated' => ['bg'=>'#e3f2fd','c'=>'#0277BD','icon'=>'fa-graduation-cap'],
+                            ];
+                            $stStyle = $stMap[$st] ?? $stMap['inactive'];
+                        @endphp
+                        @if($st !== 'graduated')
+                        <form method="POST"
+                              action="{{ route('admin.children.toggle-status', $child) }}"
+                              style="display:inline">
+                            @csrf @method('PATCH')
+                            <button type="submit"
+                                    title="Click to toggle status"
+                                    class="badge border-0 rounded-pill px-3 py-2 fw-semibold"
+                                    style="background:{{ $stStyle['bg'] }};color:{{ $stStyle['c'] }};
+                                           font-size:.78rem;cursor:pointer;
+                                           transition:opacity .15s;outline:none"
+                                    onmouseover="this.style.opacity='.75'"
+                                    onmouseout="this.style.opacity='1'">
+                                <i class="fas {{ $stStyle['icon'] }} me-1" style="font-size:.72rem"></i>
+                                {{ ucfirst($st) }}
+                            </button>
+                        </form>
+                        @else
+                        <span class="badge rounded-pill px-3 py-2 fw-semibold"
+                              style="background:{{ $stStyle['bg'] }};color:{{ $stStyle['c'] }};font-size:.78rem">
+                            <i class="fas {{ $stStyle['icon'] }} me-1" style="font-size:.72rem"></i>
+                            Graduated
+                        </span>
+                        @endif
+                    </td>
+
                     {{-- Actions --}}
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-1">
@@ -348,7 +386,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10" class="text-center py-5">
+                    <td colspan="11" class="text-center py-5">
                         <div style="color:#bdbdbd">
                             <i class="fas fa-child fa-3x mb-3 d-block"></i>
                             <div class="fw-semibold">No children found.</div>
