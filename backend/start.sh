@@ -22,7 +22,7 @@ DB_USERNAME="${DB_USERNAME:-}"
 DB_PASSWORD="${DB_PASSWORD:-}"
 DB_SSLMODE="${DB_SSLMODE:-require}"
 
-SESSION_DRIVER="database"
+SESSION_DRIVER="file"
 SESSION_LIFETIME="120"
 CACHE_DRIVER="file"
 QUEUE_CONNECTION="sync"
@@ -46,7 +46,9 @@ rm -rf storage/framework/views/*.php 2>/dev/null || true
 
 echo "=== [4/7] Storage setup ==="
 php artisan storage:link --force --no-ansi 2>&1 || true
-chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs storage/app/public
+chmod -R 777 storage bootstrap/cache 2>/dev/null || true
+chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
 
 echo "=== [5/7] Running migrations ==="
 php artisan migrate --force --no-ansi 2>&1 || echo "!!! migrate failed — check DB env vars"
