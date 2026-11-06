@@ -15,6 +15,39 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        try {
+            return $this->loadDashboard();
+        } catch (\Throwable $e) {
+            // Log the real error so we can see it in Render logs
+            \Illuminate\Support\Facades\Log::error('Dashboard 500: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+            // Return a minimal working dashboard instead of crashing
+            return view('admin.dashboard', [
+                'totalChildren' => 0,
+                'activeEnrollments' => 0,
+                'presentToday' => 0,
+                'totalReports' => 0,
+                'absentToday' => 0,
+                'excusedToday' => 0,
+                'presMonth' => 0,
+                'absMonth' => 0,
+                'excusedMonth' => 0,
+                'chartLabels' => [],
+                'chartData' => [],
+                'recentActivities' => collect(),
+                'enActive' => 0,
+                'enPending' => 0,
+                'enRejected' => 0,
+                'enTotal' => 0,
+                'enActivePct' => 0,
+                'enPendingPct' => 0,
+                'enRejPct' => 0,
+                '_error' => $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine(),
+            ]);
+        }
+    }
+
+    private function loadDashboard(): \Illuminate\View\View
+    {
         // ── Stat cards ────────────────────────────────────────────────
         $totalChildren = Child::where('status', 'active')->count();
         $activeEnrollments = Enrollment::where('status', 'approved')->count();
@@ -145,5 +178,5 @@ class DashboardController extends Controller
             'enPendingPct',
             'enRejPct'
         ));
-    }
+    } // end loadDashboard
 }

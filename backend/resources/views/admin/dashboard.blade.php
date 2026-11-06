@@ -185,6 +185,12 @@
 
 @section('content')
 
+@if(isset($_error))
+<div class="alert alert-danger mb-3">
+    <strong>Debug Error:</strong> {{ $_error }}
+</div>
+@endif
+
 {{-- ══ Page header ══════════════════════════════════════════════ --}}
 <div class="dash-page-header d-flex justify-content-between align-items-start flex-wrap gap-2">
     <div>
