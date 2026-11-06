@@ -189,7 +189,6 @@ class AttendanceController extends Controller
                 'child_name' => $child->full_name,
                 'present' => $present,
                 'absent' => $group->where('status', 'absent')->count(),
-                'late' => $group->where('status', 'late')->count(),
                 'excused' => $group->where('status', 'excused')->count(),
                 'total_days' => $total,
                 'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 1) . '%' : '0%',

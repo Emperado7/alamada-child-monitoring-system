@@ -156,7 +156,6 @@ class ReportController extends Controller
                 'diagnosis' => $child->diagnosis,
                 'present' => $present,
                 'absent' => $group->where('status', 'absent')->count(),
-                'late' => $group->where('status', 'late')->count(),
                 'excused' => $group->where('status', 'excused')->count(),
                 'total_days' => $total,
                 'attendance_rate' => $total > 0 ? round(($present / $total) * 100, 1) . '%' : '0%',

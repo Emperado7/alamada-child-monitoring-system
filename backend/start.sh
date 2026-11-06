@@ -38,6 +38,7 @@ LOG_LEVEL="${LOG_LEVEL:-error}"
 ENVEOF
 
 echo ">>> Caching config, routes, views (runtime, so env vars are present)"
+php artisan view:clear   --no-ansi 2>&1 || echo "!!! view:clear failed (continuing)"
 php artisan config:cache --no-ansi 2>&1 || echo "!!! config:cache failed (continuing)"
 php artisan route:cache  --no-ansi 2>&1 || echo "!!! route:cache failed (continuing)"
 php artisan view:cache   --no-ansi 2>&1 || echo "!!! view:cache failed (continuing)"
