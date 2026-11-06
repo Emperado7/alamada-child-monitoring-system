@@ -16,14 +16,13 @@ class DashboardController extends Controller
     public function index()
     {
         // ── Stat cards ────────────────────────────────────────────────
-        $totalChildren = Child::count();
+        $totalChildren = Child::where('status', 'active')->count();
         $activeEnrollments = Enrollment::where('status', 'approved')->count();
         $totalReports = Report::count();
 
         $today = Carbon::today()->toDateString();
         $presentToday = Attendance::where('attendance_date', $today)->where('status', 'present')->count();
         $absentToday = Attendance::where('attendance_date', $today)->where('status', 'absent')->count();
-        $lateToday = Attendance::where('attendance_date', $today)->where('status', 'late')->count();
         $excusedToday = Attendance::where('attendance_date', $today)->where('status', 'excused')->count();
 
         // ── Attendance chart — per-day present count this month ───────
@@ -48,7 +47,6 @@ class DashboardController extends Controller
         // Monthly attendance legend totals
         $presMonth = Attendance::whereYear('attendance_date', $year)->whereMonth('attendance_date', $month)->where('status', 'present')->count();
         $absMonth = Attendance::whereYear('attendance_date', $year)->whereMonth('attendance_date', $month)->where('status', 'absent')->count();
-        $lateMonth = Attendance::whereYear('attendance_date', $year)->whereMonth('attendance_date', $month)->where('status', 'late')->count();
         $excusedMonth = Attendance::whereYear('attendance_date', $year)->whereMonth('attendance_date', $month)->where('status', 'excused')->count();
 
         // ── Recent activities ─────────────────────────────────────────
@@ -132,11 +130,9 @@ class DashboardController extends Controller
             'presentToday',
             'totalReports',
             'absentToday',
-            'lateToday',
             'excusedToday',
             'presMonth',
             'absMonth',
-            'lateMonth',
             'excusedMonth',
             'chartLabels',
             'chartData',

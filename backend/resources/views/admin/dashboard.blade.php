@@ -307,17 +307,17 @@
                     <div class="col">
                         <div class="d-flex align-items-center justify-content-center gap-1 mb-1">
                             <span style="width:10px;height:10px;border-radius:50%;background:#1565c0;display:inline-block"></span>
-                            <span class="small text-muted">Late</span>
+                            <span class="small text-muted">Excused</span>
                         </div>
-                        <div class="fw-bold fs-5" style="color:#1565c0">{{ $lateMonth }}</div>
+                        <div class="fw-bold fs-5" style="color:#1565c0">{{ $excusedMonth }}</div>
                         <div class="small text-muted">children</div>
                     </div>
                     <div class="col">
                         <div class="d-flex align-items-center justify-content-center gap-1 mb-1">
                             <span style="width:10px;height:10px;border-radius:50%;background:#9e9e9e;display:inline-block"></span>
-                            <span class="small text-muted">Excused</span>
+                            <span class="small text-muted">Absent</span>
                         </div>
-                        <div class="fw-bold fs-5" style="color:#9e9e9e">{{ $excusedMonth }}</div>
+                        <div class="fw-bold fs-5" style="color:#9e9e9e">{{ $absMonth }}</div>
                         <div class="small text-muted">children</div>
                     </div>
                 </div>
