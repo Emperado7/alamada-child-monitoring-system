@@ -12,7 +12,7 @@ cat > .env <<ENVEOF
 APP_NAME="${APP_NAME:-AlamadaCMS}"
 APP_ENV="${APP_ENV:-production}"
 APP_KEY="${APP_KEY:-}"
-APP_DEBUG="false"
+APP_DEBUG="true"
 APP_URL="${APP_URL:-https://alamada-child-monitoring-system.onrender.com}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
@@ -35,8 +35,10 @@ LOG_CHANNEL="${LOG_CHANNEL:-errorlog}"
 LOG_LEVEL="${LOG_LEVEL:-error}"
 ENVEOF
 
-echo ">>> Clearing stale view cache"
-php artisan view:clear   --no-ansi 2>&1 || echo "!!! view:clear skipped"
+echo ">>> Clearing stale caches"
+php artisan config:clear --no-ansi 2>&1 || true
+php artisan view:clear   --no-ansi 2>&1 || true
+php artisan route:clear  --no-ansi 2>&1 || true
 
 echo ">>> Caching config, routes, views"
 php artisan config:cache --no-ansi 2>&1 || echo "!!! config:cache skipped"
