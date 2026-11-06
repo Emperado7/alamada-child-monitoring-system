@@ -1,6 +1,7 @@
 ﻿#!/usr/bin/env bash
-# Render runtime entrypoint — no caching so .env is always read directly.
-# This guarantees APP_DEBUG=true takes effect immediately for diagnosis.
+# Render runtime entrypoint
+# APP_ENV=production, APP_DEBUG=false for live use.
+# Session uses database driver to avoid file permission issues on Render.
 
 cd /var/www/html
 
@@ -9,9 +10,9 @@ APP_PORT="${PORT:-10000}"
 echo ">>> Writing .env"
 cat > .env <<ENVEOF
 APP_NAME="${APP_NAME:-AlamadaCMS}"
-APP_ENV="local"
+APP_ENV="${APP_ENV:-production}"
 APP_KEY="${APP_KEY:-}"
-APP_DEBUG="true"
+APP_DEBUG="${APP_DEBUG:-false}"
 APP_URL="${APP_URL:-https://alamada-child-monitoring-system.onrender.com}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
@@ -22,29 +23,34 @@ DB_USERNAME="${DB_USERNAME:-}"
 DB_PASSWORD="${DB_PASSWORD:-}"
 DB_SSLMODE="${DB_SSLMODE:-require}"
 
-SESSION_DRIVER="${SESSION_DRIVER:-file}"
+SESSION_DRIVER="database"
+SESSION_LIFETIME="120"
 CACHE_DRIVER="${CACHE_DRIVER:-file}"
 QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
 FILESYSTEM_DISK="${FILESYSTEM_DISK:-public}"
 
-SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring-system.onrender.com}"
+SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring-system.onrender.com,alamada-child-monitoring-system-1.onrender.com}"
 SESSION_DOMAIN="${SESSION_DOMAIN:-.onrender.com}"
 
-LOG_CHANNEL="stderr"
-LOG_LEVEL="debug"
+LOG_CHANNEL="${LOG_CHANNEL:-errorlog}"
+LOG_LEVEL="${LOG_LEVEL:-error}"
 ENVEOF
 
-echo ">>> Clearing ALL caches so .env is read directly"
+echo ">>> Clearing stale caches"
 php artisan config:clear --no-ansi 2>&1 || true
 php artisan route:clear  --no-ansi 2>&1 || true
 php artisan view:clear   --no-ansi 2>&1 || true
-php artisan cache:clear  --no-ansi 2>&1 || true
+
+echo ">>> Caching config + routes + views"
+php artisan config:cache --no-ansi 2>&1 || echo "!!! config:cache skipped"
+php artisan route:cache  --no-ansi 2>&1 || echo "!!! route:cache skipped"
+php artisan view:cache   --no-ansi 2>&1 || echo "!!! view:cache skipped"
 
 echo ">>> Storage symlink + permissions"
 php artisan storage:link --force --no-ansi 2>&1 || true
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
-echo ">>> Running migrations"
+echo ">>> Running migrations (includes sessions table)"
 php artisan migrate --force --no-ansi 2>&1 || echo "!!! migrate skipped"
 
 echo ">>> Seeding"
