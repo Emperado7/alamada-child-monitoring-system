@@ -20,7 +20,7 @@
 <div class="mb-3">
     <label class="form-label">Activity Date <span class="text-danger">*</span></label>
     <input type="date" name="activity_date"
-           value="{{ old('activity_date', isset($activity) ? $activity->activity_date->format('Y-m-d') : now()->toDateString()) }}"
+           value="{{ old('activity_date', isset($activity) && $activity->activity_date ? $activity->activity_date->format('Y-m-d') : now()->toDateString()) }}"
            max="{{ now()->toDateString() }}"
            class="form-control @error('activity_date') is-invalid @enderror" required>
     @error('activity_date')<div class="invalid-feedback">{{ $message }}</div>@enderror

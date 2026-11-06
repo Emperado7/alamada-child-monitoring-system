@@ -162,10 +162,10 @@
                     <tr>
                         <td class="px-3">
                             <div class="fw-semibold small">
-                                {{ $act->activity_date->format('M d, Y') }}
+                                {{ $act->activity_date ? $act->activity_date->format('M d, Y') : '—' }}
                             </div>
                             <div class="text-muted" style="font-size:.72rem">
-                                {{ $act->activity_date->format('l') }}
+                                {{ $act->activity_date ? $act->activity_date->format('l') : '' }}
                             </div>
                         </td>
                         <td>

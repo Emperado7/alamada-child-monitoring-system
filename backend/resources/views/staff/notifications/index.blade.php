@@ -35,7 +35,7 @@
                         <div class="text-muted mt-1" style="font-size:.72rem">
                             <i class="fas fa-user me-1"></i>{{ $n->sender->name ?? 'System' }}
                             &nbsp;·&nbsp;
-                            <i class="fas fa-clock me-1"></i>{{ $n->created_at->format('M d, Y h:i A') }}
+                            <i class="fas fa-clock me-1"></i>{{ $n->created_at ? $n->created_at->format('M d, Y h:i A') : '—' }}
                         </div>
                     </div>
                     <div class="ms-3 d-flex gap-2 align-items-center">
