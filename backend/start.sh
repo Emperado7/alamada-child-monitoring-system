@@ -1,9 +1,7 @@
 ﻿#!/usr/bin/env bash
 # Render runtime entrypoint for the Alamada LGU Laravel backend.
-# Runs deploy steps (caching, migrations, seeding) then starts nginx + php-fpm via supervisor.
-# set -u is intentionally NOT used so a missing env var doesn't crash the container before
-# port binding. Missing DB vars surface via /api/health (503) not a crash loop.
-set -e
+# Every step is non-fatal so the container always starts and binds the port.
+# Missing DB / config issues surface via /api/health rather than a crash loop.
 
 cd /var/www/html
 
@@ -15,7 +13,7 @@ APP_NAME="${APP_NAME:-AlamadaCMS}"
 APP_ENV="${APP_ENV:-production}"
 APP_KEY="${APP_KEY:-}"
 APP_DEBUG="${APP_DEBUG:-false}"
-APP_URL="${APP_URL:-https://alamada-child-monitoring.onrender.com}"
+APP_URL="${APP_URL:-https://alamada-child-monitoring-system.onrender.com}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"
 DB_HOST="${DB_HOST:-}"
@@ -30,38 +28,33 @@ CACHE_DRIVER="${CACHE_DRIVER:-file}"
 QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
 FILESYSTEM_DISK="${FILESYSTEM_DISK:-public}"
 
-SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring.onrender.com}"
+SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring-system.onrender.com}"
 SESSION_DOMAIN="${SESSION_DOMAIN:-.onrender.com}"
 
 LOG_CHANNEL="${LOG_CHANNEL:-errorlog}"
 LOG_LEVEL="${LOG_LEVEL:-error}"
 ENVEOF
 
-echo ">>> Caching config, routes, views (runtime, so env vars are present)"
-php artisan view:clear   --no-ansi 2>&1 || echo "!!! view:clear failed (continuing)"
-php artisan config:cache --no-ansi 2>&1 || echo "!!! config:cache failed (continuing)"
-php artisan route:cache  --no-ansi 2>&1 || echo "!!! route:cache failed (continuing)"
-php artisan view:cache   --no-ansi 2>&1 || echo "!!! view:cache failed (continuing)"
+echo ">>> Clearing stale view cache"
+php artisan view:clear   --no-ansi 2>&1 || echo "!!! view:clear skipped"
+
+echo ">>> Caching config, routes, views"
+php artisan config:cache --no-ansi 2>&1 || echo "!!! config:cache skipped"
+php artisan route:cache  --no-ansi 2>&1 || echo "!!! route:cache skipped"
+php artisan view:cache   --no-ansi 2>&1 || echo "!!! view:cache skipped"
 
 echo ">>> Storage symlink + permissions"
 php artisan storage:link --force --no-ansi 2>&1 || true
 chmod -R 775 storage bootstrap/cache 2>/dev/null || true
 
-# Migrations run non-fatally: if the DB is unreachable the web server still binds the
-# port, so Render's health check (/api/health) can report DB status instead of the
-# container crash-looping with a misleading "port binding" error.
 echo ">>> Running migrations"
-if ! php artisan migrate --force --no-ansi 2>&1; then
-    echo "!!! Migration failed — server will still start. Check /api/health and Render logs."
-fi
+php artisan migrate --force --no-ansi 2>&1 || echo "!!! migrate skipped — DB may be unreachable"
 
-# Seed is idempotent (firstOrCreate) so it is safe to run on every deploy.
 echo ">>> Seeding database"
-php artisan db:seed --force --class=DatabaseSeeder --no-ansi 2>&1 || echo "!!! Seed skipped/failed (continuing)"
+php artisan db:seed --force --class=DatabaseSeeder --no-ansi 2>&1 || echo "!!! seed skipped"
 
-# Bind nginx to Render's $PORT (default 10000).
-echo ">>> Configuring nginx to listen on 0.0.0.0:${APP_PORT}"
-sed -i "s/__PORT__/${APP_PORT}/" /etc/nginx/http.d/default.conf
+echo ">>> Configuring nginx port to ${APP_PORT}"
+sed -i "s/__PORT__/${APP_PORT}/g" /etc/nginx/http.d/default.conf || echo "!!! sed skipped"
 
-echo ">>> Starting nginx + php-fpm"
+echo ">>> Starting supervisord (nginx + php-fpm + scheduler)"
 exec /usr/bin/supervisord -n -c /etc/supervisord.conf
