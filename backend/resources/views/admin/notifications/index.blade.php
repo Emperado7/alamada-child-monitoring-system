@@ -225,8 +225,8 @@
             <tbody>
                 @forelse($notifications as $n)
                 @php
-                    // Read/unread: check if any user has read it via the pivot table
-                    $isRead = $n->readers()->whereNotNull('read_at')->exists();
+                    // Use is_read flag set by the controller (avoids N+1 DB query per row)
+                    $isRead = $n->is_read ?? false;
 
                     // Icon based on title keywords
                     $titleLower = strtolower($n->title ?? '');

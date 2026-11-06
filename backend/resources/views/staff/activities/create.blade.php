@@ -2,6 +2,30 @@
 @section('title','Record Activity')
 @section('page-title','Record Activity')
 
+@php
+// Define activityIcon() here at the TOP so it is available throughout the view.
+// It MUST NOT be defined inside @push('scripts') because @push blocks render
+// after @section('content'), causing a "Call to undefined function" fatal error.
+function activityIcon($type) {
+    $icons = [
+        'Building Blocks'       => '🧱',
+        'Logico Piccolo'        => '🎯',
+        'Drawing and Coloring'  => '🎨',
+        'Writing Improvement'   => '✏️',
+        'Socialization'         => '🤝',
+        'Counting Numbers'      => '🔢',
+        'Identifying Alphabets' => '🔤',
+        'Identifying Shapes'    => '🔷',
+        'Addition'              => '➕',
+        'Subtraction'           => '➖',
+        'Maze Tracing'          => '🌀',
+        'Puzzles'               => '🧩',
+        'Other'                 => '📝',
+    ];
+    return $icons[$type] ?? '📝';
+}
+@endphp
+
 @section('content')
 <div class="d-flex mb-3">
     <a href="{{ route('staff.activities.index') }}"
@@ -57,7 +81,6 @@
                         </label>
                         <input type="date" name="activity_date"
                                value="{{ old('activity_date', today()->toDateString()) }}"
-                               min="{{ today()->toDateString() }}"
                                max="{{ today()->toDateString() }}"
                                class="form-control @error('activity_date') is-invalid @enderror"
                                required>
@@ -243,23 +266,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 @endpush
 
-@php
-function activityIcon($type) {
-    $icons = [
-        'Building Blocks'      => '🧱',
-        'Logico Piccolo'       => '🎯',
-        'Drawing and Coloring' => '🎨',
-        'Writing Improvement'  => '✏️',
-        'Socialization'        => '🤝',
-        'Counting Numbers'     => '🔢',
-        'Identifying Alphabets'=> '🔤',
-        'Identifying Shapes'   => '🔷',
-        'Addition'             => '➕',
-        'Subtraction'          => '➖',
-        'Maze Tracing'         => '🌀',
-        'Puzzles'              => '🧩',
-        'Other'                => '📝',
-    ];
-    return $icons[$type] ?? '📝';
-}
-@endphp
