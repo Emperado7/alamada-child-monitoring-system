@@ -256,7 +256,7 @@
 
                     {{-- Date of Birth --}}
                     <td class="small text-muted">
-                        {{ $child->date_of_birth->format('F d, Y') }}
+                        {{ $child->date_of_birth ? $child->date_of_birth->format('F d, Y') : '—' }}
                     </td>
 
                     {{-- Age --}}

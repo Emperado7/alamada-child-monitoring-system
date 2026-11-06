@@ -279,10 +279,14 @@
 
                     {{-- Last Login --}}
                     <td class="small text-muted" style="white-space:nowrap">
-                        {{ \Carbon\Carbon::parse($lastLogin)->format('M d, Y') }}<br>
-                        <span style="font-size:.72rem">
-                            {{ \Carbon\Carbon::parse($lastLogin)->format('h:i A') }}
-                        </span>
+                        @if($lastLogin)
+                            {{ \Carbon\Carbon::parse($lastLogin)->format('M d, Y') }}<br>
+                            <span style="font-size:.72rem">
+                                {{ \Carbon\Carbon::parse($lastLogin)->format('h:i A') }}
+                            </span>
+                        @else
+                            <span class="text-muted">—</span>
+                        @endif
                     </td>
 
                     {{-- Actions: View + Edit + Delete --}}
