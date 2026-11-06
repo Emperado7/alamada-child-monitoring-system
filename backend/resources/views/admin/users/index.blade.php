@@ -298,7 +298,7 @@
                                         '{{ $u->phone ?? '—' }}',
                                         '{{ ucfirst($u->role) }}',
                                         '{{ ucfirst($u->status ?? 'active') }}',
-                                        '{{ $u->created_at->format('M d, Y') }}'
+                                        '{{ $u->created_at ? $u->created_at->format('M d, Y') : '—' }}'
                                     )">
                                 <i class="fas fa-eye" style="font-size:.8rem"></i>
                             </button>

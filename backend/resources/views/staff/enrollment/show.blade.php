@@ -13,7 +13,7 @@
             <div class="fw-semibold mb-3 border-bottom pb-2">Enrollment Information</div>
             <table class="table table-sm">
                 <tr><th class="text-muted fw-normal">School Year</th><td>{{ $enrollment->school_year }}</td></tr>
-                <tr><th class="text-muted fw-normal">Enrollment Date</th><td>{{ $enrollment->enrollment_date->format('F d, Y') }}</td></tr>
+                <tr><th class="text-muted fw-normal">Enrollment Date</th><td>{{ $enrollment->enrollment_date ? $enrollment->enrollment_date->format('F d, Y') : '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Status</th>
                     <td><span class="badge badge-{{ $enrollment->status }}">{{ ucfirst($enrollment->status) }}</span></td></tr>
                 <tr><th class="text-muted fw-normal">Approved By</th><td>{{ $enrollment->approver->name ?? 'Pending' }}</td></tr>

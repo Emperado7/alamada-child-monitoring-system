@@ -65,10 +65,10 @@
                 @forelse($records as $r)
                 <tr>
                     <td class="px-3 fw-semibold small">
-                        {{ $r->attendance_date->format('M d, Y') }}
+                        {{ $r->attendance_date ? $r->attendance_date->format('M d, Y') : '—' }}
                     </td>
                     <td class="text-muted small">
-                        {{ $r->attendance_date->format('l') }}
+                        {{ $r->attendance_date ? $r->attendance_date->format('l') : '—' }}
                     </td>
                     <td>
                         @php

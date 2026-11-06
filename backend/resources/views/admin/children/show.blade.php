@@ -24,7 +24,7 @@
             <span class="badge badge-{{ $child->status }} mb-3">{{ ucfirst($child->status) }}</span>
 
             <table class="table table-sm text-start small">
-                <tr><th class="text-muted fw-normal">Date of Birth</th><td>{{ $child->date_of_birth->format('M d, Y') }}</td></tr>
+                <tr><th class="text-muted fw-normal">Date of Birth</th><td>{{ $child->date_of_birth ? $child->date_of_birth->format('M d, Y') : '—' }}</td></tr>
                 <tr><th class="text-muted fw-normal">Diagnosis</th><td>{{ $child->diagnosis }}</td></tr>
                 @if($child->diagnosis_notes)
                 <tr><th class="text-muted fw-normal">Notes</th><td>{{ $child->diagnosis_notes }}</td></tr>
@@ -50,7 +50,7 @@
                         @forelse($child->enrollments as $e)
                         <tr>
                             <td>{{ $e->school_year }}</td>
-                            <td>{{ $e->enrollment_date->format('M d, Y') }}</td>
+                            <td>{{ $e->enrollment_date ? $e->enrollment_date->format('M d, Y') : '—' }}</td>
                             <td><span class="badge badge-{{ $e->status }}">{{ ucfirst($e->status) }}</span></td>
                             <td>{{ $e->approver->name ?? '—' }}</td>
                         </tr>
@@ -75,7 +75,7 @@
                         <tbody>
                             @forelse($child->attendances as $a)
                             <tr>
-                                <td>{{ $a->attendance_date->format('M d, Y') }}</td>
+                                <td>{{ $a->attendance_date ? $a->attendance_date->format('M d, Y') : '—' }}</td>
                                 <td><span class="badge badge-{{ $a->status }}">{{ ucfirst($a->status) }}</span></td>
                                 <td class="text-muted small">{{ $a->remarks ?? '—' }}</td>
                             </tr>
@@ -98,7 +98,7 @@
                         <tbody>
                             @forelse($child->activities as $act)
                             <tr>
-                                <td>{{ $act->activity_date->format('M d, Y') }}</td>
+                                <td>{{ $act->activity_date ? $act->activity_date->format('M d, Y') : '—' }}</td>
                                 <td>{{ $act->activity_type }}</td>
                                 <td>{{ ucfirst(str_replace('_',' ',$act->completion_status)) }}</td>
                                 <td class="text-muted small">{{ Str::limit($act->notes,50) ?? '—' }}</td>

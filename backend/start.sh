@@ -12,7 +12,7 @@ cat > .env <<ENVEOF
 APP_NAME="${APP_NAME:-AlamadaCMS}"
 APP_ENV="${APP_ENV:-production}"
 APP_KEY="${APP_KEY:-}"
-APP_DEBUG="true"
+APP_DEBUG="false"
 APP_URL="${APP_URL:-https://alamada-child-monitoring-system.onrender.com}"
 
 DB_CONNECTION="${DB_CONNECTION:-pgsql}"

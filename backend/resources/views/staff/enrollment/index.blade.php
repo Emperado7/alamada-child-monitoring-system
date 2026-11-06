@@ -256,12 +256,12 @@
 
                     {{-- Date of Birth --}}
                     <td class="small text-muted">
-                        {{ $child ? $child->date_of_birth->format('M d, Y') : '—' }}
+                        {{ $child && $child->date_of_birth ? $child->date_of_birth->format('M d, Y') : '—' }}
                     </td>
 
                     {{-- Date Enrolled --}}
                     <td class="small text-muted">
-                        {{ $e->enrollment_date->format('M d, Y') }}
+                        {{ $e->enrollment_date ? $e->enrollment_date->format('M d, Y') : '—' }}
                     </td>
 
                     {{-- Age --}}

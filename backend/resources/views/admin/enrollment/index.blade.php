@@ -285,7 +285,7 @@
 
                     {{-- Date of Birth --}}
                     <td class="small text-muted">
-                        {{ $child ? $child->date_of_birth->format('F d, Y') : '—' }}
+                        {{ $child && $child->date_of_birth ? $child->date_of_birth->format('F d, Y') : '—' }}
                     </td>
 
                     {{-- Age --}}
@@ -320,7 +320,7 @@
 
                     {{-- Date Enrolled --}}
                     <td class="small text-muted">
-                        {{ $e->enrollment_date->format('F d, Y') }}
+                        {{ $e->enrollment_date ? $e->enrollment_date->format('F d, Y') : '—' }}
                     </td>
 
                     {{-- School Year --}}

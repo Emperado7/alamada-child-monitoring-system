@@ -282,8 +282,7 @@
 
                             {{-- Delete --}}
                             @php
-                                $attRecord = \App\Models\Attendance::where('child_id',$child->id)
-                                    ->where('attendance_date',$date)->first();
+                                $attRecord = $child->attendances->first();
                             @endphp
                             @if($attRecord)
                             <form method="POST"
