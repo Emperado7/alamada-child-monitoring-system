@@ -10,7 +10,7 @@ echo "=== [1/7] Writing .env ==="
 cat > .env <<ENVEOF
 APP_NAME="AlamadaCMS"
 APP_ENV="production"
-APP_KEY="${APP_KEY:-}"
+APP_KEY="${APP_KEY:-base64:dN5eYOE6wE//4PaqAFuVDlRcm8t2fL/BmZIz3n6GaMk=}"
 APP_DEBUG="false"
 APP_URL="${APP_URL:-https://alamada-child-monitoring-system.onrender.com}"
 
@@ -24,6 +24,8 @@ DB_SSLMODE="${DB_SSLMODE:-require}"
 
 SESSION_DRIVER="file"
 SESSION_LIFETIME="120"
+SESSION_SECURE_COOKIE="false"
+SESSION_ENCRYPT="false"
 CACHE_DRIVER="file"
 QUEUE_CONNECTION="sync"
 FILESYSTEM_DISK="public"
