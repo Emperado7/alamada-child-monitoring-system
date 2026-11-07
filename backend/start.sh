@@ -34,7 +34,7 @@ SANCTUM_STATEFUL_DOMAINS="${SANCTUM_STATEFUL_DOMAINS:-alamada-child-monitoring-s
 SESSION_DOMAIN=".onrender.com"
 
 LOG_CHANNEL="stderr"
-LOG_LEVEL="debug"
+LOG_LEVEL="error"
 ENVEOF
 
 echo "=== [2/7] Removing stale bootstrap/cache files ==="
@@ -48,9 +48,12 @@ rm -rf storage/framework/views/*.php 2>/dev/null || true
 
 echo "=== [4/7] Storage setup ==="
 php artisan storage:link --force --no-ansi 2>&1 || true
-mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs storage/app/public
+mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache/data storage/logs storage/app/public bootstrap/cache
 chmod -R 777 storage bootstrap/cache 2>/dev/null || true
 chown -R www-data:www-data storage bootstrap/cache 2>/dev/null || true
+# Ensure laravel.log is writable
+touch storage/logs/laravel.log 2>/dev/null || true
+chmod 666 storage/logs/laravel.log 2>/dev/null || true
 
 echo "=== [5/7] Running migrations ==="
 php artisan migrate --force --no-ansi 2>&1 || echo "!!! migrate failed — check DB env vars"
