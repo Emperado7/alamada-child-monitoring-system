@@ -15,35 +15,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        try {
-            return $this->loadDashboard();
-        } catch (\Throwable $e) {
-            // Log the real error so we can see it in Render logs
-            \Illuminate\Support\Facades\Log::error('Dashboard 500: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-            // Return a minimal working dashboard instead of crashing
-            return view('admin.dashboard', [
-                'totalChildren' => 0,
-                'activeEnrollments' => 0,
-                'presentToday' => 0,
-                'totalReports' => 0,
-                'absentToday' => 0,
-                'excusedToday' => 0,
-                'presMonth' => 0,
-                'absMonth' => 0,
-                'excusedMonth' => 0,
-                'chartLabels' => [],
-                'chartData' => [],
-                'recentActivities' => collect(),
-                'enActive' => 0,
-                'enPending' => 0,
-                'enRejected' => 0,
-                'enTotal' => 0,
-                'enActivePct' => 0,
-                'enPendingPct' => 0,
-                'enRejPct' => 0,
-                '_error' => $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine(),
-            ]);
-        }
+        return $this->loadDashboard();
     }
 
     private function loadDashboard(): \Illuminate\View\View
@@ -93,7 +65,7 @@ class DashboardController extends Controller
                 'ic' => '#2e7d32',
                 'title' => 'New enrollment',
                 'sub' => ($e->child->first_name ?? 'Child') . ' ' . ($e->child->last_name ?? '') . ' has been enrolled.',
-                'time' => $e->created_at->diffForHumans(null, true, true),
+                'time' => $e->created_at ? $e->created_at->diffForHumans(null, true, true) : 'Recently',
             ]);
         }
 
@@ -119,7 +91,7 @@ class DashboardController extends Controller
                 'sub' => $latestReport->title,
                 'time' => $latestReport->generated_at
                     ? $latestReport->generated_at->diffForHumans(null, true, true)
-                    : $latestReport->created_at->diffForHumans(null, true, true),
+                    : ($latestReport->created_at ? $latestReport->created_at->diffForHumans(null, true, true) : 'Recently'),
             ]);
         }
 
@@ -131,7 +103,7 @@ class DashboardController extends Controller
                 'ic' => '#6a1b9a',
                 'title' => 'New notification sent',
                 'sub' => \Illuminate\Support\Str::limit($latestNotif->message, 60),
-                'time' => $latestNotif->created_at->diffForHumans(null, true, true),
+                'time' => $latestNotif->created_at ? $latestNotif->created_at->diffForHumans(null, true, true) : 'Recently',
             ]);
         }
 
@@ -143,7 +115,7 @@ class DashboardController extends Controller
                 'ic' => '#388e3c',
                 'title' => 'New user added',
                 'sub' => ucfirst($latestUser->role) . ' "' . $latestUser->name . '" has been added.',
-                'time' => $latestUser->created_at->diffForHumans(null, true, true),
+                'time' => $latestUser->created_at ? $latestUser->created_at->diffForHumans(null, true, true) : 'Recently',
             ]);
         }
 
@@ -178,5 +150,5 @@ class DashboardController extends Controller
             'enPendingPct',
             'enRejPct'
         ));
-    } // end loadDashboard
+    }
 }
