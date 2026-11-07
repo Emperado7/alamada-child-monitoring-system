@@ -845,7 +845,7 @@
                                 {{ \Illuminate\Support\Str::limit($rn->message, 55) }}
                             </div>
                             <div style="font-size:.7rem;color:#9e9e9e;margin-top:2px;">
-                                {{ $rn->created_at->diffForHumans() }}
+                                {{ $rn->created_at ? $rn->created_at->diffForHumans() : '' }}
                                 @if(!$isRead)
                                 &nbsp;·&nbsp;
                                 <form method="POST"
