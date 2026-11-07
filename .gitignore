@@ -37,3 +37,7 @@ Thumbs.db
 
 # Nested duplicate repo (was accidentally tracked as submodule)
 alamada-child-monitoring-system/
+
+alamada-parent-app*
+android/hs_err*
+android/replay_pid*
