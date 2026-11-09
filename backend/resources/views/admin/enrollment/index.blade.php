@@ -25,10 +25,8 @@
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
     $currentYear   = now()->year;
-    $totalEnrolled = \App\Models\Enrollment::where('status','approved')->count();
-    $newThisMonth  = \App\Models\Enrollment::where('status','approved')
-                        ->whereMonth('created_at', now()->month)
-                        ->whereYear('created_at',  now()->year)->count();
+    $totalEnrolled = \App\Models\Enrollment::count();
+    $approvedCount = \App\Models\Enrollment::where('status','approved')->count();
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
     $graduated     = \App\Models\Enrollment::where('status','graduated')->count();
 @endphp
@@ -49,10 +47,10 @@
                 </svg>
             </div>
             <div class="stat-body">
-                <div class="stat-label">Total Enrolled</div>
+                <div class="stat-label">Total Enrollments</div>
                 <div class="stat-value" style="color:#2e7d32">{{ $totalEnrolled }}</div>
-                <a href="?status=approved" class="stat-link">
-                    View Details <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
+                    View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>
         </div>
@@ -71,11 +69,11 @@
                 </svg>
             </div>
             <div class="stat-body">
-                <div class="stat-label">New Enrollments</div>
-                <div class="stat-value" style="color:#1565c0">{{ $newThisMonth }}</div>
-                <span class="stat-link text-muted" style="font-size:.75rem;cursor:default">
-                    This Month
-                </span>
+                <div class="stat-label">Approved</div>
+                <div class="stat-value" style="color:#1565c0">{{ $approvedCount }}</div>
+                <a href="?status=approved" class="stat-link">
+                    View Approved <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                </a>
             </div>
         </div>
     </div>
