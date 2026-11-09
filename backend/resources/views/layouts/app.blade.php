@@ -828,58 +828,86 @@
                     @forelse($recentNotifs as $rn)
                     @php
                         $isRead = in_array($rn->id, $readIds);
-                        // Build action link for enrollment pending notifications
-                        $actionLink = null;
-                        if (isset($rn->type) && $rn->type === 'enrollment_pending' && isset($rn->enrollment_id)) {
-                            $actionLink = $userRole === 'admin'
+                        $type   = $rn->type ?? '';
+
+                        // Determine where clicking this notification should go
+                        if ($type === 'enrollment_pending' && $rn->enrollment_id) {
+                            $notifLink = $userRole === 'admin'
                                 ? route('admin.enrollment.show', $rn->enrollment_id)
-                                : null;
+                                : route('staff.enrollment.show', $rn->enrollment_id);
+                        } elseif (in_array($type, ['enrollment_approved', 'enrollment_rejected']) && $rn->enrollment_id) {
+                            $notifLink = $userRole === 'admin'
+                                ? route('admin.enrollment.show', $rn->enrollment_id)
+                                : route('staff.enrollment.show', $rn->enrollment_id);
+                        } elseif (str_contains(strtolower($rn->title ?? ''), 'attendance')) {
+                            $notifLink = $userRole === 'admin'
+                                ? route('admin.attendance.index')
+                                : route('staff.attendance.index');
+                        } else {
+                            $notifLink = $userRole === 'admin'
+                                ? route('admin.notifications.index')
+                                : route('staff.notifications.index');
                         }
+
+                        // Icon per type
+                        $notifIcon = match($type) {
+                            'enrollment_pending'  => 'fa-user-clock',
+                            'enrollment_approved' => 'fa-check-circle',
+                            'enrollment_rejected' => 'fa-times-circle',
+                            default               => str_contains(strtolower($rn->title ?? ''), 'attendance')
+                                                     ? 'fa-calendar-check' : 'fa-bell',
+                        };
+                        $notifColor = match($type) {
+                            'enrollment_pending'  => '#e65100',
+                            'enrollment_approved' => '#2e7d32',
+                            'enrollment_rejected' => '#c62828',
+                            default               => $isRead ? '#9e9e9e' : '#2e7d32',
+                        };
+                        $notifBg = match($type) {
+                            'enrollment_pending'  => '#fff3e0',
+                            'enrollment_approved' => '#e8f5e9',
+                            'enrollment_rejected' => '#ffebee',
+                            default               => $isRead ? '#e0e0e0' : '#c8e6c9',
+                        };
                     @endphp
-                    <div class="d-flex align-items-start px-3 py-2 border-bottom"
-                         style="background:{{ $isRead ? '#fff' : '#f0faf0' }};gap:10px;">
-                        <div style="flex-shrink:0;width:34px;height:34px;border-radius:50%;
-                                    background:{{ $isRead ? '#e0e0e0' : '#c8e6c9' }};
+
+                    {{-- Entire row is clickable --}}
+                    <a href="{{ $notifLink }}"
+                       style="display:flex;align-items:flex-start;padding:10px 16px;
+                              border-bottom:1px solid #f0f0f0;gap:10px;
+                              background:{{ $isRead ? '#fff' : '#f0faf0' }};
+                              text-decoration:none;transition:background .15s"
+                       onmouseover="this.style.background='#f5f5f5'"
+                       onmouseout="this.style.background='{{ $isRead ? '#fff' : '#f0faf0' }}'">
+                        <div style="flex-shrink:0;width:36px;height:36px;border-radius:50%;
+                                    background:{{ $notifBg }};
                                     display:flex;align-items:center;justify-content:center;
-                                    font-size:.9rem;color:{{ $isRead ? '#9e9e9e' : '#2e7d32' }};">
-                            <i class="fas {{ ($rn->type ?? '') === 'enrollment_pending' ? 'fa-user-clock' : 'fa-bell' }}"></i>
+                                    font-size:.9rem;color:{{ $notifColor }};margin-top:1px">
+                            <i class="fas {{ $notifIcon }}"></i>
                         </div>
                         <div style="flex:1;min-width:0;">
-                            <div style="font-size:.82rem;font-weight:{{ $isRead ? '400' : '600' }};
-                                        color:#212121;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                {{ $rn->title }}
-                            </div>
-                            <div style="font-size:.75rem;color:#757575;
+                            <div style="font-size:.83rem;font-weight:{{ $isRead ? '400' : '700' }};
+                                        color:{{ $isRead ? '#555' : '#1a1a1a' }};
                                         overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                {{ \Illuminate\Support\Str::limit($rn->message, 55) }}
-                            </div>
-                            <div style="font-size:.7rem;color:#9e9e9e;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-                                {{ $rn->created_at ? $rn->created_at->diffForHumans() : '' }}
-                                @if($actionLink)
-                                &nbsp;·&nbsp;
-                                <a href="{{ $actionLink }}"
-                                   style="font-size:.7rem;color:#2e7d32;font-weight:600;text-decoration:none">
-                                    Review →
-                                </a>
-                                @endif
+                                {{ $rn->title }}
                                 @if(!$isRead)
+                                <span style="display:inline-block;width:7px;height:7px;border-radius:50%;
+                                             background:#ef5350;margin-left:4px;vertical-align:middle"></span>
+                                @endif
+                            </div>
+                            <div style="font-size:.76rem;color:#757575;
+                                        overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:1px">
+                                {{ \Illuminate\Support\Str::limit($rn->message, 60) }}
+                            </div>
+                            <div style="font-size:.7rem;color:#bdbdbd;margin-top:3px">
+                                {{ $rn->created_at ? $rn->created_at->diffForHumans() : '' }}
+                                @if($type === 'enrollment_pending')
                                 &nbsp;·&nbsp;
-                                <form method="POST"
-                                      action="{{ $userRole === 'admin'
-                                          ? route('admin.notifications.read', $rn->id)
-                                          : route('staff.notifications.read', $rn->id) }}"
-                                      class="d-inline m-0">
-                                    @csrf
-                                    <button type="submit"
-                                            style="background:none;border:none;padding:0;
-                                                   font-size:.7rem;color:#2e7d32;cursor:pointer;">
-                                        Mark read
-                                    </button>
-                                </form>
+                                <span style="color:#e65100;font-weight:600">Needs Approval</span>
                                 @endif
                             </div>
                         </div>
-                    </div>
+                    </a>
                     @empty
                     <div class="text-center py-4" style="color:#9e9e9e;font-size:.85rem;">
                         <i class="fas fa-bell-slash mb-2 d-block" style="font-size:1.5rem;"></i>
