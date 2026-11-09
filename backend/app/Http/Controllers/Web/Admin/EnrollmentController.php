@@ -85,7 +85,6 @@ class EnrollmentController extends Controller
             'enrollment_date' => 'required|date',
             'school_year' => 'required|digits:4|integer|min:2000|max:2099',
             'remarks' => 'nullable|string|max:500',
-            'auto_approve' => 'nullable|boolean',
         ]);
 
         // Create the child
@@ -106,41 +105,31 @@ class EnrollmentController extends Controller
             'staff_id' => $data['staff_id'] ?? null,
         ]);
 
-        // Determine enrollment status
-        $autoApprove = $request->boolean('auto_approve');
-        $status = $autoApprove ? 'approved' : 'pending';
-
+        // Always create as pending — admin must approve from the enrollment list
         $enrollment = Enrollment::create([
             'child_id' => $child->id,
             'enrollment_date' => $data['enrollment_date'],
             'school_year' => $data['school_year'],
             'remarks' => $data['remarks'] ?? null,
-            'status' => $status,
-            'approved_by' => $autoApprove ? auth()->id() : null,
-            'approved_at' => $autoApprove ? Carbon::now() : null,
+            'status' => 'pending',
         ]);
 
-        $msg = $autoApprove
-            ? 'Child enrolled and approved successfully.'
-            : 'Child enrolled successfully. Enrollment is pending approval.';
+        // Notify admin to review
+        $childName = $child->first_name . ' ' . $child->last_name;
+        $schoolYear = $data['school_year'];
+        Notification::create([
+            'title' => '🔔 New Enrollment Pending Approval',
+            'message' => "A new enrollment for {$childName} (School Year {$schoolYear}) "
+                . "has been submitted and is awaiting your approval.",
+            'recipient_group' => 'all',
+            'sent_by' => auth()->id(),
+            'sent_at' => Carbon::now(),
+            'type' => 'enrollment_pending',
+            'enrollment_id' => $enrollment->id,
+        ]);
 
-        // ── If pending, notify all admins so they can review ──────────
-        if (!$autoApprove) {
-            $childName = $child->first_name . ' ' . $child->last_name;
-            $schoolYear = $data['school_year'];
-            Notification::create([
-                'title' => '🔔 New Enrollment Pending Approval',
-                'message' => "A new enrollment for {$childName} (School Year {$schoolYear}) "
-                    . "has been submitted and is awaiting your approval.",
-                'recipient_group' => 'all',
-                'sent_by' => auth()->id(),
-                'sent_at' => Carbon::now(),
-                'type' => 'enrollment_pending',
-                'enrollment_id' => $enrollment->id,
-            ]);
-        }
-
-        return redirect()->route('admin.enrollment.index')->with('success', $msg);
+        return redirect()->route('admin.enrollment.index')
+            ->with('success', 'Child enrolled successfully. Please approve the enrollment from the list.');
     }
 
     public function show(Enrollment $enrollment)

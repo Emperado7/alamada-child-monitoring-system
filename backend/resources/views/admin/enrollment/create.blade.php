@@ -262,20 +262,11 @@
                                       placeholder="Optional remarks…">{{ old('remarks') }}</textarea>
                         </div>
 
-                        {{-- Admin can auto-approve --}}
+                        {{-- All enrollments start as Pending -- admin must approve from the list --}}
                         <div class="col-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox"
-                                       name="auto_approve" value="1" id="autoApprove"
-                                       {{ old('auto_approve') ? 'checked' : '' }}>
-                                <label class="form-check-label small fw-semibold"
-                                       for="autoApprove">
-                                    Approve enrollment immediately
-                                </label>
-                            </div>
-                            <div class="form-text">
-                                Leave checked to approve right away.
-                                Uncheck to save as Pending.
+                            <div class="alert alert-info py-2 mb-0 small rounded-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                The enrollment will be saved as <strong>Pending</strong> and must be approved from the Enrollment list.
                             </div>
                         </div>
 
