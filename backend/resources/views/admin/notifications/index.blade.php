@@ -77,8 +77,19 @@
                                 <button type="submit"
                                         class="btn btn-sm rounded-3 fw-semibold"
                                         style="background:#e8f5e9;color:#2e7d32;border:none;font-size:.8rem"
-                                        onclick="return confirm('Approve enrollment for {{ $pe->child->first_name ?? 'this child' }}?')">
+                                        onclick="return confirm('Approve enrollment for {{ addslashes($pe->child->first_name ?? 'this child') }}?')">
                                     <i class="fas fa-check me-1"></i>Approve
+                                </button>
+                            </form>
+                            {{-- Reject --}}
+                            <form method="POST" action="{{ route('admin.enrollment.reject', $pe) }}"
+                                  onsubmit="return confirm('Reject enrollment for {{ addslashes($pe->child->first_name ?? 'this child') }}?')">
+                                @csrf
+                                <input type="hidden" name="remarks" value="Rejected by admin.">
+                                <button type="submit"
+                                        class="btn btn-sm rounded-3 fw-semibold"
+                                        style="background:#ffebee;color:#c62828;border:none;font-size:.8rem">
+                                    <i class="fas fa-times me-1"></i>Reject
                                 </button>
                             </form>
                             {{-- View --}}
