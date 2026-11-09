@@ -727,9 +727,11 @@
     {{-- Logout at bottom --}}
     @auth
     <div class="sidebar-bottom">
-        <form method="POST" action="{{ route('logout') }}">
+        <form method="POST" action="{{ route('logout') }}" id="logoutFormSidebar">
             @csrf
-            <button type="submit" class="nav-link-s w-100 text-start border-0 bg-transparent">
+            <button type="button"
+                    onclick="document.getElementById('logoutFormSidebar').submit()"
+                    class="nav-link-s w-100 text-start border-0 bg-transparent">
                 <i class="fas fa-sign-out-alt"></i> Logout
             </button>
         </form>

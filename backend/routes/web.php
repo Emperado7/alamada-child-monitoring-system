@@ -44,6 +44,11 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// GET logout fallback — handles cases where CSRF token expires (e.g. Render session reset)
+Route::get('/logout', [LoginController::class, 'logout'])
+    ->middleware('auth')
+    ->name('logout.get');
+
 // ── Admin ─────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
