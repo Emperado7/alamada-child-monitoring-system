@@ -4,6 +4,99 @@
 
 @section('content')
 
+{{-- ── Pending Enrollments Alert Section ───────────────────── --}}
+@if($pendingEnrollments->count() > 0)
+<div class="dash-card mb-4" style="border-left:4px solid #e65100">
+    <div class="px-4 py-3 d-flex align-items-center justify-content-between border-bottom flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width:38px;height:38px;border-radius:10px;background:#fff3e0;
+                        display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <i class="fas fa-user-clock" style="color:#e65100;font-size:1.1rem"></i>
+            </div>
+            <div>
+                <div class="fw-bold" style="color:#e65100;font-size:.95rem">
+                    {{ $pendingEnrollments->count() }} Pending Enrollment{{ $pendingEnrollments->count() > 1 ? 's' : '' }} Awaiting Approval
+                </div>
+                <div class="text-muted small">Review and approve or reject each enrollment below.</div>
+            </div>
+        </div>
+        <a href="{{ route('admin.enrollment.index', ['status' => 'pending']) }}"
+           class="btn btn-sm rounded-3 fw-semibold"
+           style="background:#e65100;color:#fff;border:none;font-size:.82rem">
+            <i class="fas fa-list me-1"></i> View All Pending
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr style="background:#fff8f5">
+                    <th class="px-4 py-2 small fw-bold" style="color:#e65100">Child</th>
+                    <th class="py-2 small fw-bold" style="color:#e65100">Diagnosis</th>
+                    <th class="py-2 small fw-bold" style="color:#e65100">School Year</th>
+                    <th class="py-2 small fw-bold" style="color:#e65100">Submitted</th>
+                    <th class="py-2 small fw-bold text-end pe-4" style="color:#e65100">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($pendingEnrollments as $pe)
+                <tr>
+                    <td class="px-4">
+                        <div class="d-flex align-items-center gap-2">
+                            @if($pe->child && $pe->child->photo)
+                                <img src="{{ asset('storage/'.$pe->child->photo) }}"
+                                     class="rounded-circle" width="36" height="36"
+                                     style="object-fit:cover;border:2px solid #ffe0b2">
+                            @else
+                                <div style="width:36px;height:36px;border-radius:50%;
+                                            background:linear-gradient(135deg,#e65100,#ff8f00);
+                                            color:#fff;display:flex;align-items:center;
+                                            justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0">
+                                    {{ strtoupper(substr($pe->child->first_name ?? 'U', 0, 1)) }}
+                                </div>
+                            @endif
+                            <div>
+                                <div class="fw-semibold small">
+                                    {{ $pe->child->first_name ?? '—' }} {{ $pe->child->last_name ?? '' }}
+                                </div>
+                                <div class="text-muted" style="font-size:.72rem">
+                                    ENR-{{ str_pad($pe->id, 3, '0', STR_PAD_LEFT) }}
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="small text-muted">{{ $pe->child->diagnosis ?? '—' }}</td>
+                    <td class="small fw-semibold">{{ $pe->school_year }} - {{ $pe->school_year + 1 }}</td>
+                    <td class="small text-muted">
+                        {{ $pe->enrollment_date ? $pe->enrollment_date->format('M d, Y') : '—' }}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            {{-- Approve --}}
+                            <form method="POST" action="{{ route('admin.enrollment.approve', $pe) }}">
+                                @csrf
+                                <button type="submit"
+                                        class="btn btn-sm rounded-3 fw-semibold"
+                                        style="background:#e8f5e9;color:#2e7d32;border:none;font-size:.8rem"
+                                        onclick="return confirm('Approve enrollment for {{ $pe->child->first_name ?? 'this child' }}?')">
+                                    <i class="fas fa-check me-1"></i>Approve
+                                </button>
+                            </form>
+                            {{-- View --}}
+                            <a href="{{ route('admin.enrollment.show', $pe) }}"
+                               class="btn btn-sm rounded-3"
+                               style="background:#e3f2fd;color:#1565c0;border:none;font-size:.8rem">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
 {{-- ── Page Header ──────────────────────────────────────────── --}}
 <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap gap-2">
     <div>

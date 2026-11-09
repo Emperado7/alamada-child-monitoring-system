@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,21 @@ class NotificationController extends Controller
             return $n;
         });
 
-        return view('admin.notifications.index', compact('notifications'));
+        // ── Pending enrollments that need approval ────────────────
+        $pendingEnrollments = \App\Models\Enrollment::with(['child'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // ── Unread count by type ──────────────────────────────────
+        $unreadPending = Notification::where('type', 'enrollment_pending')
+            ->whereNotIn('id', $readIds)->count();
+
+        return view('admin.notifications.index', compact(
+            'notifications',
+            'pendingEnrollments',
+            'unreadPending'
+        ));
     }
 
     public function create()
