@@ -77,18 +77,31 @@ class AttendanceController extends Controller
     {
         $request->validate([
             'date' => 'required|date',
-            'attendance' => 'required|array',
-            'attendance.*' => 'required|in:present,absent,excused',
+            'attendance' => 'nullable|array',
+            'attendance.*' => 'nullable|in:present,absent,excused',
             'fetched_by' => 'nullable|array',
             'fetched_by.*' => 'nullable|string|max:100',
+            'remarks' => 'nullable|array',
+            'remarks.*' => 'nullable|string|max:500',
         ]);
 
         $date = $request->date;
         $staffId = auth()->id();
 
+        // If nothing was submitted, just redirect back
+        if (empty($request->attendance)) {
+            return redirect()
+                ->route('staff.attendance.index', ['date' => $date])
+                ->with('warning', 'No attendance selections were made.');
+        }
+
         foreach ($request->attendance as $childId => $status) {
-            // Bug fix: verify child exists AND is active — any staff can record
-            // attendance for any active child (this is by design per index query)
+            // Skip if status is null/empty (no radio selected for this child)
+            if (empty($status)) {
+                continue;
+            }
+
+            // Verify child exists and is active
             if (!Child::where('id', $childId)->where('status', 'active')->exists()) {
                 continue;
             }
