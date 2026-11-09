@@ -19,8 +19,9 @@ class EnrollmentController extends Controller
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
         // Join children upfront so we can filter AND sort by child name
-        $query = Enrollment::with(['child', 'approver:id,name'])
-            ->join('children', 'enrollments.child_id', '=', 'children.id')
+        // Use LEFT JOIN so enrollments with soft-deleted children still appear
+        $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
+            ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
             ->select('enrollments.*');
 
         // Filters — use fully-qualified column names after join
@@ -44,8 +45,7 @@ class EnrollmentController extends Controller
             );
         }
 
-        $enrollments = $query->orderBy('children.last_name')
-            ->orderBy('children.first_name')
+        $enrollments = $query->orderBy('enrollments.created_at', 'desc')
             ->paginate($perPage)->withQueryString();
 
         $years = Enrollment::selectRaw('DISTINCT school_year')
