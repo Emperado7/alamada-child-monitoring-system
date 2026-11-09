@@ -826,14 +826,23 @@
                 {{-- List --}}
                 <div style="max-height:300px;overflow-y:auto;">
                     @forelse($recentNotifs as $rn)
-                    @php $isRead = in_array($rn->id, $readIds); @endphp
+                    @php
+                        $isRead = in_array($rn->id, $readIds);
+                        // Build action link for enrollment pending notifications
+                        $actionLink = null;
+                        if (isset($rn->type) && $rn->type === 'enrollment_pending' && isset($rn->enrollment_id)) {
+                            $actionLink = $userRole === 'admin'
+                                ? route('admin.enrollment.show', $rn->enrollment_id)
+                                : null;
+                        }
+                    @endphp
                     <div class="d-flex align-items-start px-3 py-2 border-bottom"
                          style="background:{{ $isRead ? '#fff' : '#f0faf0' }};gap:10px;">
                         <div style="flex-shrink:0;width:34px;height:34px;border-radius:50%;
                                     background:{{ $isRead ? '#e0e0e0' : '#c8e6c9' }};
                                     display:flex;align-items:center;justify-content:center;
                                     font-size:.9rem;color:{{ $isRead ? '#9e9e9e' : '#2e7d32' }};">
-                            <i class="fas fa-bell"></i>
+                            <i class="fas {{ ($rn->type ?? '') === 'enrollment_pending' ? 'fa-user-clock' : 'fa-bell' }}"></i>
                         </div>
                         <div style="flex:1;min-width:0;">
                             <div style="font-size:.82rem;font-weight:{{ $isRead ? '400' : '600' }};
@@ -844,8 +853,15 @@
                                         overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                                 {{ \Illuminate\Support\Str::limit($rn->message, 55) }}
                             </div>
-                            <div style="font-size:.7rem;color:#9e9e9e;margin-top:2px;">
+                            <div style="font-size:.7rem;color:#9e9e9e;margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
                                 {{ $rn->created_at ? $rn->created_at->diffForHumans() : '' }}
+                                @if($actionLink)
+                                &nbsp;·&nbsp;
+                                <a href="{{ $actionLink }}"
+                                   style="font-size:.7rem;color:#2e7d32;font-weight:600;text-decoration:none">
+                                    Review →
+                                </a>
+                                @endif
                                 @if(!$isRead)
                                 &nbsp;·&nbsp;
                                 <form method="POST"
