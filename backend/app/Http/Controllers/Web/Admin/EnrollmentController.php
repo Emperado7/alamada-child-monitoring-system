@@ -124,6 +124,22 @@ class EnrollmentController extends Controller
             ? 'Child enrolled and approved successfully.'
             : 'Child enrolled successfully. Enrollment is pending approval.';
 
+        // ── If pending, notify all admins so they can review ──────────
+        if (!$autoApprove) {
+            $childName = $child->first_name . ' ' . $child->last_name;
+            $schoolYear = $data['school_year'];
+            Notification::create([
+                'title' => '🔔 New Enrollment Pending Approval',
+                'message' => "A new enrollment for {$childName} (School Year {$schoolYear}) "
+                    . "has been submitted and is awaiting your approval.",
+                'recipient_group' => 'all',
+                'sent_by' => auth()->id(),
+                'sent_at' => Carbon::now(),
+                'type' => 'enrollment_pending',
+                'enrollment_id' => $enrollment->id,
+            ]);
+        }
+
         return redirect()->route('admin.enrollment.index')->with('success', $msg);
     }
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web\Staff;
 use App\Http\Controllers\Controller;
 use App\Models\Child;
 use App\Models\Enrollment;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -94,12 +95,28 @@ class EnrollmentController extends Controller
                 'staff_id' => auth()->id(),
             ]);
 
-            Enrollment::create([
+            $enrollment = Enrollment::create([
                 'child_id' => $child->id,
                 'enrollment_date' => $data['enrollment_date'],
                 'school_year' => $data['school_year'],
                 'remarks' => $data['remarks'] ?? null,
                 'status' => 'pending',
+            ]);
+
+            // ── Notify all admins about the new pending enrollment ──
+            $staffName = auth()->user()->name;
+            $childName = $child->first_name . ' ' . $child->last_name;
+            $schoolYear = $data['school_year'];
+
+            \App\Models\Notification::create([
+                'title' => '🔔 New Enrollment Pending Approval',
+                'message' => "Staff {$staffName} submitted a new enrollment for {$childName} "
+                    . "(School Year {$schoolYear}). Please review and approve or reject.",
+                'recipient_group' => 'all',
+                'sent_by' => auth()->id(),
+                'sent_at' => Carbon::now(),
+                'type' => 'enrollment_pending',
+                'enrollment_id' => $enrollment->id,
             ]);
         });
 
