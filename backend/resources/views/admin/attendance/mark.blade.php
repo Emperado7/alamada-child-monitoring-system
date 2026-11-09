@@ -28,6 +28,7 @@
             <input type="date" name="date" value="{{ $date }}"
                    class="form-control form-control-sm rounded-3"
                    style="max-width:200px"
+                   min="{{ now()->startOfMonth()->toDateString() }}"
                    max="{{ now()->toDateString() }}"
                    onchange="document.getElementById('dateForm').submit()">
         </form>

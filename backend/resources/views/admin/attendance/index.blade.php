@@ -125,6 +125,7 @@
             <div class="input-group" style="width:175px">
                 <input type="date" name="date" value="{{ $date }}"
                        class="form-control form-control-sm"
+                       min="{{ now()->startOfMonth()->toDateString() }}"
                        max="{{ now()->toDateString() }}"
                        onchange="document.getElementById('filterForm').submit()">
                 <span class="input-group-text bg-white border-start-0"

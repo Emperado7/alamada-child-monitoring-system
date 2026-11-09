@@ -106,7 +106,7 @@
                     </span>
                     <input type="date" name="date_select" id="dateInput"
                            value="{{ $date }}"
-                           min="{{ now()->toDateString() }}"
+                           min="{{ now()->startOfMonth()->toDateString() }}"
                            max="{{ now()->toDateString() }}"
                            class="form-control form-control-sm border-start-0"
                            onchange="updateDate(this.value)">
