@@ -25,8 +25,8 @@
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
     $currentYear   = now()->year;
-    $totalEnrolled = \App\Models\Enrollment::count();
-    $approvedCount = \App\Models\Enrollment::where('status','approved')->count();
+    $totalEnrolled = \App\Models\Child::count(); // Total children in system
+    $approvedCount = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
     $graduated     = \App\Models\Enrollment::where('status','graduated')->count();
 @endphp
@@ -47,7 +47,7 @@
                 </svg>
             </div>
             <div class="stat-body">
-                <div class="stat-label">Total Enrollments</div>
+                <div class="stat-label">Total Students</div>
                 <div class="stat-value" style="color:#2e7d32">{{ $totalEnrolled }}</div>
                 <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
                     View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
