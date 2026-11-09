@@ -131,25 +131,63 @@
             </div>
             <div class="text-muted small mb-2">Choose the date for attendance.</div>
             <form method="GET" id="dateForm">
-                <div class="input-group rounded-3" style="max-width:260px;border:1.5px solid #e0e0e0;border-radius:10px;overflow:hidden">
-                    <span class="input-group-text bg-white border-0"
-                          style="color:#2e7d32">
+                {{-- Hidden actual date value submitted --}}
+                <input type="hidden" name="date" id="hiddenDateInput" value="{{ $selectedDate }}">
+                <input type="hidden" name="search" value="{{ request('search') }}">
+                <input type="hidden" name="status" value="{{ request('status') }}">
+
+                {{-- Clickable display --}}
+                <div class="input-group rounded-3" style="max-width:260px;border:1.5px solid #e0e0e0;border-radius:10px;overflow:hidden;cursor:pointer"
+                     onclick="toggleCalendar()">
+                    <span class="input-group-text bg-white border-0" style="color:#2e7d32">
                         <i class="fas fa-calendar-alt"></i>
                     </span>
-                    <input type="date" name="date"
-                           value="{{ $selectedDate }}"
-                           class="form-control border-0 shadow-none"
-                           min="{{ now()->startOfMonth()->toDateString() }}"
-                           max="{{ now()->toDateString() }}"
-                           style="font-size:.88rem"
-                           onchange="document.getElementById('dateForm').submit()">
+                    <span class="form-control border-0 shadow-none bg-white d-flex align-items-center"
+                          id="dateDisplay" style="font-size:.88rem;cursor:pointer">
+                        {{ \Carbon\Carbon::parse($selectedDate)->format('m/d/Y') }}
+                    </span>
                     <span class="input-group-text bg-white border-0 text-muted">
                         <i class="fas fa-chevron-down" style="font-size:.7rem"></i>
                     </span>
                 </div>
-                {{-- Hidden: preserve search --}}
-                <input type="hidden" name="search" value="{{ request('search') }}">
-                <input type="hidden" name="status" value="{{ request('status') }}">
+
+                {{-- Custom Calendar Popup --}}
+                <div id="customCalendar"
+                     style="display:none;position:absolute;z-index:9999;background:#fff;
+                            border:1px solid #e0e0e0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);
+                            padding:16px;width:280px;margin-top:4px">
+                    {{-- Header --}}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <button type="button" onclick="changeMonth(-1)"
+                                style="background:none;border:none;cursor:pointer;color:#2e7d32;font-size:1rem;padding:4px 8px">
+                            ‹
+                        </button>
+                        <span id="calMonthYear" class="fw-bold" style="font-size:.9rem"></span>
+                        <button type="button" onclick="changeMonth(1)"
+                                style="background:none;border:none;cursor:pointer;color:#2e7d32;font-size:1rem;padding:4px 8px">
+                            ›
+                        </button>
+                    </div>
+                    {{-- Day headers --}}
+                    <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px">
+                        @foreach(['Su','Mo','Tu','We','Th','Fr','Sa'] as $d)
+                        <div style="font-size:.72rem;font-weight:700;color:#9e9e9e;padding:4px 0">{{ $d }}</div>
+                        @endforeach
+                    </div>
+                    {{-- Days grid --}}
+                    <div id="calDays" style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:2px"></div>
+
+                    <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                        <button type="button" onclick="selectToday()"
+                                style="background:none;border:none;color:#2e7d32;font-size:.8rem;font-weight:600;cursor:pointer">
+                            Today
+                        </button>
+                        <button type="button" onclick="toggleCalendar()"
+                                style="background:none;border:none;color:#9e9e9e;font-size:.8rem;cursor:pointer">
+                            Close
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
 
@@ -447,5 +485,109 @@ function clearAll() {
         btn.style.color       = '#757575';
     });
 }
+</script>
+
+{{-- ── Custom Calendar Script ──────────────────────────────── --}}
+<script>
+(function() {
+    // Selected date from server
+    var selDate  = new Date('{{ $selectedDate }}');
+    var viewYear = selDate.getFullYear();
+    var viewMonth= selDate.getMonth(); // 0-indexed
+
+    var today    = new Date();
+    today.setHours(0,0,0,0);
+    // Min = start of current month
+    var minDate  = new Date(today.getFullYear(), today.getMonth(), 1);
+    // Max = today
+    var maxDate  = new Date(today);
+
+    var months = ['January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
+
+    function pad(n){ return n < 10 ? '0'+n : n; }
+    function toISO(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+    function renderCalendar() {
+        document.getElementById('calMonthYear').textContent =
+            months[viewMonth] + ' ' + viewYear;
+
+        var grid = document.getElementById('calDays');
+        grid.innerHTML = '';
+
+        var firstDay = new Date(viewYear, viewMonth, 1).getDay();
+        var daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+        // Empty cells before first day
+        for (var i = 0; i < firstDay; i++) {
+            grid.innerHTML += '<div></div>';
+        }
+
+        for (var d = 1; d <= daysInMonth; d++) {
+            var thisDate = new Date(viewYear, viewMonth, d);
+            thisDate.setHours(0,0,0,0);
+
+            var iso      = toISO(thisDate);
+            var isToday  = thisDate.getTime() === today.getTime();
+            var isSelected = iso === toISO(selDate);
+            var isPast   = thisDate < minDate;   // before start of month
+            var isFuture = thisDate > maxDate;   // after today
+            var disabled = isPast || isFuture;
+
+            var bg    = isSelected ? '#2e7d32' : isToday ? '#e8f5e9' : 'transparent';
+            var color = isSelected ? '#fff' : disabled ? '#c0c0c0' : isToday ? '#2e7d32' : '#212121';
+            var fw    = isSelected || isToday ? '700' : '400';
+            var cursor= disabled ? 'default' : 'pointer';
+            var strike= disabled ? 'line-through' : 'none';
+
+            var cell = '<div onclick="' + (disabled ? '' : 'pickDate(\''+iso+'\')') + '"'
+                + ' style="border-radius:50%;width:34px;height:34px;display:flex;align-items:center;'
+                + 'justify-content:center;margin:auto;font-size:.82rem;font-weight:'+fw+';'
+                + 'background:'+bg+';color:'+color+';cursor:'+cursor+';'
+                + 'text-decoration:'+strike+';transition:background .1s"'
+                + (disabled ? '' : ' onmouseover="if(this.style.background===\'transparent\')this.style.background=\'#f5f5f5\'"'
+                             + ' onmouseout="if(this.style.background===\'#f5f5f5\')this.style.background=\'transparent\'"')
+                + '>' + d + '</div>';
+            grid.innerHTML += cell;
+        }
+    }
+
+    window.toggleCalendar = function() {
+        var cal = document.getElementById('customCalendar');
+        cal.style.display = cal.style.display === 'none' ? 'block' : 'none';
+        if (cal.style.display === 'block') renderCalendar();
+    };
+
+    window.changeMonth = function(dir) {
+        viewMonth += dir;
+        if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+        if (viewMonth > 11) { viewMonth = 0;  viewYear++; }
+        renderCalendar();
+    };
+
+    window.pickDate = function(iso) {
+        selDate = new Date(iso);
+        document.getElementById('hiddenDateInput').value = iso;
+        document.getElementById('dateDisplay').textContent =
+            (selDate.getMonth()+1) + '/' + pad(selDate.getDate()) + '/' + selDate.getFullYear();
+        document.getElementById('customCalendar').style.display = 'none';
+        document.getElementById('dateForm').submit();
+    };
+
+    window.selectToday = function() {
+        pickDate(toISO(today));
+    };
+
+    // Close calendar when clicking outside
+    document.addEventListener('click', function(e) {
+        var cal = document.getElementById('customCalendar');
+        var wrap = cal ? cal.closest('div[style*="min-width"]') : null;
+        if (cal && cal.style.display === 'block') {
+            if (!cal.contains(e.target) && !e.target.closest('.input-group')) {
+                cal.style.display = 'none';
+            }
+        }
+    });
+})();
 </script>
 @endpush
