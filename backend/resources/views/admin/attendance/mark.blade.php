@@ -25,12 +25,11 @@
     <div class="p-4 border-bottom">
         <form method="GET" id="dateForm" class="d-flex align-items-center gap-3 flex-wrap">
             <div class="fw-semibold small">Select Date:</div>
-            <input type="date" name="date" value="{{ $date }}"
-                   class="form-control form-control-sm rounded-3"
-                   style="max-width:200px"
-                   min="{{ now()->startOfMonth()->toDateString() }}"
-                   max="{{ now()->toDateString() }}"
-                   onchange="document.getElementById('dateForm').submit()">
+            <x-date-picker name="date"
+                           :value="$date"
+                           form-id="dateForm"
+                           :min-date="now()->startOfMonth()->toDateString()"
+                           :max-date="now()->toDateString()" />
         </form>
     </div>
 

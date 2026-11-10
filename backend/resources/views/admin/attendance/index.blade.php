@@ -122,18 +122,11 @@
 
             {{-- Date --}}
             <label class="small text-muted mb-0 fw-semibold">Date</label>
-            <div class="input-group" style="width:175px">
-                <input type="date" name="date" value="{{ $date }}"
-                       class="form-control form-control-sm"
-                       min="{{ now()->startOfMonth()->toDateString() }}"
-                       max="{{ now()->toDateString() }}"
-                       onchange="document.getElementById('filterForm').submit()">
-                <span class="input-group-text bg-white border-start-0"
-                      style="font-size:.8rem;color:#9e9e9e;cursor:pointer"
-                      onclick="this.previousElementSibling.showPicker()">
-                    <i class="fas fa-calendar-alt" style="color:#2e7d32"></i>
-                </span>
-            </div>
+            <x-date-picker name="date"
+                           :value="$date"
+                           form-id="filterForm"
+                           :min-date="now()->startOfMonth()->toDateString()"
+                           :max-date="now()->toDateString()" />
 
             {{-- Search + Filters (pushed right) --}}
             <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
