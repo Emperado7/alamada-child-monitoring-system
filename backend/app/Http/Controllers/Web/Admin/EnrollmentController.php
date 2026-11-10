@@ -149,11 +149,11 @@ class EnrollmentController extends Controller
             'approved_by' => auth()->id(),
             'approved_at' => Carbon::now(),
         ]);
-        $enrollment->child->update(['status' => 'active']);
+        $enrollment->child?->update(['status' => 'active']);
 
         // ── Auto-send Enrollment Approved notification ────────────
         $child = $enrollment->child;
-        $childName = $child->first_name . ' ' . $child->last_name;
+        $childName = ($child->first_name ?? 'Child') . ' ' . ($child->last_name ?? '');
         $schoolYear = $enrollment->school_year;
 
         $recipientId = $child->parent_id ?? null;
@@ -191,7 +191,7 @@ class EnrollmentController extends Controller
 
         // ── Auto-send Enrollment Rejected notification ────────────
         $child = $enrollment->child;
-        $childName = $child->first_name . ' ' . $child->last_name;
+        $childName = ($child->first_name ?? 'Child') . ' ' . ($child->last_name ?? '');
         $schoolYear = $enrollment->school_year;
         $reason = $request->remarks ? ' Reason: ' . $request->remarks : '';
 

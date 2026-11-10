@@ -100,6 +100,14 @@
                             </a>
                         </div>
                     </td>
+                            {{-- View --}}
+                            <a href="{{ route('admin.enrollment.show', $pe) }}"
+                               class="btn btn-sm rounded-3"
+                               style="background:#e3f2fd;color:#1565c0;border:none;font-size:.8rem">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
