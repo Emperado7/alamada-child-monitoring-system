@@ -21,12 +21,12 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Fix: show stats for ALL children, not just staff-assigned ones
-    $totalEnrolled = \App\Models\Child::where('status','active')->count();
-    $newThisMonth  = \App\Models\Enrollment::where('status','approved')
-                        ->whereMonth('created_at', now()->month)
-                        ->whereYear('created_at',  now()->year)->count();
-    $totalRecords  = \App\Models\Enrollment::count();
+    // Card 1: Total enrolled (approved only, exclude pending)
+    $totalEnrolled = \App\Models\Child::where('status','active')
+                        ->whereHas('currentEnrollment', fn($q) => $q->where('status','approved'))
+                        ->count();
+    // Card 2: Pending enrollments
+    $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
 @endphp
 
 <div class="row g-3 mb-4">
@@ -57,7 +57,7 @@
                         {{ $totalEnrolled }}
                     </div>
                     <div class="text-muted small mt-1">
-                        All enrolled children in the system.
+                        All approved enrolled children.
                     </div>
                 </div>
             </div>
@@ -70,72 +70,37 @@
         </div>
     </div>
 
-    {{-- New Enrollments This Month --}}
+    {{-- Pending Enrollments --}}
     <div class="col-md-4">
         <div class="dash-card p-4 h-100">
             <div class="d-flex align-items-start gap-3 mb-3">
                 <div style="width:56px;height:56px;border-radius:14px;
-                            background:#e8f5e9;display:flex;align-items:center;
+                            background:#fff3e0;display:flex;align-items:center;
                             justify-content:center;flex-shrink:0">
                     <div style="width:36px;height:36px;border-radius:8px;
-                                border:2.5px solid #2e7d32;background:#fff;
+                                border:2.5px solid #e65100;background:#fff;
                                 display:flex;align-items:center;justify-content:center">
-                        <i class="fas fa-plus" style="color:#2e7d32;font-size:.9rem"></i>
+                        <i class="fas fa-user-clock"
+                           style="color:#e65100;font-size:.9rem"></i>
                     </div>
                 </div>
                 <div>
                     <div class="text-muted small fw-semibold"
                          style="text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">
-                        New Enrollments (This Month)
+                        Pending Enrollments
                     </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#212121;line-height:1.1">
-                        {{ $newThisMonth }}
+                    <div style="font-size:2.8rem;font-weight:800;color:#e65100;line-height:1.1">
+                        {{ $pendingCount }}
                     </div>
                     <div class="text-muted small mt-1">
-                        New children enrolled this month.
+                        Awaiting admin approval.
                     </div>
                 </div>
             </div>
-            <a href="{{ route('staff.enrollment.create') }}"
+            <a href="?status=pending"
                class="d-flex align-items-center gap-1"
-               style="color:#2e7d32;font-size:.83rem;font-weight:600;text-decoration:none">
-                View new enrollments
-                <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
-            </a>
-        </div>
-    </div>
-
-    {{-- Total Enrollments --}}
-    <div class="col-md-4">
-        <div class="dash-card p-4 h-100">
-            <div class="d-flex align-items-start gap-3 mb-3">
-                <div style="width:56px;height:56px;border-radius:14px;
-                            background:#e8f5e9;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0">
-                    <div style="width:36px;height:36px;border-radius:8px;
-                                border:2.5px solid #2e7d32;background:#fff;
-                                display:flex;align-items:center;justify-content:center">
-                        <i class="fas fa-clipboard-list"
-                           style="color:#2e7d32;font-size:.9rem"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="text-muted small fw-semibold"
-                         style="text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">
-                        Total Enrollments
-                    </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#212121;line-height:1.1">
-                        {{ $totalRecords }}
-                    </div>
-                    <div class="text-muted small mt-1">
-                        Total enrollment records.
-                    </div>
-                </div>
-            </div>
-            <a href="#enrollTable"
-               class="d-flex align-items-center gap-1"
-               style="color:#2e7d32;font-size:.83rem;font-weight:600;text-decoration:none">
-                View enrollment records
+               style="color:#e65100;font-size:.83rem;font-weight:600;text-decoration:none">
+                View pending enrollments
                 <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
             </a>
         </div>
