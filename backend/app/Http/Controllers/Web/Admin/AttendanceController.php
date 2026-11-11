@@ -16,8 +16,9 @@ class AttendanceController extends Controller
         $month = $request->input('month', Carbon::now()->format('Y-m'));
         [$yr, $mo] = explode('-', $month);
 
-        // Build children query with today's attendance eager-loaded
-        $query = Child::where('status', 'active')
+        // Build children query — only approved-enrollment children
+        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
+        $query = Child::whereIn('id', $approvedIds)
             ->with([
                 'attendances' => fn($q) =>
                     $q->where('attendance_date', $date)
@@ -119,7 +120,7 @@ class AttendanceController extends Controller
     public function markForm(Request $request)
     {
         $date = $request->input('date', Carbon::today()->toDateString());
-        $children = Child::where('status', 'active')
+        $children = Child::whereIn('id', \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id'))
             ->with(['attendances' => fn($q) => $q->where('attendance_date', $date)])
             ->orderBy('last_name')
             ->get();

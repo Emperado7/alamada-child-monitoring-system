@@ -19,7 +19,7 @@
 
 {{-- ── Stat Cards ───────────────────────────────────────────── --}}
 @php
-    $totalActive  = \App\Models\Child::where('status','active')->count();
+    $totalActive  = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $presentCount = $summary['present'];
     $absentCount  = $summary['absent'];
     $todayPct     = $totalActive > 0 ? round($presentCount / $totalActive * 100) : 0;

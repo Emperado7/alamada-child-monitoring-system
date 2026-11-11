@@ -24,10 +24,12 @@
 
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    $totalAll    = \App\Models\Child::where('status','active')->count();
-    $totalMale   = \App\Models\Child::where('status','active')->where('gender','male')->count();
-    $totalFemale = \App\Models\Child::where('status','active')->where('gender','female')->count();
-    $avgAge      = round(\App\Models\Child::where('status','active')->selectRaw(
+    // Only count children with approved enrollment (exclude pending)
+    $approvedIds = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->pluck('child_id');
+    $totalAll    = \App\Models\Child::whereIn('id', $approvedIds)->count();
+    $totalMale   = \App\Models\Child::whereIn('id', $approvedIds)->where('gender','male')->count();
+    $totalFemale = \App\Models\Child::whereIn('id', $approvedIds)->where('gender','female')->count();
+    $avgAge      = round(\App\Models\Child::whereIn('id', $approvedIds)->selectRaw(
         "AVG(DATE_PART('year', AGE(date_of_birth))) as a"
     )->value('a'), 1);
 @endphp
