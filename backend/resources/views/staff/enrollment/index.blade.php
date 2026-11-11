@@ -21,10 +21,8 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Card 1: Total enrolled (approved only, exclude pending)
-    $totalEnrolled = \App\Models\Child::where('status','active')
-                        ->whereHas('currentEnrollment', fn($q) => $q->where('status','approved'))
-                        ->count();
+    // Card 1: Total children in system (all 14)
+    $totalEnrolled = \App\Models\Child::count();
     // Card 2: Pending enrollments
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
 @endphp
@@ -57,7 +55,7 @@
                         {{ $totalEnrolled }}
                     </div>
                     <div class="text-muted small mt-1">
-                        All approved enrolled children.
+                        All enrolled children in the system.
                     </div>
                 </div>
             </div>
