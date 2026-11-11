@@ -11,13 +11,8 @@ class ChildController extends Controller
     public function index(Request $request)
     {
         $query = Child::with(['currentEnrollment']);
-        // Show ALL children — not just those assigned to this staff member
-        // Exclude children whose only/latest enrollment is still pending
-        $query->where(function($q) {
-            $q->whereHas('currentEnrollment', function($eq) {
-                $eq->where('status', '!=', 'pending');
-            })->orWhereDoesntHave('enrollments');
-        });
+        // Only show children with approved enrollment (not pending)
+        $query->whereHas('enrollments', fn($q) => $q->where('status', 'approved'));
 
         if ($request->filled('search')) {
             $s = $request->search;

@@ -21,16 +21,12 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Only count active children (exclude those with pending enrollment)
-    $totalAll    = \App\Models\Child::where('status','active')
-                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
-                    ->count();
-    $totalMale   = \App\Models\Child::where('status','active')->where('gender','male')
-                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
-                    ->count();
-    $totalFemale = \App\Models\Child::where('status','active')->where('gender','female')
-                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
-                    ->count();
+    // Only count children with approved enrollment
+    $approvedChildIds = \App\Models\Enrollment::where('status','approved')
+                            ->distinct('child_id')->pluck('child_id');
+    $totalAll    = \App\Models\Child::whereIn('id', $approvedChildIds)->count();
+    $totalMale   = \App\Models\Child::whereIn('id', $approvedChildIds)->where('gender','male')->count();
+    $totalFemale = \App\Models\Child::whereIn('id', $approvedChildIds)->where('gender','female')->count();
     $malePct     = $totalAll > 0 ? round($totalMale   / $totalAll * 100) : 0;
     $femalePct   = $totalAll > 0 ? round($totalFemale / $totalAll * 100) : 0;
 @endphp

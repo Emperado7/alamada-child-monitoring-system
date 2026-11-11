@@ -25,7 +25,9 @@
 
 {{-- ── 3 Separate Stat Cards ────────────────────────────────── --}}
 @php
-    $totalEnrolled = \App\Models\Child::where('status','active')->count();
+    // Only count children with approved enrollment (not pending)
+    $totalEnrolled = \App\Models\Enrollment::where('status','approved')
+                        ->distinct('child_id')->count('child_id');
     $today         = now()->toDateString();
     $presentToday  = \App\Models\Attendance::where('attendance_date',$today)
                          ->where('status','present')->count();
