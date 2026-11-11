@@ -25,7 +25,7 @@
 {{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
     $currentYear   = now()->year;
-    $totalEnrolled = \App\Models\Child::count(); // Total children in system
+    $pendingTotal  = \App\Models\Enrollment::where('status','pending')->count();
     $approvedCount = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
     $graduated     = \App\Models\Enrollment::where('status','graduated')->count();
@@ -47,10 +47,10 @@
                 </svg>
             </div>
             <div class="stat-body">
-                <div class="stat-label">Total Students</div>
-                <div class="stat-value" style="color:#2e7d32">{{ $totalEnrolled }}</div>
-                <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
-                    View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                <div class="stat-label">Pending Enrollments</div>
+                <div class="stat-value" style="color:#2e7d32">{{ $pendingTotal }}</div>
+                <a href="?status=pending" class="stat-link">
+                    View Pending <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>
         </div>
@@ -69,10 +69,10 @@
                 </svg>
             </div>
             <div class="stat-body">
-                <div class="stat-label">Approved</div>
-                <div class="stat-value" style="color:#1565c0">{{ $approvedCount }}</div>
-                <a href="?status=approved" class="stat-link">
-                    View Approved <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value" style="color:#1565c0">{{ \App\Models\Child::count() }}</div>
+                <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
+                    View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>
         </div>

@@ -12,6 +12,12 @@ class ChildController extends Controller
     {
         $query = Child::with(['currentEnrollment']);
         // Show ALL children — not just those assigned to this staff member
+        // Exclude children whose only/latest enrollment is still pending
+        $query->where(function($q) {
+            $q->whereHas('currentEnrollment', function($eq) {
+                $eq->where('status', '!=', 'pending');
+            })->orWhereDoesntHave('enrollments');
+        });
 
         if ($request->filled('search')) {
             $s = $request->search;

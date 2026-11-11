@@ -21,9 +21,16 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    $totalAll    = \App\Models\Child::where('status','active')->count();
-    $totalMale   = \App\Models\Child::where('status','active')->where('gender','male')->count();
-    $totalFemale = \App\Models\Child::where('status','active')->where('gender','female')->count();
+    // Only count active children (exclude those with pending enrollment)
+    $totalAll    = \App\Models\Child::where('status','active')
+                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
+                    ->count();
+    $totalMale   = \App\Models\Child::where('status','active')->where('gender','male')
+                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
+                    ->count();
+    $totalFemale = \App\Models\Child::where('status','active')->where('gender','female')
+                    ->whereHas('currentEnrollment', fn($q) => $q->where('status','!=','pending'))
+                    ->count();
     $malePct     = $totalAll > 0 ? round($totalMale   / $totalAll * 100) : 0;
     $femalePct   = $totalAll > 0 ? round($totalFemale / $totalAll * 100) : 0;
 @endphp
@@ -217,12 +224,17 @@
                     {{-- Status badge --}}
                     <td>
                         @php
-                            $sc = match(strtolower($child->status ?? 'active')) {
-                                'active'    => ['bg'=>'#e8f5e9','c'=>'#2e7d32','l'=>'Active'],
-                                'inactive'  => ['bg'=>'#f5f5f5','c'=>'#616161','l'=>'Inactive'],
-                                'graduated' => ['bg'=>'#f3e5f5','c'=>'#6a1b9a','l'=>'Graduated'],
-                                default     => ['bg'=>'#f5f5f5','c'=>'#9e9e9e','l'=>ucfirst($child->status ?? '')],
-                            };
+                            $enrollStatus = $child->currentEnrollment?->status ?? 'approved';
+                            if ($enrollStatus === 'pending') {
+                                $sc = ['bg'=>'#fff3e0','c'=>'#e65100','l'=>'Pending'];
+                            } else {
+                                $sc = match(strtolower($child->status ?? 'active')) {
+                                    'active'    => ['bg'=>'#e8f5e9','c'=>'#2e7d32','l'=>'Active'],
+                                    'inactive'  => ['bg'=>'#f5f5f5','c'=>'#616161','l'=>'Inactive'],
+                                    'graduated' => ['bg'=>'#f3e5f5','c'=>'#6a1b9a','l'=>'Graduated'],
+                                    default     => ['bg'=>'#f5f5f5','c'=>'#9e9e9e','l'=>ucfirst($child->status ?? '')],
+                                };
+                            }
                         @endphp
                         <span class="badge rounded-2 px-3 py-2 fw-semibold"
                               style="background:{{ $sc['bg'] }};color:{{ $sc['c'] }};font-size:.78rem">
