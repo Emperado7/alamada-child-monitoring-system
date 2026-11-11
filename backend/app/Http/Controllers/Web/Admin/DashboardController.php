@@ -21,9 +21,8 @@ class DashboardController extends Controller
     private function loadDashboard(): \Illuminate\View\View
     {
         // ── Stat cards ────────────────────────────────────────────────
-        // Only count children with approved enrollment (exclude pending)
-        $approvedChildIds = Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
-        $totalChildren = Child::whereIn('id', $approvedChildIds)->count();
+        // Total = ALL children in system (14), not just approved
+        $totalChildren = Child::count();
         $activeEnrollments = Enrollment::where('status', 'approved')->count();
         $totalReports = Report::count();
 

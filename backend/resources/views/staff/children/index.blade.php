@@ -21,12 +21,10 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Only count children with approved enrollment
-    $approvedChildIds = \App\Models\Enrollment::where('status','approved')
-                            ->distinct('child_id')->pluck('child_id');
-    $totalAll    = \App\Models\Child::whereIn('id', $approvedChildIds)->count();
-    $totalMale   = \App\Models\Child::whereIn('id', $approvedChildIds)->where('gender','male')->count();
-    $totalFemale = \App\Models\Child::whereIn('id', $approvedChildIds)->where('gender','female')->count();
+    // Stat cards show ALL 14 children; list is filtered to approved-only
+    $totalAll    = \App\Models\Child::count();
+    $totalMale   = \App\Models\Child::where('gender','male')->count();
+    $totalFemale = \App\Models\Child::where('gender','female')->count();
     $malePct     = $totalAll > 0 ? round($totalMale   / $totalAll * 100) : 0;
     $femalePct   = $totalAll > 0 ? round($totalFemale / $totalAll * 100) : 0;
 @endphp
