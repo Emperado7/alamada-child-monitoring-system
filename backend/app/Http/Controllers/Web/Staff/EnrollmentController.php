@@ -16,8 +16,9 @@ class EnrollmentController extends Controller
     public function index(Request $request)
     {
         // Join children upfront for alphabetical sort + filter by child name
-        $query = Enrollment::with(['child', 'approver:id,name'])
-            ->join('children', 'enrollments.child_id', '=', 'children.id')
+        // Use LEFT JOIN so enrollments with soft-deleted children still appear
+        $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
+            ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
             ->select('enrollments.*');
 
         // Filters — use fully-qualified column names after join

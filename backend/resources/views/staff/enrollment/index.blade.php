@@ -387,7 +387,7 @@
     </div>
     @else
     <div class="px-3 py-3 border-top small text-muted">
-        Showing {{ $enrollments->count() }} entries
+        Showing {{ $enrollments->count() }} of {{ $enrollments->total() }} entries
     </div>
     @endif
 </div>
