@@ -19,7 +19,8 @@ class EnrollmentController extends Controller
         // Use LEFT JOIN so enrollments with soft-deleted children still appear
         $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
             ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('enrollments.*');
+            ->select('enrollments.*')
+            ->where('enrollments.status', '!=', 'pending'); // hide pending from list by default
 
         // Filters — use fully-qualified column names after join
         if ($request->filled('status'))

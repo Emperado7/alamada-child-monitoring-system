@@ -21,8 +21,9 @@
 
 {{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Card 1: Total children in system (all 14)
-    $totalEnrolled = \App\Models\Child::count();
+    // Card 1: Approved/active enrolled children only (not pending)
+    $totalEnrolled = \App\Models\Enrollment::where('status','approved')
+                        ->distinct('child_id')->count('child_id');
     // Card 2: Pending enrollments
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
 @endphp
