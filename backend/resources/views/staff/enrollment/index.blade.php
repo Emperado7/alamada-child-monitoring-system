@@ -4,13 +4,16 @@
 
 @section('content')
 
-{{-- ── Page Title + Button ──────────────────────────────────── --}}
-<div class="d-flex justify-content-between align-items-start mb-4">
+{{-- ── Breadcrumb + Title ───────────────────────────────────── --}}
+<div class="d-flex justify-content-between align-items-start mb-3">
     <div>
-        <h4 class="fw-bold mb-1">Enrollment</h4>
-        <div class="text-muted small">
-            Manage and monitor child enrollments in the system.
-        </div>
+        <h4 class="fw-bold mb-1">Enrollment Dashboard</h4>
+        <nav style="font-size:.83rem">
+            <a href="{{ route('staff.dashboard') }}"
+               style="color:#2e7d32;text-decoration:none">Dashboard</a>
+            <span class="text-muted mx-1">›</span>
+            <span class="text-muted">Enrollment</span>
+        </nav>
     </div>
     <a href="{{ route('staff.enrollment.create') }}"
        class="btn btn-success rounded-3 px-3 py-2 fw-semibold"
@@ -19,285 +22,325 @@
     </a>
 </div>
 
-{{-- ── 3 Stat Cards ─────────────────────────────────────────── --}}
+{{-- ── 4 Stat Cards ─────────────────────────────────────────── --}}
 @php
-    // Card 1: ALL children in system (14)
-    $totalEnrolled = \App\Models\Child::count();
-    // Card 2: Pending enrollments
+    $approvedCount = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $pendingCount  = \App\Models\Enrollment::where('status','pending')->count();
+    $graduated     = \App\Models\Enrollment::where('status','graduated')->count();
 @endphp
 
 <div class="row g-3 mb-4">
 
-    {{-- Total Enrolled Children --}}
-    <div class="col-md-4">
-        <div class="dash-card p-4 h-100">
-            <div class="d-flex align-items-start gap-3 mb-3">
-                <div style="width:56px;height:56px;border-radius:14px;
-                            background:#e8f5e9;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
-                        <circle cx="9"  cy="7"  r="3.5" fill="#2e7d32"/>
-                        <circle cx="15" cy="7"  r="3.5" fill="#66bb6a"/>
-                        <path d="M2 19c0-3.31 3.13-6 7-6s7 2.69 7 6"
-                              stroke="#2e7d32" stroke-width="1.5" fill="none"/>
-                        <path d="M15 13c2.5.6 4 2.3 4 5"
-                              stroke="#66bb6a" stroke-width="1.5" fill="none"
-                              stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="text-muted small fw-semibold"
-                         style="text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">
-                        Total Enrolled Children
-                    </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#212121;line-height:1.1">
-                        {{ $totalEnrolled }}
-                    </div>
-                    <div class="text-muted small mt-1">
-                        All enrolled children in the system.
-                    </div>
-                </div>
+    {{-- Approved Enrollments --}}
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <circle cx="9"  cy="7"  r="3.5" fill="#2e7d32"/>
+                    <circle cx="15" cy="7"  r="3.5" fill="#66bb6a"/>
+                    <path d="M2 19c0-3.31 3.13-6 7-6s7 2.69 7 6"
+                          stroke="#2e7d32" stroke-width="1.5" fill="none"/>
+                    <path d="M15 13c2.5.6 4 2.3 4 5"
+                          stroke="#66bb6a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                </svg>
             </div>
-            <a href="?status=approved"
-               class="d-flex align-items-center gap-1"
-               style="color:#2e7d32;font-size:.83rem;font-weight:600;text-decoration:none">
-                View all enrolled children
-                <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
-            </a>
+            <div class="stat-body">
+                <div class="stat-label">Approved Enrollments</div>
+                <div class="stat-value" style="color:#2e7d32">{{ $approvedCount }}</div>
+                <a href="?status=approved" class="stat-link">
+                    View Approved <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Total Students --}}
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <circle cx="10" cy="8" r="4" fill="#1565c0"/>
+                    <path d="M3 20c0-3.31 3.13-6 7-6"
+                          stroke="#1565c0" stroke-width="1.6" fill="none"/>
+                    <line x1="18" y1="14" x2="18" y2="20" stroke="#1565c0" stroke-width="1.8" stroke-linecap="round"/>
+                    <line x1="15" y1="17" x2="21" y2="17" stroke="#1565c0" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="stat-body">
+                <div class="stat-label">Total Students</div>
+                <div class="stat-value" style="color:#1565c0">{{ \App\Models\Child::count() }}</div>
+                <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
+                    View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                </a>
+            </div>
         </div>
     </div>
 
     {{-- Pending Enrollments --}}
-    <div class="col-md-4">
-        <div class="dash-card p-4 h-100">
-            <div class="d-flex align-items-start gap-3 mb-3">
-                <div style="width:56px;height:56px;border-radius:14px;
-                            background:#fff3e0;display:flex;align-items:center;
-                            justify-content:center;flex-shrink:0">
-                    <div style="width:36px;height:36px;border-radius:8px;
-                                border:2.5px solid #e65100;background:#fff;
-                                display:flex;align-items:center;justify-content:center">
-                        <i class="fas fa-user-clock"
-                           style="color:#e65100;font-size:.9rem"></i>
-                    </div>
-                </div>
-                <div>
-                    <div class="text-muted small fw-semibold"
-                         style="text-transform:uppercase;letter-spacing:.06em;font-size:.72rem">
-                        Pending Enrollments
-                    </div>
-                    <div style="font-size:2.8rem;font-weight:800;color:#e65100;line-height:1.1">
-                        {{ $pendingCount }}
-                    </div>
-                    <div class="text-muted small mt-1">
-                        Awaiting admin approval.
-                    </div>
-                </div>
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="4" width="16" height="16" rx="3" fill="#e65100" opacity=".15"/>
+                    <rect x="4" y="4" width="16" height="16" rx="3" stroke="#e65100" stroke-width="1.5"/>
+                    <line x1="8"  y1="9"  x2="16" y2="9"  stroke="#e65100" stroke-width="1.4" stroke-linecap="round"/>
+                    <line x1="8"  y1="12" x2="16" y2="12" stroke="#e65100" stroke-width="1.4" stroke-linecap="round"/>
+                    <line x1="8"  y1="15" x2="12" y2="15" stroke="#e65100" stroke-width="1.4" stroke-linecap="round"/>
+                    <circle cx="17" cy="15" r="3.5" fill="#e65100"/>
+                    <line x1="17" y1="13.5" x2="17" y2="15" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/>
+                    <circle cx="17" cy="16.2" r=".5" fill="#fff"/>
+                </svg>
             </div>
-            <a href="?status=pending"
-               class="d-flex align-items-center gap-1"
-               style="color:#e65100;font-size:.83rem;font-weight:600;text-decoration:none">
-                View pending enrollments
-                <i class="fas fa-arrow-right" style="font-size:.7rem"></i>
-            </a>
+            <div class="stat-body">
+                <div class="stat-label">Pending Enrollments</div>
+                <div class="stat-value" style="color:#e65100">{{ $pendingCount }}</div>
+                <a href="?status=pending" class="stat-link">
+                    View Details <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- Total Graduated --}}
+    <div class="col-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3L2 8l10 5 10-5-10-5z" fill="#6a1b9a" opacity=".2"/>
+                    <path d="M12 3L2 8l10 5 10-5-10-5z" stroke="#6a1b9a" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M6 10.5v4c0 2 2.7 3.5 6 3.5s6-1.5 6-3.5v-4"
+                          stroke="#6a1b9a" stroke-width="1.4" stroke-linecap="round"/>
+                    <line x1="20" y1="8" x2="20" y2="14" stroke="#6a1b9a" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="stat-body">
+                <div class="stat-label">Total Graduated</div>
+                <div class="stat-value" style="color:#6a1b9a">{{ $graduated }}</div>
+                <a href="?status=graduated" class="stat-link">
+                    View Details <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-{{-- ── Enrolled Children Table ──────────────────────────────── --}}
-<div class="dash-card" id="enrollTable">
-    <div class="dash-card-header">
-        <span class="dash-card-title">Enrolled Children</span>
-    </div>
+{{-- ── Table Card ───────────────────────────────────────────── --}}
+<div class="dash-card">
 
-    {{-- Search + Status filter --}}
-    <div class="px-3 py-3 border-bottom d-flex justify-content-between align-items-center gap-3 flex-wrap">
-        <form method="GET" class="d-flex align-items-center gap-2 flex-grow-1 flex-wrap">
-            {{-- Search --}}
-            <div class="input-group" style="max-width:280px">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="fas fa-search text-muted small"></i>
-                </span>
-                <input type="text" name="search"
-                       value="{{ request('search') }}"
-                       class="form-control form-control-sm border-start-0 ps-0"
-                       placeholder="Search by child name or ID...">
-            </div>
+    {{-- Toolbar --}}
+    <div class="dash-card-header flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label class="small text-muted mb-0 fw-semibold">School Year</label>
+            <form method="GET" id="yearForm" class="d-flex gap-2 align-items-center">
+                <input type="hidden" name="per_page"     value="{{ request('per_page',10) }}">
+                <input type="hidden" name="search"       value="{{ request('search') }}">
+                <input type="hidden" name="status"       value="{{ request('status') }}">
+                <input type="hidden" name="child_status" value="{{ request('child_status') }}">
+                <select name="school_year"
+                        class="form-select form-select-sm rounded-2"
+                        style="width:140px"
+                        onchange="document.getElementById('yearForm').submit()">
+                    <option value="">All Years</option>
+                    @foreach($years as $y)
+                        <option value="{{ $y }}" {{ request('school_year')==$y?'selected':'' }}>
+                            {{ $y }} - {{ $y+1 }}
+                        </option>
+                    @endforeach
+                </select>
 
-            {{-- Child Status filter --}}
-            <select name="child_status"
-                    class="form-select form-select-sm rounded-3"
-                    style="width:150px"
-                    onchange="this.form.submit()">
-                <option value="">All Students</option>
-                <option value="active"    {{ request('child_status')=='active'    ?'selected':'' }}>Active</option>
-                <option value="inactive"  {{ request('child_status')=='inactive'  ?'selected':'' }}>Inactive</option>
-                <option value="graduated" {{ request('child_status')=='graduated' ?'selected':'' }}>Graduated</option>
-            </select>
+                <select name="child_status"
+                        class="form-select form-select-sm rounded-2"
+                        style="width:140px"
+                        onchange="document.getElementById('yearForm').submit()">
+                    <option value="">All Students</option>
+                    <option value="active"    {{ request('child_status')=='active'    ?'selected':'' }}>Active</option>
+                    <option value="inactive"  {{ request('child_status')=='inactive'  ?'selected':'' }}>Inactive</option>
+                    <option value="graduated" {{ request('child_status')=='graduated' ?'selected':'' }}>Graduated</option>
+                </select>
+            </form>
 
-            {{-- Enrollment Status filter --}}
-            <select name="status"
-                    class="form-select form-select-sm rounded-3 ms-auto"
-                    style="width:150px"
-                    onchange="this.form.submit()">
-                <option value="">All Status</option>
-                @foreach(['pending','approved','rejected','graduated'] as $s)
-                    <option value="{{ $s }}"
-                        {{ request('status')==$s?'selected':'' }}>
-                        {{ ucfirst($s) }}
-                    </option>
+            <span class="text-muted small">Show</span>
+            <select class="form-select form-select-sm rounded-2"
+                    style="width:70px"
+                    onchange="changePageSize(this.value)">
+                @foreach([10,25,50] as $ps)
+                    <option value="{{ $ps }}" {{ request('per_page',10)==$ps?'selected':'' }}>{{ $ps }}</option>
                 @endforeach
             </select>
+            <span class="text-muted small">entries</span>
+        </div>
 
-            <button type="submit"
-                    class="btn btn-success btn-sm rounded-3"
-                    style="background:#2e7d32;border:none;display:none">
-                Search
-            </button>
-        </form>
+        <div class="d-flex align-items-center gap-2 ms-auto flex-wrap">
+            <form method="GET" class="d-flex gap-2">
+                <input type="hidden" name="per_page"     value="{{ request('per_page',10) }}">
+                <input type="hidden" name="school_year"  value="{{ request('school_year') }}">
+                <input type="hidden" name="child_status" value="{{ request('child_status') }}">
+                <input type="hidden" name="status"       value="{{ request('status') }}">
+                <div class="input-group" style="max-width:260px">
+                    <input type="text" name="search"
+                           value="{{ request('search') }}"
+                           class="form-control form-control-sm"
+                           placeholder="Search child or guardian...">
+                    <button class="btn btn-success btn-sm"
+                            style="background:#2e7d32;border-color:#2e7d32">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary rounded-2 dropdown-toggle"
+                        data-bs-toggle="dropdown">
+                    <i class="fas fa-filter me-1"></i>Filters
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-2"
+                    style="min-width:160px">
+                    @foreach([''=>'All Status','approved'=>'Enrolled','pending'=>'Pending','rejected'=>'Rejected','graduated'=>'Graduated'] as $val=>$label)
+                    <li>
+                        <a class="dropdown-item rounded-2 small py-2 {{ request('status')==$val?'fw-bold':'' }}"
+                           href="{{ request()->fullUrlWithQuery(['status'=>$val,'page'=>1]) }}">
+                            @php
+                                $dotColor = match($val) {
+                                    'approved'  => '#2e7d32',
+                                    'pending'   => '#e65100',
+                                    'rejected'  => '#c62828',
+                                    'graduated' => '#6a1b9a',
+                                    default     => '#9e9e9e',
+                                };
+                            @endphp
+                            <span class="me-2" style="color:{{ $dotColor }}">●</span>
+                            {{ $label }}
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
     </div>
 
     {{-- ── Table ──────────────────────────────────────────────── --}}
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="table table-hover align-middle mb-0" style="min-width:900px">
             <thead>
                 <tr style="background:#f8f9fa">
-                    <th class="px-3 py-2 small fw-bold" style="color:#2e7d32;width:40px">#</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Child ID</th>
+                    <th class="px-3 py-2 small fw-bold" style="color:#2e7d32">ID</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">Photo</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Child Name</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Date of Birth</th>
-                    <th class="py-2 small fw-bold" style="color:#2e7d32">Date Enrolled</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Age</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">Gender</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">Guardian</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">Date Enrolled</th>
+                    <th class="py-2 small fw-bold" style="color:#2e7d32">School Year</th>
                     <th class="py-2 small fw-bold" style="color:#2e7d32">Status</th>
                     <th class="py-2 small fw-bold text-end pe-3" style="color:#2e7d32">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($enrollments as $i => $e)
+                @forelse($enrollments as $e)
                 @php $child = $e->child; @endphp
                 <tr>
-                    {{-- Row number --}}
-                    <td class="px-3 text-muted small">
-                        {{ $enrollments->firstItem() + $i }}
+                    <td class="px-3 fw-semibold small" style="color:#2e7d32">
+                        ENR-{{ str_pad($e->id, 3, '0', STR_PAD_LEFT) }}
                     </td>
 
-                    {{-- Child ID --}}
-                    <td class="fw-semibold small" style="color:#2e7d32">
-                        CHD-{{ str_pad($child->id ?? 0, 3, '0', STR_PAD_LEFT) }}
-                    </td>
-
-                    {{-- Child Name + Photo --}}
                     <td>
-                        <div class="d-flex align-items-center gap-2">
-                            @if($child && $child->photo)
-                                <img src="{{ asset('storage/'.$child->photo) }}"
-                                     class="rounded-circle object-fit-cover"
-                                     width="36" height="36"
-                                     style="border:2px solid #e8f5e9">
-                            @else
-                                <div style="width:36px;height:36px;border-radius:50%;
-                                            background:linear-gradient(135deg,#2e7d32,#66bb6a);
-                                            color:#fff;display:flex;align-items:center;
-                                            justify-content:center;font-weight:700;
-                                            font-size:.8rem;flex-shrink:0">
-                                    {{ strtoupper(substr($child->first_name ?? 'U', 0, 1)) }}
-                                </div>
-                            @endif
-                            <div>
-                                <div class="fw-semibold small">
-                                    {{ $child ? $child->last_name.', '.$child->first_name.' '.($child->middle_name ? substr($child->middle_name,0,1).'.' : '') : '—' }}
-                                </div>
-                                @if($child)
-                                <div class="text-muted" style="font-size:.72rem">
-                                    {{ $child->diagnosis }}
-                                </div>
-                                @endif
+                        @if($child && $child->photo)
+                            <img src="{{ asset('storage/'.$child->photo) }}"
+                                 class="rounded-circle object-fit-cover"
+                                 width="40" height="40"
+                                 style="border:2px solid #e8f5e9">
+                        @else
+                            <div style="width:40px;height:40px;border-radius:50%;
+                                        background:linear-gradient(135deg,#2e7d32,#66bb6a);
+                                        color:#fff;display:flex;align-items:center;
+                                        justify-content:center;font-weight:700;font-size:.88rem">
+                                {{ strtoupper(substr($child->first_name ?? 'U', 0, 1)) }}
                             </div>
+                        @endif
+                    </td>
+
+                    <td>
+                        <div class="fw-semibold small">
+                            {{ $child->first_name ?? '—' }} {{ $child->last_name ?? '' }}
+                        </div>
+                        <div class="text-muted" style="font-size:.72rem">
+                            {{ $child->diagnosis ?? '' }}
                         </div>
                     </td>
 
-                    {{-- Date of Birth --}}
                     <td class="small text-muted">
-                        {{ $child && $child->date_of_birth ? $child->date_of_birth->format('M d, Y') : '—' }}
+                        {{ $child && $child->date_of_birth ? $child->date_of_birth->format('F d, Y') : '—' }}
                     </td>
 
-                    {{-- Date Enrolled --}}
+                    <td class="small fw-semibold">{{ $child ? $child->age : '—' }}</td>
+
+                    <td>
+                        @if($child && $child->gender === 'male')
+                        <span class="badge rounded-pill px-3 py-1 fw-semibold"
+                              style="background:#e3f2fd;color:#1565c0;font-size:.78rem">Male</span>
+                        @elseif($child)
+                        <span class="badge rounded-pill px-3 py-1 fw-semibold"
+                              style="background:#fce4ec;color:#c2185b;font-size:.78rem">Female</span>
+                        @else
+                        <span class="text-muted small">—</span>
+                        @endif
+                    </td>
+
+                    <td>
+                        @if($child)
+                        <div class="small fw-semibold">{{ $child->guardian_name }}</div>
+                        <div class="text-muted" style="font-size:.72rem">
+                            ({{ $child->guardian_relationship ?? ($child->gender === 'female' ? 'Mother' : 'Father') }})
+                        </div>
+                        @else
+                        <span class="text-muted small">—</span>
+                        @endif
+                    </td>
+
                     <td class="small text-muted">
-                        {{ $e->enrollment_date ? $e->enrollment_date->format('M d, Y') : '—' }}
+                        {{ $e->enrollment_date ? $e->enrollment_date->format('F d, Y') : '—' }}
                     </td>
 
-                    {{-- Age --}}
-                    <td class="small fw-semibold">
-                        {{ $child ? $child->age : '—' }}
-                    </td>
+                    <td class="small">{{ $e->school_year }} - {{ $e->school_year + 1 }}</td>
 
-                    {{-- Status --}}
                     <td>
                         @php
-                            $sm = match($e->status) {
-                                'approved'  => ['bg'=>'#e8f5e9','color'=>'#2e7d32','label'=>'Active'],
+                            $statusMap = [
+                                'approved'  => ['bg'=>'#e8f5e9','color'=>'#2e7d32','label'=>'Enrolled'],
                                 'pending'   => ['bg'=>'#fff3e0','color'=>'#e65100','label'=>'Pending'],
                                 'rejected'  => ['bg'=>'#ffebee','color'=>'#c62828','label'=>'Rejected'],
                                 'graduated' => ['bg'=>'#f3e5f5','color'=>'#6a1b9a','label'=>'Graduated'],
-                                default     => ['bg'=>'#f5f5f5','color'=>'#9e9e9e','label'=>ucfirst($e->status)],
-                            };
+                            ];
+                            $sm = $statusMap[$e->status] ?? ['bg'=>'#f5f5f5','color'=>'#9e9e9e','label'=>ucfirst($e->status)];
                         @endphp
-                        <span class="badge rounded-2 px-3 py-2 fw-semibold"
+                        <span class="badge rounded-pill px-3 py-2 fw-semibold"
                               style="background:{{ $sm['bg'] }};color:{{ $sm['color'] }};font-size:.78rem">
                             {{ $sm['label'] }}
                         </span>
                     </td>
 
-                    {{-- Actions --}}
+                    {{-- Actions: View only for staff --}}
                     <td class="text-end pe-3">
                         <div class="d-flex justify-content-end gap-1">
-                            {{-- View button --}}
-                            <a href="{{ route('staff.enrollment.show', $e) }}"
-                               class="btn btn-sm rounded-3 px-3"
-                               style="background:#e8f5e9;color:#2e7d32;border:none;
-                                      font-size:.8rem;font-weight:600">
-                                <i class="fas fa-eye me-1"></i>View
+                            <a href="{{ route('staff.enrollment.show',$e) }}"
+                               class="btn btn-sm rounded-2 p-1 px-2"
+                               style="background:#e3f2fd;color:#1565c0;border:none"
+                               title="View">
+                                <i class="fas fa-eye" style="font-size:.8rem"></i>
                             </a>
-                            {{-- More options --}}
-                            <div class="dropdown">
-                                <button class="btn btn-sm rounded-2 p-1 px-2 dropdown-toggle"
-                                        style="background:#f5f5f5;color:#757575;border:none"
-                                        data-bs-toggle="dropdown">
-                                    <i class="fas fa-ellipsis-v" style="font-size:.8rem"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 p-1"
-                                    style="min-width:160px">
-                                    <li>
-                                        <a class="dropdown-item rounded-2 small"
-                                           href="{{ route('staff.children.show', $e->child_id) }}">
-                                            <i class="fas fa-child me-2 text-muted"></i>
-                                            View Child Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item rounded-2 small"
-                                           href="{{ route('staff.attendance.mark') }}?child_id={{ $e->child_id }}">
-                                            <i class="fas fa-calendar-check me-2 text-muted"></i>
-                                            Mark Attendance
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center py-5">
+                    <td colspan="11" class="text-center py-5">
                         <div style="color:#bdbdbd">
                             <i class="fas fa-clipboard-list fa-3x mb-3 d-block"></i>
                             <div class="fw-semibold">No enrollment records found.</div>
-                            <div class="small text-muted mt-2">
+                            <div class="small text-muted mt-1">
                                 <a href="{{ route('staff.enrollment.create') }}"
-                                   style="color:#2e7d32">
-                                    Submit a new enrollment
-                                </a>
+                                   style="color:#2e7d32">Enroll a child now</a>
                             </div>
                         </div>
                     </td>
@@ -316,72 +359,40 @@
         </div>
         <nav>
             <ul class="pagination pagination-sm mb-0 gap-1">
-
-                {{-- Prev --}}
-                <li class="page-item {{ $enrollments->onFirstPage() ? 'disabled':'' }}">
-                    <a class="page-link rounded-2 border-0"
-                       href="{{ $enrollments->previousPageUrl() ?? '#' }}"
-                       style="background:#f5f5f5;color:{{ $enrollments->onFirstPage() ? '#bdbdbd':'#2e7d32' }}">
-                        ‹
-                    </a>
-                </li>
-
-                {{-- Pages with smart window --}}
-                @php
-                    $cur   = $enrollments->currentPage();
-                    $last  = $enrollments->lastPage();
-                    $start = max(1, $cur - 2);
-                    $end   = min($last, $cur + 2);
-                @endphp
-
-                @if($start > 1)
-                <li class="page-item">
-                    <a class="page-link rounded-2 border-0"
-                       href="{{ $enrollments->url(1) }}"
-                       style="background:#f5f5f5;color:#212121">1</a>
-                </li>
-                @if($start > 2)
+                @if($enrollments->onFirstPage())
                 <li class="page-item disabled">
-                    <span class="page-link rounded-2 border-0"
-                          style="background:#f5f5f5;color:#9e9e9e">…</span>
+                    <span class="page-link rounded-2 border-0" style="background:#f5f5f5;color:#bdbdbd">«</span>
                 </li>
-                @endif
-                @endif
-
-                @for($p = $start; $p <= $end; $p++)
+                @else
                 <li class="page-item">
                     <a class="page-link rounded-2 border-0"
-                       href="{{ $enrollments->url($p) }}"
-                       style="{{ $p==$cur
+                       href="{{ $enrollments->previousPageUrl() }}"
+                       style="background:#f5f5f5;color:#2e7d32">«</a>
+                </li>
+                @endif
+
+                @foreach($enrollments->getUrlRange(1, $enrollments->lastPage()) as $page => $url)
+                <li class="page-item">
+                    <a class="page-link rounded-2 border-0" href="{{ $url }}"
+                       style="{{ $page == $enrollments->currentPage()
                            ? 'background:#2e7d32;color:#fff'
                            : 'background:#f5f5f5;color:#212121' }}">
-                        {{ $p }}
+                        {{ $page }}
                     </a>
                 </li>
-                @endfor
+                @endforeach
 
-                @if($end < $last)
-                @if($end < $last - 1)
-                <li class="page-item disabled">
-                    <span class="page-link rounded-2 border-0"
-                          style="background:#f5f5f5;color:#9e9e9e">…</span>
-                </li>
-                @endif
+                @if($enrollments->hasMorePages())
                 <li class="page-item">
                     <a class="page-link rounded-2 border-0"
-                       href="{{ $enrollments->url($last) }}"
-                       style="background:#f5f5f5;color:#212121">{{ $last }}</a>
+                       href="{{ $enrollments->nextPageUrl() }}"
+                       style="background:#f5f5f5;color:#2e7d32">»</a>
+                </li>
+                @else
+                <li class="page-item disabled">
+                    <span class="page-link rounded-2 border-0" style="background:#f5f5f5;color:#bdbdbd">»</span>
                 </li>
                 @endif
-
-                {{-- Next --}}
-                <li class="page-item {{ !$enrollments->hasMorePages() ? 'disabled':'' }}">
-                    <a class="page-link rounded-2 border-0"
-                       href="{{ $enrollments->nextPageUrl() ?? '#' }}"
-                       style="background:#f5f5f5;color:{{ !$enrollments->hasMorePages() ? '#bdbdbd':'#2e7d32' }}">
-                        ›
-                    </a>
-                </li>
             </ul>
         </nav>
     </div>
@@ -393,3 +404,14 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function changePageSize(size) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', size);
+    url.searchParams.set('page', 1);
+    window.location.href = url.toString();
+}
+</script>
+@endpush

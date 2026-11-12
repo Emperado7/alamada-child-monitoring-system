@@ -15,18 +15,21 @@ class EnrollmentController extends Controller
 {
     public function index(Request $request)
     {
-        // Join children upfront for alphabetical sort + filter by child name
-        // Use LEFT JOIN so enrollments with soft-deleted children still appear
+        $perPage = (int) $request->input('per_page', 10);
+        $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
+
+        // Same as admin — show all enrollments, use filters to narrow
         $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
             ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('enrollments.*')
-            ->where('enrollments.status', '!=', 'pending'); // hide pending from list by default
+            ->select('enrollments.*');
 
-        // Filters — use fully-qualified column names after join
+        // Filters
         if ($request->filled('status'))
             $query->where('enrollments.status', $request->status);
 
-        // Child status filter (Active / Inactive / Graduated)
+        if ($request->filled('school_year'))
+            $query->where('enrollments.school_year', $request->school_year);
+
         if ($request->filled('child_status'))
             $query->where('children.status', $request->child_status);
 
@@ -41,11 +44,13 @@ class EnrollmentController extends Controller
             );
         }
 
-        $enrollments = $query->orderBy('children.last_name')
-            ->orderBy('children.first_name')
-            ->paginate(10)->withQueryString();
+        $enrollments = $query->orderBy('enrollments.created_at', 'desc')
+            ->paginate($perPage)->withQueryString();
 
-        return view('staff.enrollment.index', compact('enrollments'));
+        $years = Enrollment::selectRaw('DISTINCT school_year')
+            ->orderBy('school_year', 'desc')->pluck('school_year');
+
+        return view('staff.enrollment.index', compact('enrollments', 'years'));
     }
 
     public function create()
