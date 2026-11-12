@@ -18,20 +18,26 @@ class EnrollmentController extends Controller
         $perPage = (int) $request->input('per_page', 10);
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        // Join children upfront so we can filter AND sort by child name
-        // Use LEFT JOIN so enrollments with soft-deleted children still appear
+        // Show only the latest enrollment per child — approved by default
         $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
             ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('enrollments.*');
+            ->select('enrollments.*')
+            // Only the latest enrollment per child (no duplicates)
+            ->whereIn('enrollments.id', function ($sub) {
+                $sub->selectRaw('MAX(id)')
+                    ->from('enrollments')
+                    ->groupBy('child_id');
+            });
 
-        // Filters — use fully-qualified column names after join
-        if ($request->filled('status'))
-            $query->where('enrollments.status', $request->status);
+        // Status filter — default to approved if not specified
+        $statusFilter = $request->input('status', 'approved');
+        if ($statusFilter !== '') {
+            $query->where('enrollments.status', $statusFilter);
+        }
 
         if ($request->filled('school_year'))
             $query->where('enrollments.school_year', $request->school_year);
 
-        // Child status filter (Active / Inactive / Graduated)
         if ($request->filled('child_status'))
             $query->where('children.status', $request->child_status);
 
