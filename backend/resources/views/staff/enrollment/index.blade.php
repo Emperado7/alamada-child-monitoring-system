@@ -68,8 +68,8 @@
             </div>
             <div class="stat-body">
                 <div class="stat-label">Total Students</div>
-                <div class="stat-value" style="color:#1565c0">{{ \App\Models\Child::count() }}</div>
-                <a href="{{ request()->fullUrlWithQuery(['status'=>'']) }}" class="stat-link">
+                <div class="stat-value" style="color:#1565c0">{{ \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id') }}</div>
+                <a href="{{ request()->fullUrlWithQuery(['status'=>'approved']) }}" class="stat-link">
                     View All <i class="fas fa-arrow-right" style="font-size:.65rem"></i>
                 </a>
             </div>

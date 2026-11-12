@@ -18,19 +18,12 @@ class EnrollmentController extends Controller
         $perPage = (int) $request->input('per_page', 10);
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        // Show latest enrollment per child — approved by default
+        // Show all approved enrollments — simple filter, no subquery
         $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
             ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('enrollments.*')
-            // Only show approved by default; use ?status= to override
-            ->whereIn('enrollments.id', function ($sub) {
-                // Get the latest enrollment ID per child
-                $sub->selectRaw('MAX(id)')
-                    ->from('enrollments')
-                    ->groupBy('child_id');
-            });
+            ->select('enrollments.*');
 
-        // Status filter — default to approved if not set
+        // Default to approved; use ?status= to show pending/all/etc
         $statusFilter = $request->input('status', 'approved');
         if ($statusFilter !== '') {
             $query->where('enrollments.status', $statusFilter);
