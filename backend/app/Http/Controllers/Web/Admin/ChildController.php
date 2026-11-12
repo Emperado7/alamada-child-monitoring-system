@@ -17,9 +17,6 @@ class ChildController extends Controller
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
         $query = Child::with(['staff:id,name', 'parent:id,name', 'currentEnrollment']);
-        // Only show children with approved enrollment — exclude pending
-        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
-        $query->whereIn('id', $approvedIds);
 
         if ($request->filled('search')) {
             $s = $request->search;

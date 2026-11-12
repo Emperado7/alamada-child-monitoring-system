@@ -11,8 +11,6 @@ class ChildController extends Controller
     public function index(Request $request)
     {
         $query = Child::with(['currentEnrollment']);
-        // Only show children with approved enrollment (not pending)
-        $query->whereHas('enrollments', fn($q) => $q->where('status', 'approved'));
 
         if ($request->filled('search')) {
             $s = $request->search;
