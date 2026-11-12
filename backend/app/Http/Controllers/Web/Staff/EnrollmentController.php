@@ -18,14 +18,23 @@ class EnrollmentController extends Controller
         $perPage = (int) $request->input('per_page', 10);
         $perPage = in_array($perPage, [10, 25, 50]) ? $perPage : 10;
 
-        // Same as admin — show all enrollments, use filters to narrow
+        // Show latest enrollment per child — approved by default
         $query = Enrollment::with(['child' => fn($q) => $q->withTrashed(), 'approver:id,name'])
             ->leftJoin('children', 'enrollments.child_id', '=', 'children.id')
-            ->select('enrollments.*');
+            ->select('enrollments.*')
+            // Only show approved by default; use ?status= to override
+            ->whereIn('enrollments.id', function ($sub) {
+                // Get the latest enrollment ID per child
+                $sub->selectRaw('MAX(id)')
+                    ->from('enrollments')
+                    ->groupBy('child_id');
+            });
 
-        // Filters
-        if ($request->filled('status'))
-            $query->where('enrollments.status', $request->status);
+        // Status filter — default to approved if not set
+        $statusFilter = $request->input('status', 'approved');
+        if ($statusFilter !== '') {
+            $query->where('enrollments.status', $statusFilter);
+        }
 
         if ($request->filled('school_year'))
             $query->where('enrollments.school_year', $request->school_year);
