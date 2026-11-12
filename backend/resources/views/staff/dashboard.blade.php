@@ -25,8 +25,8 @@
 
 {{-- ── 3 Separate Stat Cards ────────────────────────────────── --}}
 @php
-    // Stat card shows ALL 14 children
-    $totalEnrolled = \App\Models\Child::count();
+    // Only approved-enrollment children (10)
+    $totalEnrolled = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $today         = now()->toDateString();
     $presentToday  = \App\Models\Attendance::where('attendance_date',$today)
                          ->where('status','present')->count();

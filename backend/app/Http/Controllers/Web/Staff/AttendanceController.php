@@ -20,8 +20,9 @@ class AttendanceController extends Controller
         $selectedDate = $request->input('date', Carbon::today()->toDateString());
         $month = Carbon::parse($selectedDate)->format('Y-m');
 
-        // Build children query — show ALL active children (not just this staff's)
-        $query = Child::where('status', 'active');
+        // Only show approved-enrollment children (10)
+        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
+        $query = Child::whereIn('id', $approvedIds);
 
         // Search filter
         if ($request->filled('search')) {

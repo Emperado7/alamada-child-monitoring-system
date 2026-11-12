@@ -38,8 +38,9 @@ class ActivityController extends Controller
 
         $activities = $query->orderBy('activity_date', 'desc')->paginate(20)->withQueryString();
 
-        // Show ALL active children so staff can log activities for any child
-        $children = Child::where('status', 'active')
+        // Only approved-enrollment children (10)
+        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
+        $children = Child::whereIn('id', $approvedIds)
             ->orderBy('last_name')->get(['id', 'first_name', 'last_name']);
 
         return view('staff.activities.index', compact('activities', 'children'), [
@@ -49,8 +50,9 @@ class ActivityController extends Controller
 
     public function create()
     {
-        // Show ALL active children (not just this staff's assigned ones)
-        $children = Child::where('status', 'active')
+        // Only approved-enrollment children (10)
+        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
+        $children = Child::whereIn('id', $approvedIds)
             ->orderBy('last_name')->get();
 
         return view('staff.activities.create', [
@@ -79,8 +81,9 @@ class ActivityController extends Controller
 
     public function edit(Activity $activity)
     {
-        // Show ALL active children — removed staff ownership restriction
-        $children = Child::where('status', 'active')
+        // Only approved-enrollment children (10)
+        $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
+        $children = Child::whereIn('id', $approvedIds)
             ->orderBy('last_name')->get();
 
         return view('staff.activities.edit', [

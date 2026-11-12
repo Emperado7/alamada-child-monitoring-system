@@ -16,7 +16,7 @@ class AttendanceController extends Controller
         $month = $request->input('month', Carbon::now()->format('Y-m'));
         [$yr, $mo] = explode('-', $month);
 
-        // Build children query — only approved-enrollment children
+        // Build children query — only approved-enrollment children (10)
         $approvedIds = \App\Models\Enrollment::where('status', 'approved')->distinct('child_id')->pluck('child_id');
         $query = Child::whereIn('id', $approvedIds)
             ->with([

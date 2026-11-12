@@ -12,7 +12,7 @@
                            ->whereMonth('activity_date', now()->month)->count();
     $totalInProgress = \App\Models\Activity::where('completion_status','in_progress')
                            ->whereMonth('activity_date', now()->month)->count();
-    $totalChildren   = \App\Models\Child::where('status','active')->count();
+    $totalChildren   = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
 @endphp
 
 <div class="row g-3 mb-4">

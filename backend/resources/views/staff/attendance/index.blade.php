@@ -16,8 +16,8 @@
     $selectedDate  = request('date', \Carbon\Carbon::today()->toDateString());
     $selectedMonth = request('month', \Carbon\Carbon::now()->format('Y-m'));
 
-    // Bug fix: use total active children (all, not just this staff's) to match the attendance table
-    $totalEnrolled = \App\Models\Child::where('status','active')->count();
+    // Only approved-enrollment children (10)
+    $totalEnrolled = \App\Models\Enrollment::where('status','approved')->distinct('child_id')->count('child_id');
     $presentToday  = \App\Models\Attendance::where('attendance_date',$selectedDate)
                         ->where('status','present')->count();
     $absentToday   = \App\Models\Attendance::where('attendance_date',$selectedDate)
